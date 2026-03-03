@@ -7,6 +7,7 @@ import { urlFor } from '@/sanity/lib/image'
 import { useCart } from '@/context/CartContext'
 import ProductCard from '@/components/ProductCard'
 import { HiOutlineShoppingCart } from 'react-icons/hi'
+import { PortableText } from '@portabletext/react'
 import type { Product } from '@/types'
 
 interface ProductDetailClientProps {
@@ -119,7 +120,24 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                     </div>
 
                     {product.description && (
-                        <p className="product-detail-description">{product.description}</p>
+                        <div className="product-detail-description portable-text">
+                            {typeof product.description === 'string' ? (
+                                <p>{product.description}</p>
+                            ) : (
+                                <PortableText value={product.description} />
+                            )}
+                        </div>
+                    )}
+
+                    {product.details && (
+                        <div className="product-detail-more-info portable-text" style={{ marginTop: '20px' }}>
+                            <h3 className="product-detail-section-title">Additional Details</h3>
+                            {typeof product.details === 'string' ? (
+                                <p>{product.details}</p>
+                            ) : (
+                                <PortableText value={product.details} />
+                            )}
+                        </div>
                     )}
 
                     {/* Quantity & Add to Cart */}

@@ -4,7 +4,6 @@ import React from 'react'
 import Link from 'next/link'
 import ProductCard from '@/components/ProductCard'
 import CategoryCard from '@/components/CategoryCard'
-import { DEMO_CATEGORIES, DEMO_FEATURED_PRODUCTS } from '@/lib/demo-data'
 import { HiOutlineShieldCheck, HiOutlineTruck, HiOutlineClock, HiOutlineSupport } from 'react-icons/hi'
 import type { Product, Category } from '@/types'
 
@@ -37,8 +36,9 @@ const features = [
 ]
 
 export default function HomeClient({ products, categories }: HomeClientProps) {
-    const displayCategories = categories.length > 0 ? categories : DEMO_CATEGORIES
-    const displayProducts = products.length > 0 ? products : DEMO_FEATURED_PRODUCTS
+    // Force use of real data from Sanity, without falling back to demo data.
+    const displayCategories = categories || []
+    const displayProducts = products || []
 
     return (
         <>

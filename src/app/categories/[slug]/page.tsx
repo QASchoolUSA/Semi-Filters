@@ -5,7 +5,6 @@ import ProductCard from '@/components/ProductCard'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { DEMO_CATEGORY_DATA } from '@/lib/demo-data'
 import type { Product, Category } from '@/types'
 
 export const revalidate = 60
@@ -17,11 +16,11 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { slug } = await params
     const category = await client.fetch(categoryBySlugQuery, { slug }).catch(() => null) as Category | null
-    const cat = category || DEMO_CATEGORY_DATA[slug]?.category
-    if (!cat) return { title: 'Category Not Found — Semi Filters' }
+
+    if (!category) return { title: 'Category Not Found — Semi Filters' }
     return {
-        title: `${cat.name} — Semi Filters`,
-        description: cat.description || `Shop ${cat.name} at Semi Filters.`,
+        title: `${category.name} — Semi Filters`,
+        description: category.description || `Shop ${category.name} at Semi Filters.`,
     }
 }
 
@@ -31,10 +30,7 @@ export default async function CategoryPage({ params }: Props) {
     let products = await client.fetch(productsByCategoryQuery, { categorySlug: slug }).catch(() => []) as Product[]
 
     if (!category) {
-        const demo = DEMO_CATEGORY_DATA[slug]
-        if (!demo) notFound()
-        category = demo.category
-        products = demo.products
+        notFound()
     }
 
     return (

@@ -32,7 +32,7 @@ export const productBySlugQuery = `*[_type == "product" && slug.current == $slug
   featured
 }`
 
-export const featuredProductsQuery = `*[_type == "product" && featured == true] | order(_createdAt desc) [0...8] {
+export const featuredProductsQuery = `*[_type == "product"] | order(featured desc, _createdAt desc) [0...8] {
   _id,
   name,
   slug,

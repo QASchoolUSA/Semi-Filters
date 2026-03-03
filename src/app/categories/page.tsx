@@ -2,7 +2,6 @@ import React from 'react'
 import { client } from '@/sanity/lib/client'
 import { allCategoriesQuery } from '@/sanity/lib/queries'
 import CategoryCard from '@/components/CategoryCard'
-import { DEMO_CATEGORIES } from '@/lib/demo-data'
 import type { Category } from '@/types'
 import type { Metadata } from 'next'
 
@@ -14,8 +13,7 @@ export const metadata: Metadata = {
 export const revalidate = 60
 
 export default async function CategoriesPage() {
-    let categories = await client.fetch(allCategoriesQuery).catch(() => []) as Category[]
-    if (categories.length === 0) categories = DEMO_CATEGORIES
+    const categories = await client.fetch(allCategoriesQuery).catch(() => []) as Category[]
 
     return (
         <>

@@ -21,8 +21,8 @@ export interface Product {
     images?: SanityImage[]
     price: number
     compareAtPrice?: number
-    description?: string
-    details?: string
+    description?: any // Portable Text block array
+    details?: any // Portable Text block array
     category?: CategoryRef
     specifications?: Specification[]
     partNumber?: string

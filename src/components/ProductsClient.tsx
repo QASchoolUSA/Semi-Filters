@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo } from 'react'
 import ProductCard from '@/components/ProductCard'
-import { DEMO_PRODUCTS, DEMO_CATEGORIES } from '@/lib/demo-data'
 import type { Product, Category } from '@/types'
 
 interface ProductsClientProps {
@@ -11,8 +10,8 @@ interface ProductsClientProps {
 }
 
 export default function ProductsClient({ products, categories }: ProductsClientProps) {
-    const displayProducts = products.length > 0 ? products : DEMO_PRODUCTS
-    const displayCategories = categories.length > 0 ? categories : DEMO_CATEGORIES
+    const displayProducts = products || []
+    const displayCategories = categories || []
 
     const [selectedCategory, setSelectedCategory] = useState<string>('all')
     const [sortBy, setSortBy] = useState<string>('default')
