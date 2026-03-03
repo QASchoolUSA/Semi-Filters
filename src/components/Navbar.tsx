@@ -1,13 +1,30 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useCart } from '@/context/CartContext'
 import { HiOutlineShoppingBag, HiOutlineMenu, HiOutlineX } from 'react-icons/hi'
 
 export default function Navbar() {
-    const { totalItems } = useCart()
+    const { totalItems, openCart } = useCart()
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const pathname = usePathname()
+
+    // Close mobile menu on route change
+    useEffect(() => {
+        setMobileMenuOpen(false)
+    }, [pathname])
+
+    // Lock body scroll when mobile menu is open
+    useEffect(() => {
+        if (mobileMenuOpen) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = ''
+        }
+        return () => { document.body.style.overflow = '' }
+    }, [mobileMenuOpen])
 
     const navLinks = [
         { href: '/', label: 'Home' },
@@ -35,19 +52,23 @@ export default function Navbar() {
 
                 <div className="navbar-links-desktop">
                     {navLinks.map((link) => (
-                        <Link key={link.href} href={link.href} className="nav-link">
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            className={`nav-link ${pathname === link.href ? 'nav-link-active' : ''}`}
+                        >
                             {link.label}
                         </Link>
                     ))}
                 </div>
 
                 <div className="navbar-actions">
-                    <Link href="/cart" className="cart-button">
+                    <button className="cart-button" onClick={openCart} aria-label="Open cart">
                         <HiOutlineShoppingBag size={24} />
                         {totalItems > 0 && (
                             <span className="cart-badge">{totalItems}</span>
                         )}
-                    </Link>
+                    </button>
 
                     <button
                         className="mobile-menu-toggle"
@@ -59,18 +80,33 @@ export default function Navbar() {
                 </div>
             </div>
 
+            {/* Mobile Menu Overlay */}
+            <div
+                className={`mobile-menu-backdrop ${mobileMenuOpen ? 'mobile-menu-backdrop-visible' : ''}`}
+                onClick={() => setMobileMenuOpen(false)}
+            />
+
             {/* Mobile Menu */}
             <div className={`mobile-menu ${mobileMenuOpen ? 'mobile-menu-open' : ''}`}>
-                {navLinks.map((link) => (
-                    <Link
-                        key={link.href}
-                        href={link.href}
-                        className="mobile-nav-link"
-                        onClick={() => setMobileMenuOpen(false)}
+                <div className="mobile-menu-inner">
+                    {navLinks.map((link) => (
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            className={`mobile-nav-link ${pathname === link.href ? 'mobile-nav-link-active' : ''}`}
+                            onClick={() => setMobileMenuOpen(false)}
+                        >
+                            {link.label}
+                        </Link>
+                    ))}
+                    <button
+                        className="mobile-nav-link mobile-cart-link"
+                        onClick={() => { setMobileMenuOpen(false); openCart() }}
                     >
-                        {link.label}
-                    </Link>
-                ))}
+                        <HiOutlineShoppingBag size={20} />
+                        Cart {totalItems > 0 && <span className="mobile-cart-count">({totalItems})</span>}
+                    </button>
+                </div>
             </div>
         </nav>
     )

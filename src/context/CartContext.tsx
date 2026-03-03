@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react'
+import React, { createContext, useContext, useReducer, useEffect, useState, useCallback, ReactNode } from 'react'
 import toast from 'react-hot-toast'
 
 export interface CartItem {
@@ -31,6 +31,10 @@ interface CartContextType extends CartState {
     removeFromCart: (id: string) => void
     updateQuantity: (id: string, quantity: number) => void
     clearCart: () => void
+    isCartOpen: boolean
+    openCart: () => void
+    closeCart: () => void
+    toggleCart: () => void
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -87,6 +91,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
         totalPrice: 0,
     })
 
+    const [isCartOpen, setIsCartOpen] = useState(false)
+
+    const openCart = useCallback(() => setIsCartOpen(true), [])
+    const closeCart = useCallback(() => setIsCartOpen(false), [])
+    const toggleCart = useCallback(() => setIsCartOpen((prev) => !prev), [])
+
+    // Lock body scroll when cart drawer is open
+    useEffect(() => {
+        if (isCartOpen) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = ''
+        }
+        return () => { document.body.style.overflow = '' }
+    }, [isCartOpen])
+
     // Load cart from localStorage on mount
     useEffect(() => {
         try {
@@ -112,6 +132,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const addToCart = (item: CartItem) => {
         dispatch({ type: 'ADD_TO_CART', payload: item })
         toast.success(`${item.name} added to cart!`)
+        openCart()
     }
 
     const removeFromCart = (id: string) => {
@@ -130,7 +151,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     return (
         <CartContext.Provider
-            value={{ ...state, addToCart, removeFromCart, updateQuantity, clearCart }}
+            value={{ ...state, addToCart, removeFromCart, updateQuantity, clearCart, isCartOpen, openCart, closeCart, toggleCart }}
         >
             {children}
         </CartContext.Provider>
