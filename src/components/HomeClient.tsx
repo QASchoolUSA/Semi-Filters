@@ -4,30 +4,14 @@ import React from 'react'
 import Link from 'next/link'
 import ProductCard from '@/components/ProductCard'
 import CategoryCard from '@/components/CategoryCard'
+import { DEMO_CATEGORIES, DEMO_FEATURED_PRODUCTS } from '@/lib/demo-data'
 import { HiOutlineShieldCheck, HiOutlineTruck, HiOutlineClock, HiOutlineSupport } from 'react-icons/hi'
+import type { Product, Category } from '@/types'
 
 interface HomeClientProps {
-    products: any[]
-    categories: any[]
+    products: Product[]
+    categories: Category[]
 }
-
-const DEMO_CATEGORIES = [
-    { _id: '1', name: 'Oil Filters', slug: { current: 'oil-filters' }, description: 'Premium engine oil filtration', image: null },
-    { _id: '2', name: 'Air Filters', slug: { current: 'air-filters' }, description: 'Clean air for peak performance', image: null },
-    { _id: '3', name: 'Fuel Filters', slug: { current: 'fuel-filters' }, description: 'Protect your fuel system', image: null },
-    { _id: '4', name: 'Cabin Filters', slug: { current: 'cabin-filters' }, description: 'Breathe clean on the road', image: null },
-]
-
-const DEMO_PRODUCTS = [
-    { _id: 'p1', name: 'Heavy Duty Oil Filter - HD-9001', slug: { current: 'hd-oil-filter-9001' }, price: 24.99, compareAtPrice: 34.99, category: { name: 'Oil Filters', slug: { current: 'oil-filters' } }, partNumber: 'HD-9001', inStock: true, featured: true, images: [] },
-    { _id: 'p2', name: 'Premium Air Filter - AF-5500', slug: { current: 'premium-air-filter-5500' }, price: 39.99, category: { name: 'Air Filters', slug: { current: 'air-filters' } }, partNumber: 'AF-5500', inStock: true, featured: true, images: [] },
-    { _id: 'p3', name: 'Fuel Water Separator - FW-3200', slug: { current: 'fuel-water-separator-3200' }, price: 29.99, compareAtPrice: 39.99, category: { name: 'Fuel Filters', slug: { current: 'fuel-filters' } }, partNumber: 'FW-3200', inStock: true, featured: true, images: [] },
-    { _id: 'p4', name: 'Cabin Air Filter - CA-7700', slug: { current: 'cabin-air-filter-7700' }, price: 19.99, category: { name: 'Cabin Filters', slug: { current: 'cabin-filters' } }, partNumber: 'CA-7700', inStock: true, featured: true, images: [] },
-    { _id: 'p5', name: 'Synthetic Oil Filter - SO-1200', slug: { current: 'synthetic-oil-filter-1200' }, price: 32.99, category: { name: 'Oil Filters', slug: { current: 'oil-filters' } }, partNumber: 'SO-1200', inStock: true, featured: true, images: [] },
-    { _id: 'p6', name: 'High Flow Air Filter - HF-8800', slug: { current: 'high-flow-air-filter-8800' }, price: 54.99, compareAtPrice: 69.99, category: { name: 'Air Filters', slug: { current: 'air-filters' } }, partNumber: 'HF-8800', inStock: false, featured: true, images: [] },
-    { _id: 'p7', name: 'Diesel Fuel Filter - DF-4400', slug: { current: 'diesel-fuel-filter-4400' }, price: 27.99, category: { name: 'Fuel Filters', slug: { current: 'fuel-filters' } }, partNumber: 'DF-4400', inStock: true, featured: true, images: [] },
-    { _id: 'p8', name: 'Extended Life Oil Filter - EL-6600', slug: { current: 'extended-life-oil-filter-6600' }, price: 42.99, compareAtPrice: 54.99, category: { name: 'Oil Filters', slug: { current: 'oil-filters' } }, partNumber: 'EL-6600', inStock: true, featured: true, images: [] },
-]
 
 const features = [
     {
@@ -54,7 +38,7 @@ const features = [
 
 export default function HomeClient({ products, categories }: HomeClientProps) {
     const displayCategories = categories.length > 0 ? categories : DEMO_CATEGORIES
-    const displayProducts = products.length > 0 ? products : DEMO_PRODUCTS
+    const displayProducts = products.length > 0 ? products : DEMO_FEATURED_PRODUCTS
 
     return (
         <>
@@ -69,7 +53,7 @@ export default function HomeClient({ products, categories }: HomeClientProps) {
                         </p>
                     </div>
                     <div className="category-grid">
-                        {displayCategories.map((category: any) => (
+                        {displayCategories.map((category) => (
                             <CategoryCard key={category._id} category={category} />
                         ))}
                     </div>
@@ -87,7 +71,7 @@ export default function HomeClient({ products, categories }: HomeClientProps) {
                         </p>
                     </div>
                     <div className="product-grid">
-                        {displayProducts.map((product: any) => (
+                        {displayProducts.map((product) => (
                             <ProductCard key={product._id} product={product} />
                         ))}
                     </div>

@@ -65,7 +65,7 @@ export default function AboutPage() {
                     been tested, verified, and approved by people who understand trucks.
                 </p>
 
-                <div className="features-grid" style={{ marginTop: '48px' }}>
+                <div className="features-grid about-features-grid">
                     <div className="feature-card">
                         <div className="feature-icon"><HiOutlineShieldCheck size={28} /></div>
                         <h3 className="feature-title">Quality Guaranteed</h3>
@@ -88,7 +88,7 @@ export default function AboutPage() {
                     </div>
                 </div>
 
-                <div style={{ textAlign: 'center', marginTop: '48px' }}>
+                <div className="about-cta">
                     <Link href="/products" className="btn btn-primary btn-lg">
                         Shop Our Products
                     </Link>

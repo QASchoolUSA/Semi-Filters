@@ -1392,6 +1392,60 @@ select {
   gap: 20px;
 }
 
+.contact-form-heading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.contact-fleet-card {
+  margin-top: 24px;
+}
+
+.contact-fleet-text {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+.contact-fleet-btn {
+  margin-top: 16px;
+  width: 100%;
+}
+
+/* About page utilities */
+.about-features-grid {
+  margin-top: 48px;
+}
+
+.about-cta {
+  text-align: center;
+  margin-top: 48px;
+}
+
+/* Products page count */
+.products-count {
+  color: var(--color-text-muted);
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+/* Cart drawer buttons */
+.cart-drawer-checkout-btn {
+  width: 100%;
+}
+
+.cart-drawer-view-cart-btn {
+  width: 100%;
+  margin-top: 8px;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;

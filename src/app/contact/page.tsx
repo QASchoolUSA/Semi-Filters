@@ -35,9 +35,9 @@ export default function ContactPage() {
                     <div className="contact-grid">
                         {/* Form */}
                         <div>
-                            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '24px' }}>Send us a Message</h2>
+                            <h2 className="contact-form-heading">Send us a Message</h2>
                             <form className="contact-form" onSubmit={handleSubmit}>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                                <div className="form-row">
                                     <div className="form-group">
                                         <label htmlFor="name">Full Name *</label>
                                         <input
@@ -61,7 +61,7 @@ export default function ContactPage() {
                                         />
                                     </div>
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                                <div className="form-row">
                                     <div className="form-group">
                                         <label htmlFor="phone">Phone</label>
                                         <input
@@ -85,7 +85,7 @@ export default function ContactPage() {
                                             <option value="order-support">Order Support</option>
                                             <option value="bulk-pricing">Bulk / Fleet Pricing</option>
                                             <option value="compatibility">Compatibility Question</option>
-                                            <option value="returns">Returns & Warranty</option>
+                                            <option value="returns">Returns &amp; Warranty</option>
                                             <option value="other">Other</option>
                                         </select>
                                     </div>
@@ -148,13 +148,13 @@ export default function ContactPage() {
                                 </div>
                             </div>
 
-                            <div className="contact-info-card" style={{ marginTop: '24px' }}>
+                            <div className="contact-info-card contact-fleet-card">
                                 <h3>Fleet Operators</h3>
-                                <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', lineHeight: 1.7 }}>
+                                <p className="contact-fleet-text">
                                     Managing a fleet? We offer volume discounts, dedicated account managers, and scheduled
                                     delivery programs. Contact us for a custom quote.
                                 </p>
-                                <button className="btn btn-outline" style={{ marginTop: '16px', width: '100%' }}>
+                                <button className="btn btn-outline contact-fleet-btn">
                                     Request Fleet Pricing
                                 </button>
                             </div>

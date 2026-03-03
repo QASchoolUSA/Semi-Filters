@@ -1,15 +1,17 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { urlFor } from '@/sanity/lib/image'
 import { useCart } from '@/context/CartContext'
 import ProductCard from '@/components/ProductCard'
 import { HiOutlineShoppingCart } from 'react-icons/hi'
+import type { Product } from '@/types'
 
 interface ProductDetailClientProps {
-    product: any
-    relatedProducts: any[]
+    product: Product
+    relatedProducts: Product[]
 }
 
 export default function ProductDetailClient({ product, relatedProducts }: ProductDetailClientProps) {
@@ -55,9 +57,11 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                 <div className="product-detail-images">
                     <div className="product-detail-main-image">
                         {product.images?.[selectedImage] ? (
-                            <img
+                            <Image
                                 src={urlFor(product.images[selectedImage]).width(600).height(600).url()}
                                 alt={product.name}
+                                width={600}
+                                height={600}
                             />
                         ) : (
                             <div className="product-card-placeholder" style={{ aspectRatio: '1', height: '100%' }}>
@@ -71,13 +75,18 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                     </div>
                     {product.images && product.images.length > 1 && (
                         <div className="product-detail-thumbs">
-                            {product.images.map((img: any, index: number) => (
+                            {product.images.map((img, index) => (
                                 <button
                                     key={index}
                                     className={`product-detail-thumb ${selectedImage === index ? 'active' : ''}`}
                                     onClick={() => setSelectedImage(index)}
                                 >
-                                    <img src={urlFor(img).width(100).height(100).url()} alt={`${product.name} ${index + 1}`} />
+                                    <Image
+                                        src={urlFor(img).width(100).height(100).url()}
+                                        alt={`${product.name} ${index + 1}`}
+                                        width={100}
+                                        height={100}
+                                    />
                                 </button>
                             ))}
                         </div>
@@ -134,10 +143,10 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                     {/* Specifications */}
                     {product.specifications && product.specifications.length > 0 && (
                         <div>
-                            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '12px' }}>Specifications</h3>
+                            <h3 className="product-detail-section-title">Specifications</h3>
                             <table className="specs-table">
                                 <tbody>
-                                    {product.specifications.map((spec: any, index: number) => (
+                                    {product.specifications.map((spec, index) => (
                                         <tr key={index}>
                                             <th>{spec.label}</th>
                                             <td>{spec.value}</td>
@@ -150,10 +159,10 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
 
                     {/* Compatibility */}
                     {product.compatibility && product.compatibility.length > 0 && (
-                        <div style={{ marginTop: '24px' }}>
-                            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '12px' }}>Compatible Trucks</h3>
+                        <div className="product-detail-compat">
+                            <h3 className="product-detail-section-title">Compatible Trucks</h3>
                             <div className="compatibility-tags">
-                                {product.compatibility.map((truck: string, index: number) => (
+                                {product.compatibility.map((truck, index) => (
                                     <span key={index} className="compat-tag">{truck}</span>
                                 ))}
                             </div>
@@ -164,13 +173,13 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
 
             {/* Related Products */}
             {relatedProducts.length > 0 && (
-                <div style={{ marginTop: '80px' }}>
+                <div className="product-detail-related">
                     <div className="section-header">
                         <span className="section-label">You May Also Like</span>
                         <h2 className="section-title">Related Products</h2>
                     </div>
                     <div className="product-grid">
-                        {relatedProducts.filter((p: any) => p._id !== product._id).slice(0, 4).map((p: any) => (
+                        {relatedProducts.filter((p) => p._id !== product._id).slice(0, 4).map((p) => (
                             <ProductCard key={p._id} product={p} />
                         ))}
                     </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/context/CartContext'
 import { urlFor } from '@/sanity/lib/image'
@@ -50,7 +51,12 @@ export default function CartDrawer() {
                                 <div key={item._id} className="cart-drawer-item">
                                     <div className="cart-drawer-item-image">
                                         {item.image ? (
-                                            <img src={urlFor(item.image).width(120).height(120).url()} alt={item.name} />
+                                            <Image
+                                                src={urlFor(item.image).width(120).height(120).url()}
+                                                alt={item.name}
+                                                width={120}
+                                                height={120}
+                                            />
                                         ) : (
                                             <div className="product-card-placeholder" style={{ width: '100%', height: '100%' }}>
                                                 <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -102,13 +108,12 @@ export default function CartDrawer() {
                                 <span>Total</span>
                                 <span>${grandTotal.toFixed(2)}</span>
                             </div>
-                            <button className="btn btn-primary btn-lg" style={{ width: '100%' }}>
+                            <button className="btn btn-primary btn-lg cart-drawer-checkout-btn">
                                 Checkout
                             </button>
                             <Link
                                 href="/cart"
-                                className="btn btn-outline"
-                                style={{ width: '100%', marginTop: '8px' }}
+                                className="btn btn-outline cart-drawer-view-cart-btn"
                                 onClick={closeCart}
                             >
                                 View Full Cart

@@ -1,23 +1,15 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { urlFor } from '@/sanity/lib/image'
 import { useCart } from '@/context/CartContext'
 import { HiOutlineShoppingCart } from 'react-icons/hi'
+import type { Product } from '@/types'
 
 interface ProductCardProps {
-    product: {
-        _id: string
-        name: string
-        slug: { current: string }
-        images?: any[]
-        price: number
-        compareAtPrice?: number
-        category?: { name: string; slug: { current: string } }
-        partNumber?: string
-        inStock: boolean
-    }
+    product: Product
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
@@ -46,10 +38,12 @@ export default function ProductCard({ product }: ProductCardProps) {
             <Link href={`/products/${product.slug.current}`} className="product-card-link">
                 <div className="product-card-image-wrapper">
                     {product.images?.[0] ? (
-                        <img
+                        <Image
                             src={urlFor(product.images[0]).width(400).height(400).url()}
                             alt={product.name}
                             className="product-card-image"
+                            width={400}
+                            height={400}
                         />
                     ) : (
                         <div className="product-card-placeholder">

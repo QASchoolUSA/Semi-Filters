@@ -1,26 +1,24 @@
 import React from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { urlFor } from '@/sanity/lib/image'
+import type { Banner } from '@/types'
 
 interface HeroBannerProps {
-    banner?: {
-        heading: string
-        subheading?: string
-        image?: any
-        ctaText?: string
-        ctaLink?: string
-        discount?: string
-    }
+    banner?: Banner | null
 }
 
 export default function HeroBanner({ banner }: HeroBannerProps) {
     return (
         <section className="hero">
             {banner?.image && (
-                <img
+                <Image
                     src={urlFor(banner.image).width(1920).height(800).url()}
                     alt={banner.heading || 'Semi Filters'}
                     className="hero-bg-image"
+                    width={1920}
+                    height={800}
+                    priority
                 />
             )}
             <div className="hero-overlay" />

@@ -1,15 +1,11 @@
 import React from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { urlFor } from '@/sanity/lib/image'
+import type { Category } from '@/types'
 
 interface CategoryCardProps {
-    category: {
-        _id: string
-        name: string
-        slug: { current: string }
-        description?: string
-        image?: any
-    }
+    category: Category
 }
 
 export default function CategoryCard({ category }: CategoryCardProps) {
@@ -17,10 +13,12 @@ export default function CategoryCard({ category }: CategoryCardProps) {
         <Link href={`/categories/${category.slug.current}`} className="category-card">
             <div className="category-card-image-wrapper">
                 {category.image ? (
-                    <img
+                    <Image
                         src={urlFor(category.image).width(600).height(400).url()}
                         alt={category.name}
                         className="category-card-image"
+                        width={600}
+                        height={400}
                     />
                 ) : (
                     <div className="category-card-placeholder">

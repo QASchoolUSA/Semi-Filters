@@ -2,16 +2,9 @@
 
 import React, { createContext, useContext, useReducer, useEffect, useState, useCallback, ReactNode } from 'react'
 import toast from 'react-hot-toast'
+import type { CartItem } from '@/types'
 
-export interface CartItem {
-    _id: string
-    name: string
-    slug: string
-    price: number
-    quantity: number
-    image?: any
-    partNumber?: string
-}
+export type { CartItem }
 
 interface CartState {
     items: CartItem[]

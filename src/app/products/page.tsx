@@ -2,6 +2,7 @@ import React from 'react'
 import { client } from '@/sanity/lib/client'
 import { allProductsQuery, allCategoriesQuery } from '@/sanity/lib/queries'
 import ProductsClient from '@/components/ProductsClient'
+import type { Product, Category } from '@/types'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -13,8 +14,8 @@ export const revalidate = 60
 
 async function getData() {
     const [products, categories] = await Promise.all([
-        client.fetch(allProductsQuery).catch(() => []),
-        client.fetch(allCategoriesQuery).catch(() => []),
+        client.fetch(allProductsQuery).catch(() => []) as Promise<Product[]>,
+        client.fetch(allCategoriesQuery).catch(() => []) as Promise<Category[]>,
     ])
     return { products, categories }
 }
