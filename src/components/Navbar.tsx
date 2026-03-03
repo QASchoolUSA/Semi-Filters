@@ -70,13 +70,9 @@ export default function Navbar() {
                         )}
                     </button>
 
-                    <button
-                        className="mobile-menu-toggle"
-                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        aria-label="Toggle menu"
-                    >
-                        {mobileMenuOpen ? <HiOutlineX size={24} /> : <HiOutlineMenu size={24} />}
-                    </button>
+                    <div className="mobile-menu-toggle" style={{ display: 'none' }}>
+                        {/* Hidden on mobile because MobileTabBar handles navigation */}
+                    </div>
                 </div>
             </div>
 

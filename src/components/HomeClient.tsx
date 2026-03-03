@@ -52,7 +52,7 @@ export default function HomeClient({ products, categories }: HomeClientProps) {
                             Find the right filter for your semi truck. We carry every type of filtration solution you need.
                         </p>
                     </div>
-                    <div className="category-grid">
+                    <div className="category-grid mobile-scroll-x">
                         {displayCategories.map((category) => (
                             <CategoryCard key={category._id} category={category} />
                         ))}
@@ -70,7 +70,7 @@ export default function HomeClient({ products, categories }: HomeClientProps) {
                             Our most popular filters, trusted by thousands of owner-operators and fleet managers.
                         </p>
                     </div>
-                    <div className="product-grid">
+                    <div className="product-grid mobile-scroll-x">
                         {displayProducts.map((product) => (
                             <ProductCard key={product._id} product={product} />
                         ))}
