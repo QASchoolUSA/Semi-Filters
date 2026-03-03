@@ -2,6 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { urlFor } from '@/sanity/lib/image'
+import { getCategoryIcon } from '@/components/CategoryIcons'
 import type { Category } from '@/types'
 
 interface CategoryCardProps {
@@ -22,11 +23,7 @@ export default function CategoryCard({ category }: CategoryCardProps) {
                     />
                 ) : (
                     <div className="category-card-placeholder">
-                        <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="1.5" opacity="0.4" />
-                            <circle cx="16" cy="16" r="10" stroke="currentColor" strokeWidth="1" strokeDasharray="4 3" opacity="0.4" />
-                            <circle cx="16" cy="16" r="5" fill="currentColor" opacity="0.3" />
-                        </svg>
+                        {getCategoryIcon(category.slug.current, 64)}
                     </div>
                 )}
                 <div className="category-card-overlay">

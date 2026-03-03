@@ -58,11 +58,11 @@ export default function Footer() {
                             </li>
                             <li>
                                 <HiOutlineMail size={18} />
-                                <span>info@semifilters.com</span>
+                                <span>contact@semifilters.com</span>
                             </li>
                             <li>
                                 <HiOutlineLocationMarker size={18} />
-                                <span>Houston, TX 77001</span>
+                                <span>Sanford, FL 32771</span>
                             </li>
                         </ul>
                     </div>

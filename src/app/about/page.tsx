@@ -45,7 +45,7 @@ export default function AboutPage() {
                     meet their needs. We set out to change that.
                 </p>
                 <p>
-                    Based in Houston, Texas — the heart of America&apos;s trucking corridor — we source and stock
+                    Based in Sanford, Florida — we source and stock
                     only the highest quality filtration products. Every filter we sell meets or exceeds OEM
                     specifications, ensuring your engine gets the protection it deserves.
                 </p>

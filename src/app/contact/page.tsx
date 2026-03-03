@@ -125,7 +125,7 @@ export default function ContactPage() {
                                     </div>
                                     <div className="contact-info-text">
                                         <h4>Email</h4>
-                                        <p>info@semifilters.com</p>
+                                        <p>contact@semifilters.com</p>
                                     </div>
                                 </div>
                                 <div className="contact-info-item">
@@ -134,7 +134,7 @@ export default function ContactPage() {
                                     </div>
                                     <div className="contact-info-text">
                                         <h4>Address</h4>
-                                        <p>1234 Industrial Blvd<br />Houston, TX 77001</p>
+                                        <p>Sanford, FL 32771</p>
                                     </div>
                                 </div>
                                 <div className="contact-info-item">
