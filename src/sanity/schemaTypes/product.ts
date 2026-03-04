@@ -97,6 +97,51 @@ export const product = defineType({
             type: 'boolean',
             initialValue: false,
         }),
+        defineField({
+            name: 'brand',
+            title: 'Brand',
+            type: 'string',
+            description: 'Manufacturer or brand name (e.g. CoralFly, Fleetguard)',
+        }),
+        defineField({
+            name: 'productType',
+            title: 'Product Type',
+            type: 'string',
+            description: 'Type identifier (e.g. air-filter, oil-filter)',
+        }),
+        defineField({
+            name: 'published',
+            title: 'Published',
+            type: 'boolean',
+            initialValue: true,
+            description: 'Whether this product is visible on the storefront',
+        }),
+        defineField({
+            name: 'seoTitle',
+            title: 'SEO Title',
+            type: 'string',
+            description: 'Custom title for search engine results',
+            group: 'seo',
+        }),
+        defineField({
+            name: 'seoDescription',
+            title: 'SEO Description',
+            type: 'text',
+            rows: 3,
+            description: 'Custom description for search engine results',
+            group: 'seo',
+        }),
+        defineField({
+            name: 'vehicleFit',
+            title: 'Vehicle Fitment',
+            type: 'array',
+            of: [{ type: 'string' }],
+            options: { layout: 'tags' },
+            description: 'Vehicles this product fits (e.g. freightliner, kenworth)',
+        }),
+    ],
+    groups: [
+        { name: 'seo', title: 'SEO', icon: () => '🔍' },
     ],
     preview: {
         select: {
