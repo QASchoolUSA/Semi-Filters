@@ -22,7 +22,7 @@ export default function CartDrawer() {
             />
 
             {/* Drawer */}
-            <div className={`cart-drawer ${isCartOpen ? 'cart-drawer-open' : ''}`}>
+            <div className={`cart-drawer fade-in ${isCartOpen ? 'cart-drawer-open' : ''}`} style={isCartOpen ? { backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', background: 'rgba(18, 18, 26, 0.95)' } : {}}>
                 {/* Header */}
                 <div className="cart-drawer-header">
                     <h2 className="cart-drawer-title">
@@ -38,8 +38,8 @@ export default function CartDrawer() {
                 {items.length === 0 ? (
                     <div className="cart-drawer-empty">
                         <div className="cart-drawer-empty-icon">🛒</div>
-                        <p>Your cart is empty</p>
-                        <Link href="/products" className="btn btn-primary" onClick={closeCart}>
+                        <p style={{ color: 'var(--color-text-secondary)', marginBottom: '24px' }}>Your cart is empty</p>
+                        <Link href="/products" className="btn btn-primary btn-lg" onClick={closeCart}>
                             Shop Filters
                         </Link>
                     </div>
