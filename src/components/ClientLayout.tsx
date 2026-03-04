@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { usePathname } from 'next/navigation'
 import { Toaster } from 'react-hot-toast'
 import { CartProvider } from '@/context/CartContext'
 import Navbar from '@/components/Navbar'
@@ -9,6 +10,14 @@ import CartDrawer from '@/components/CartDrawer'
 import MobileTabBar from '@/components/MobileTabBar'
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
+    const pathname = usePathname()
+    const isStudio = pathname.startsWith('/studio')
+
+    // Sanity Studio needs full control of the page — skip site chrome
+    if (isStudio) {
+        return <>{children}</>
+    }
+
     return (
         <CartProvider>
             <Toaster
@@ -30,3 +39,4 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         </CartProvider>
     )
 }
+
