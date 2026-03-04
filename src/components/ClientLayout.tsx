@@ -7,7 +7,6 @@ import { CartProvider } from '@/context/CartContext'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import CartDrawer from '@/components/CartDrawer'
-import MobileTabBar from '@/components/MobileTabBar'
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
@@ -35,8 +34,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             <Navbar />
             <main>{children}</main>
             <Footer />
-            <MobileTabBar />
         </CartProvider>
     )
 }
+
 
