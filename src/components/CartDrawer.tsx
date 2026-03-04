@@ -22,7 +22,7 @@ export default function CartDrawer() {
             />
 
             {/* Drawer */}
-            <div className={`cart-drawer fade-in ${isCartOpen ? 'cart-drawer-open' : ''}`} style={isCartOpen ? { backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', background: 'rgba(18, 18, 26, 0.95)' } : {}}>
+            <div className={`cart-drawer ${isCartOpen ? 'cart-drawer-open' : ''}`} style={isCartOpen ? { backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', background: 'rgba(18, 18, 26, 0.95)' } : {}}>
                 {/* Header */}
                 <div className="cart-drawer-header">
                     <h2 className="cart-drawer-title">
