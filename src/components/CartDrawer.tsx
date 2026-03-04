@@ -1,55 +1,106 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/context/CartContext'
 import { urlFor } from '@/sanity/lib/image'
-import { HiOutlineX, HiOutlineShoppingBag, HiOutlineTrash } from 'react-icons/hi'
+import { HiOutlineX, HiOutlineShoppingBag, HiOutlineTrash, HiOutlineArrowRight } from 'react-icons/hi'
 
 export default function CartDrawer() {
     const { items, totalItems, totalPrice, removeFromCart, updateQuantity, clearCart, isCartOpen, closeCart } = useCart()
 
     const shipping = totalPrice >= 150 ? 0 : 12.99
     const grandTotal = totalPrice + shipping
+    const freeShippingProgress = Math.min((totalPrice / 150) * 100, 100)
+
+    // Close drawer on Escape key
+    useEffect(() => {
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && isCartOpen) closeCart()
+        }
+        document.addEventListener('keydown', handleEscape)
+        return () => document.removeEventListener('keydown', handleEscape)
+    }, [isCartOpen, closeCart])
 
     return (
         <>
-            {/* Backdrop */}
+            {/* Backdrop overlay */}
             <div
-                className={`cart-drawer-backdrop ${isCartOpen ? 'cart-drawer-backdrop-visible' : ''}`}
+                className={`cart-overlay ${isCartOpen ? 'cart-overlay--visible' : ''}`}
                 onClick={closeCart}
+                aria-hidden="true"
             />
 
-            {/* Drawer */}
-            <div className={`cart-drawer ${isCartOpen ? 'cart-drawer-open' : ''}`} style={isCartOpen ? { backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', background: 'rgba(18, 18, 26, 0.95)' } : {}}>
-                {/* Header */}
-                <div className="cart-drawer-header">
-                    <h2 className="cart-drawer-title">
+            {/* Drawer panel */}
+            <aside
+                className={`cart-panel ${isCartOpen ? 'cart-panel--open' : ''}`}
+                role="dialog"
+                aria-label="Shopping cart"
+                aria-modal="true"
+            >
+                {/* ─── Header ─── */}
+                <header className="cart-panel__header">
+                    <h2 className="cart-panel__title">
                         <HiOutlineShoppingBag size={22} />
-                        Cart ({totalItems})
+                        <span>Cart</span>
+                        {totalItems > 0 && (
+                            <span className="cart-panel__count">{totalItems}</span>
+                        )}
                     </h2>
-                    <button className="cart-drawer-close" onClick={closeCart} aria-label="Close cart">
-                        <HiOutlineX size={24} />
+                    <button
+                        className="cart-panel__close"
+                        onClick={closeCart}
+                        aria-label="Close cart"
+                    >
+                        <HiOutlineX size={22} />
                     </button>
-                </div>
+                </header>
 
-                {/* Content */}
+                {/* ─── Empty State ─── */}
                 {items.length === 0 ? (
-                    <div className="cart-drawer-empty">
-                        <div className="cart-drawer-empty-icon">🛒</div>
-                        <p style={{ color: 'var(--color-text-secondary)', marginBottom: '24px' }}>Your cart is empty</p>
-                        <Link href="/products" className="btn btn-primary btn-lg" onClick={closeCart}>
-                            Shop Filters
+                    <div className="cart-panel__empty">
+                        <div className="cart-panel__empty-icon">
+                            <HiOutlineShoppingBag size={56} />
+                        </div>
+                        <h3>Your cart is empty</h3>
+                        <p>Discover our premium filter selection</p>
+                        <Link
+                            href="/products"
+                            className="btn btn-primary"
+                            onClick={closeCart}
+                        >
+                            Browse Products
+                            <HiOutlineArrowRight size={18} />
                         </Link>
                     </div>
                 ) : (
                     <>
-                        {/* Items */}
-                        <div className="cart-drawer-items">
+                        {/* ─── Free Shipping Progress ─── */}
+                        {totalPrice < 150 && (
+                            <div className="cart-panel__shipping-bar">
+                                <p>
+                                    Add <strong>${(150 - totalPrice).toFixed(2)}</strong> more for <strong>FREE</strong> shipping!
+                                </p>
+                                <div className="cart-panel__progress-track">
+                                    <div
+                                        className="cart-panel__progress-fill"
+                                        style={{ width: `${freeShippingProgress}%` }}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        {totalPrice >= 150 && (
+                            <div className="cart-panel__shipping-bar cart-panel__shipping-bar--free">
+                                <p>🎉 You qualify for <strong>FREE shipping!</strong></p>
+                            </div>
+                        )}
+
+                        {/* ─── Items List ─── */}
+                        <div className="cart-panel__items">
                             {items.map((item) => (
-                                <div key={item._id} className="cart-drawer-item">
-                                    <div className="cart-drawer-item-image">
+                                <div key={item._id} className="cart-item-card">
+                                    <div className="cart-item-card__image">
                                         {item.image ? (
                                             <Image
                                                 src={urlFor(item.image).width(120).height(120).url()}
@@ -58,76 +109,96 @@ export default function CartDrawer() {
                                                 height={120}
                                             />
                                         ) : (
-                                            <div className="product-card-placeholder" style={{ width: '100%', height: '100%' }}>
-                                                <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <div className="cart-item-card__placeholder">
+                                                <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
                                                     <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="1" opacity="0.2" />
                                                     <circle cx="16" cy="16" r="5" fill="currentColor" opacity="0.15" />
                                                 </svg>
                                             </div>
                                         )}
                                     </div>
-                                    <div className="cart-drawer-item-details">
+
+                                    <div className="cart-item-card__body">
                                         <Link href={`/products/${item.slug}`} onClick={closeCart}>
-                                            <h4 className="cart-drawer-item-name">{item.name}</h4>
+                                            <h4 className="cart-item-card__name">{item.name}</h4>
                                         </Link>
                                         {item.partNumber && (
-                                            <span className="cart-drawer-item-part">Part# {item.partNumber}</span>
+                                            <span className="cart-item-card__part">#{item.partNumber}</span>
                                         )}
-                                        <div className="cart-drawer-item-row">
-                                            <div className="cart-drawer-qty">
-                                                <button onClick={() => updateQuantity(item._id, item.quantity - 1)} aria-label="Decrease quantity">−</button>
+                                        <div className="cart-item-card__controls">
+                                            <div className="cart-item-card__qty">
+                                                <button
+                                                    onClick={() => updateQuantity(item._id, item.quantity - 1)}
+                                                    aria-label="Decrease quantity"
+                                                >
+                                                    −
+                                                </button>
                                                 <span>{item.quantity}</span>
-                                                <button onClick={() => updateQuantity(item._id, item.quantity + 1)} aria-label="Increase quantity">+</button>
+                                                <button
+                                                    onClick={() => updateQuantity(item._id, item.quantity + 1)}
+                                                    aria-label="Increase quantity"
+                                                >
+                                                    +
+                                                </button>
                                             </div>
-                                            <span className="cart-drawer-item-price">${(item.price * item.quantity).toFixed(2)}</span>
+                                            <span className="cart-item-card__price">
+                                                ${(item.price * item.quantity).toFixed(2)}
+                                            </span>
                                         </div>
                                     </div>
-                                    <button className="cart-drawer-item-remove" onClick={() => removeFromCart(item._id)} aria-label="Remove item">
+
+                                    <button
+                                        className="cart-item-card__remove"
+                                        onClick={() => removeFromCart(item._id)}
+                                        aria-label={`Remove ${item.name}`}
+                                    >
                                         <HiOutlineTrash size={16} />
                                     </button>
                                 </div>
                             ))}
                         </div>
 
-                        {/* Footer */}
-                        <div className="cart-drawer-footer">
-                            <div className="cart-drawer-summary-row">
-                                <span>Subtotal</span>
-                                <span>${totalPrice.toFixed(2)}</span>
+                        {/* ─── Footer / Summary ─── */}
+                        <footer className="cart-panel__footer">
+                            <div className="cart-panel__summary">
+                                <div className="cart-panel__row">
+                                    <span>Subtotal</span>
+                                    <span>${totalPrice.toFixed(2)}</span>
+                                </div>
+                                <div className="cart-panel__row">
+                                    <span>Shipping</span>
+                                    <span className={shipping === 0 ? 'cart-panel__free-tag' : ''}>
+                                        {shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
+                                    </span>
+                                </div>
+                                <div className="cart-panel__row cart-panel__row--total">
+                                    <span>Total</span>
+                                    <span>${grandTotal.toFixed(2)}</span>
+                                </div>
                             </div>
-                            <div className="cart-drawer-summary-row">
-                                <span>Shipping</span>
-                                <span>{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
-                            </div>
-                            {shipping > 0 && (
-                                <p className="cart-drawer-shipping-note">
-                                    Add ${(150 - totalPrice).toFixed(2)} more for FREE shipping!
-                                </p>
-                            )}
-                            <div className="cart-drawer-summary-row cart-drawer-total">
-                                <span>Total</span>
-                                <span>${grandTotal.toFixed(2)}</span>
-                            </div>
-                            <button className="btn btn-primary btn-lg cart-drawer-checkout-btn">
-                                Checkout
+
+                            <button className="btn btn-primary cart-panel__checkout-btn">
+                                Checkout — ${grandTotal.toFixed(2)}
                             </button>
+
                             <Link
                                 href="/cart"
-                                className="btn btn-outline cart-drawer-view-cart-btn"
+                                className="cart-panel__view-cart"
                                 onClick={closeCart}
                             >
                                 View Full Cart
                             </Link>
+
                             <button
-                                className="cart-drawer-clear"
+                                className="cart-panel__clear"
                                 onClick={clearCart}
                             >
                                 Clear Cart
                             </button>
-                        </div>
+                        </footer>
                     </>
                 )}
-            </div>
+            </aside>
         </>
     )
 }
