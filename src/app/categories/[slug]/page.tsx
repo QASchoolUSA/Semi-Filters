@@ -7,7 +7,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type { Product, Category } from '@/types'
 
-export const revalidate = 60
+export const revalidate = 0
 
 interface Props {
     params: Promise<{ slug: string }>

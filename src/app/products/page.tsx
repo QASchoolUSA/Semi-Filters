@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     description: 'Browse our full catalog of premium semi truck filters. Oil filters, air filters, fuel filters, cabin filters and more.',
 }
 
-export const revalidate = 60
+export const revalidate = 0
 
 async function getData() {
     const [products, categories] = await Promise.all([

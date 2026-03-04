@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     description: 'Browse semi truck filter categories. Oil filters, air filters, fuel filters, cabin filters, and more.',
 }
 
-export const revalidate = 60
+export const revalidate = 0
 
 export default async function CategoriesPage() {
     const categories = await client.fetch(allCategoriesQuery).catch(() => []) as Category[]

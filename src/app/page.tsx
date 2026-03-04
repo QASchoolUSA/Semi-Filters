@@ -5,7 +5,7 @@ import HeroBanner from '@/components/HeroBanner'
 import HomeClient from '@/components/HomeClient'
 import type { Product, Category, Banner } from '@/types'
 
-export const revalidate = 60
+export const revalidate = 0
 
 async function getData() {
   const [banner, products, categories] = await Promise.all([

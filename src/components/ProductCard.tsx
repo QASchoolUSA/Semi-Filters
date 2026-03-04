@@ -57,7 +57,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     {discount > 0 && (
                         <span className="product-card-badge">-{discount}%</span>
                     )}
-                    {!product.inStock && (
+                    {product.inStock === false && (
                         <span className="product-card-badge product-card-badge-oos">Out of Stock</span>
                     )}
                 </div>
@@ -80,10 +80,10 @@ export default function ProductCard({ product }: ProductCardProps) {
             <button
                 className="product-card-cart-btn"
                 onClick={handleAddToCart}
-                disabled={!product.inStock}
+                disabled={product.inStock === false}
             >
                 <HiOutlineShoppingCart size={18} />
-                {product.inStock ? 'Add to Cart' : 'Sold Out'}
+                {product.inStock !== false ? 'Add to Cart' : 'Sold Out'}
             </button>
         </div>
     )
