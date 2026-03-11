@@ -30,7 +30,7 @@ function SuccessContent() {
                     You will receive an email confirmation shortly.
                 </p>
                 <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
-                    <Link href="/products" className="btn btn-primary btn-lg">
+                    <Link href="/shop" className="btn btn-primary btn-lg">
                         <HiOutlineShoppingBag size={20} />
                         Continue Shopping
                     </Link>

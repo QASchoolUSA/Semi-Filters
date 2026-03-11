@@ -93,7 +93,7 @@ export default function CartDrawer() {
                         <h3>Your cart is empty</h3>
                         <p>Discover our premium filter selection</p>
                         <Link
-                            href="/products"
+                            href="/shop"
                             className="btn btn-primary"
                             onClick={closeCart}
                         >
@@ -146,7 +146,7 @@ export default function CartDrawer() {
                                     </div>
 
                                     <div className="cart-item-card__body">
-                                        <Link href={`/products/${item.slug}`} onClick={closeCart}>
+                                        <Link href={`/shop/${item.slug}`} onClick={closeCart}>
                                             <h4 className="cart-item-card__name">{item.name}</h4>
                                         </Link>
                                         {item.partNumber && (

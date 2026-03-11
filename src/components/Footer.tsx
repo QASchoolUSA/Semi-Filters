@@ -30,8 +30,7 @@ export default function Footer() {
                     <div className="footer-section">
                         <h3 className="footer-heading">Quick Links</h3>
                         <ul className="footer-links">
-                            <li><Link href="/products">All Products</Link></li>
-                            <li><Link href="/categories">Categories</Link></li>
+                            <li><Link href="/shop">All Products</Link></li>
                             <li><Link href="/about">About Us</Link></li>
                             <li><Link href="/contact">Contact</Link></li>
                         </ul>
@@ -41,10 +40,10 @@ export default function Footer() {
                     <div className="footer-section">
                         <h3 className="footer-heading">Filter Types</h3>
                         <ul className="footer-links">
-                            <li><Link href="/categories/oil-filters">Oil Filters</Link></li>
-                            <li><Link href="/categories/air-filters">Air Filters</Link></li>
-                            <li><Link href="/categories/fuel-filters">Fuel Filters</Link></li>
-                            <li><Link href="/categories/cabin-filters">Cabin Filters</Link></li>
+                            <li><Link href="/shop?category=oil-filters">Oil Filters</Link></li>
+                            <li><Link href="/shop?category=air-filters">Air Filters</Link></li>
+                            <li><Link href="/shop?category=fuel-filters">Fuel Filters</Link></li>
+                            <li><Link href="/shop?category=cabin-filters">Cabin Filters</Link></li>
                         </ul>
                     </div>
 

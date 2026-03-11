@@ -34,7 +34,7 @@ export const banner = defineType({
             name: 'ctaLink',
             title: 'CTA Button Link',
             type: 'string',
-            initialValue: '/products',
+            initialValue: '/shop',
         }),
         defineField({
             name: 'discount',

@@ -35,7 +35,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
     return (
         <div className="product-card">
-            <Link href={`/products/${product.slug.current}`} className="product-card-link">
+            <Link href={`/shop/${product.slug.current}`} className="product-card-link">
                 <div className="product-card-image-wrapper">
                     {product.images?.[0] ? (
                         <Image

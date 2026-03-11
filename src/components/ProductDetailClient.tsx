@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { urlFor } from '@/sanity/lib/image'
 import { useCart } from '@/context/CartContext'
 import ProductCard from '@/components/ProductCard'
-import { HiOutlineShoppingCart, HiOutlineX, HiOutlineChevronLeft, HiOutlineChevronRight, HiOutlineZoomIn } from 'react-icons/hi'
+import { HiOutlineShoppingCart, HiOutlineX, HiOutlineChevronLeft, HiOutlineChevronRight, HiOutlineZoomIn, HiOutlineChevronDown } from 'react-icons/hi'
 import { PortableText } from '@portabletext/react'
 import type { Product } from '@/types'
 
@@ -66,25 +66,12 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
 
     return (
         <>
-            {/* Breadcrumb */}
-            <div className="breadcrumb">
-                <Link href="/">Home</Link>
-                <span className="breadcrumb-separator">/</span>
-                <Link href="/products">Products</Link>
-                {product.category && (
-                    <>
-                        <span className="breadcrumb-separator">/</span>
-                        <Link href={`/categories/${product.category.slug.current}`}>{product.category.name}</Link>
-                    </>
-                )}
-                <span className="breadcrumb-separator">/</span>
-                <span>{product.name}</span>
-            </div>
 
             <div className="product-detail">
                 {/* Images */}
                 <div className="product-detail-images">
-                    <div className="product-detail-main-image" onClick={() => openLightbox(selectedImage)} style={{ cursor: 'pointer', position: 'relative' }}>
+                    {/* Desktop main image */}
+                    <div className="product-detail-main-image desktop-only" onClick={() => openLightbox(selectedImage)} style={{ cursor: 'pointer', position: 'relative' }}>
                         {product.images?.[selectedImage] ? (
                             <>
                                 <Image
@@ -107,8 +94,36 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                             </div>
                         )}
                     </div>
+
+                    {/* Mobile swipeable carousel */}
+                    <div className="product-image-carousel mobile-only">
+                        {product.images && product.images.length > 0 ? (
+                            product.images.map((img, i) => (
+                                <div key={i} className="carousel-slide" onClick={() => openLightbox(i)}>
+                                    <Image
+                                        src={urlFor(img).width(600).height(600).fit('crop').url()}
+                                        alt={`${product.name} - Image ${i + 1}`}
+                                        width={600}
+                                        height={600}
+                                    />
+                                </div>
+                            ))
+                        ) : (
+                            <div className="carousel-slide">
+                                <div className="product-card-placeholder" style={{ aspectRatio: '1', height: '100%' }}>
+                                    <svg width="120" height="120" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="1" opacity="0.2" />
+                                        <circle cx="16" cy="16" r="10" stroke="currentColor" strokeWidth="0.8" strokeDasharray="4 3" opacity="0.2" />
+                                        <circle cx="16" cy="16" r="5" fill="currentColor" opacity="0.15" />
+                                    </svg>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Thumbnails (Desktop only) */}
                     {product.images && product.images.length > 1 && (
-                        <div className="product-detail-thumbs">
+                        <div className="product-detail-thumbs desktop-only">
                             {product.images.map((img, index) => (
                                 <button
                                     key={index}
@@ -137,88 +152,113 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                         <p className="product-detail-part">Part Number: {product.partNumber}</p>
                     )}
 
-                    <div className="product-detail-pricing">
-                        <span className="product-detail-price">${product.price.toFixed(2)}</span>
-                        {product.compareAtPrice && (
-                            <span className="product-detail-compare">${product.compareAtPrice.toFixed(2)}</span>
-                        )}
-                        {savings && (
-                            <span className="product-detail-save">Save ${savings}</span>
-                        )}
-                    </div>
-
-                    <div className="product-detail-stock">
-                        <span className={`stock-indicator ${product.inStock !== false ? 'stock-in' : 'stock-out'}`} />
-                        {product.inStock !== false ? 'In Stock — Ready to Ship' : 'Out of Stock'}
-                    </div>
-
-                    {product.description && (
-                        <div className="product-detail-description portable-text">
-                            {typeof product.description === 'string' ? (
-                                <p>{product.description}</p>
-                            ) : (
-                                <PortableText value={product.description} />
+                    <div className="product-price-stock-row">
+                        <div className="product-detail-pricing">
+                            <span className="product-detail-price">${product.price.toFixed(2)}</span>
+                            {product.compareAtPrice && (
+                                <span className="product-detail-compare">${product.compareAtPrice.toFixed(2)}</span>
+                            )}
+                            {savings && (
+                                <span className="product-detail-save">Save ${savings}</span>
                             )}
                         </div>
-                    )}
 
-                    {product.details && (
-                        <div className="product-detail-more-info portable-text" style={{ marginTop: '20px' }}>
-                            <h3 className="product-detail-section-title">Additional Details</h3>
-                            {typeof product.details === 'string' ? (
-                                <p>{product.details}</p>
-                            ) : (
-                                <PortableText value={product.details} />
-                            )}
+                        <div className="product-detail-stock">
+                            <span className={`stock-indicator ${product.inStock !== false ? 'stock-in' : 'stock-out'}`} />
+                            {product.inStock !== false ? 'In Stock — Ready to Ship' : 'Out of Stock'}
                         </div>
-                    )}
-
-                    {/* Quantity & Add to Cart */}
-                    <div className="quantity-selector">
-                        <button className="quantity-btn" onClick={() => setQuantity(Math.max(1, quantity - 1))}>−</button>
-                        <span className="quantity-value">{quantity}</span>
-                        <button className="quantity-btn" onClick={() => setQuantity(quantity + 1)}>+</button>
                     </div>
 
-                    <div className="product-detail-actions">
+                    {/* Actions: Quantity & Add to Cart */}
+                    <div className="product-purchase-actions">
+                        <div className="quantity-selector">
+                            <button className="quantity-btn" onClick={() => setQuantity(Math.max(1, quantity - 1))}>−</button>
+                            <span className="quantity-value">{quantity}</span>
+                            <button className="quantity-btn" onClick={() => setQuantity(quantity + 1)}>+</button>
+                        </div>
                         <button
-                            className="btn btn-primary btn-lg"
+                            className="btn btn-primary btn-lg add-to-cart-btn"
                             onClick={handleAddToCart}
                             disabled={product.inStock === false}
                         >
-                            <HiOutlineShoppingCart size={20} />
+                            <HiOutlineShoppingCart size={22} />
                             {product.inStock !== false ? 'Add to Cart' : 'Out of Stock'}
                         </button>
                     </div>
 
-                    {/* Specifications */}
-                    {product.specifications && product.specifications.length > 0 && (
-                        <div>
-                            <h3 className="product-detail-section-title">Specifications</h3>
-                            <table className="specs-table">
-                                <tbody>
-                                    {product.specifications.map((spec, index) => (
-                                        <tr key={index}>
-                                            <th>{spec.label}</th>
-                                            <td>{spec.value}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
+                    {/* Description Accordions */}
+                    <div className="product-accordions-group">
+                        {product.description && (
+                            <details className="product-accordion" open>
+                                <summary className="product-accordion-summary">
+                                    Product Description
+                                    <HiOutlineChevronDown className="accordion-icon" size={20} />
+                                </summary>
+                                <div className="accordion-content portable-text">
+                                    {typeof product.description === 'string' ? (
+                                        <p>{product.description}</p>
+                                    ) : (
+                                        <PortableText value={product.description} />
+                                    )}
+                                </div>
+                            </details>
+                        )}
 
-                    {/* Compatibility */}
-                    {product.compatibility && product.compatibility.length > 0 && (
-                        <div className="product-detail-compat">
-                            <h3 className="product-detail-section-title">Compatible Trucks</h3>
-                            <div className="compatibility-tags">
-                                {product.compatibility.map((truck, index) => (
-                                    <span key={index} className="compat-tag">{truck}</span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                        {product.details && (
+                            <details className="product-accordion">
+                                <summary className="product-accordion-summary">
+                                    Additional Details
+                                    <HiOutlineChevronDown className="accordion-icon" size={20} />
+                                </summary>
+                                <div className="accordion-content portable-text">
+                                    {typeof product.details === 'string' ? (
+                                        <p>{product.details}</p>
+                                    ) : (
+                                        <PortableText value={product.details} />
+                                    )}
+                                </div>
+                            </details>
+                        )}
+
+                        {/* Specifications */}
+                        {product.specifications && product.specifications.length > 0 && (
+                            <details className="product-accordion">
+                                <summary className="product-accordion-summary">
+                                    Specifications
+                                    <HiOutlineChevronDown className="accordion-icon" size={20} />
+                                </summary>
+                                <div className="accordion-content">
+                                    <table className="specs-table">
+                                        <tbody>
+                                            {product.specifications.map((spec, index) => (
+                                                <tr key={index}>
+                                                    <th>{spec.label}</th>
+                                                    <td>{spec.value}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </details>
+                        )}
+
+                        {/* Compatibility */}
+                        {product.compatibility && product.compatibility.length > 0 && (
+                            <details className="product-accordion">
+                                <summary className="product-accordion-summary">
+                                    Compatible Trucks
+                                    <HiOutlineChevronDown className="accordion-icon" size={20} />
+                                </summary>
+                                <div className="accordion-content">
+                                    <div className="compatibility-tags">
+                                        {product.compatibility.map((truck, index) => (
+                                            <span key={index} className="compat-tag">{truck}</span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </details>
+                        )}
+                    </div>
                 </div>
             </div>
 

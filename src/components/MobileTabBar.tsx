@@ -12,7 +12,7 @@ export default function MobileTabBar() {
 
     const navItems = [
         { href: '/', label: 'Home', icon: HiOutlineHome },
-        { href: '/categories', label: 'Categories', icon: HiOutlineCollection },
+        { href: '/shop', label: 'Shop', icon: HiOutlineCollection },
         { href: '/contact', label: 'Contact', icon: HiOutlineChatAlt },
     ]
 

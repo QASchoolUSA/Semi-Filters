@@ -76,7 +76,7 @@ export default function HomeClient({ products, categories }: HomeClientProps) {
                         ))}
                     </div>
                     <div style={{ textAlign: 'center', marginTop: '40px' }}>
-                        <Link href="/products" className="btn btn-outline btn-lg">
+                        <Link href="/shop" className="btn btn-outline btn-lg">
                             View All Products →
                         </Link>
                     </div>
@@ -113,7 +113,7 @@ export default function HomeClient({ products, categories }: HomeClientProps) {
                         <p className="cta-text">
                             Get free shipping on orders over $150. Bulk discounts available for fleet operators.
                         </p>
-                        <Link href="/products" className="btn btn-white btn-lg">
+                        <Link href="/shop" className="btn btn-white btn-lg">
                             Shop All Filters
                         </Link>
                     </div>

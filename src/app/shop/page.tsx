@@ -1,7 +1,7 @@
 import React from 'react'
 import { client } from '@/sanity/lib/client'
 import { allProductsQuery, allCategoriesQuery } from '@/sanity/lib/queries'
-import ProductsClient from '@/components/ProductsClient'
+import ShopClient from '@/components/ShopClient'
 import type { Product, Category } from '@/types'
 import type { Metadata } from 'next'
 
@@ -20,18 +20,21 @@ async function getData() {
     return { products, categories }
 }
 
-export default async function ProductsPage() {
+export default async function ProductsPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
     const { products, categories } = await getData()
+    const resolvedParams = await searchParams
+    const initialCategory = typeof resolvedParams.category === 'string' ? resolvedParams.category : 'all'
 
     return (
         <>
-            <div className="page-header">
-                <h1>All Products</h1>
-                <p>Premium filtration solutions for every semi truck</p>
-            </div>
-            <section className="section">
+            <div className="shop-page-title-banner">
                 <div className="container">
-                    <ProductsClient products={products} categories={categories} />
+                    <h1>All Products</h1>
+                </div>
+            </div>
+            <section className="section shop-section">
+                <div className="container">
+                    <ShopClient products={products} categories={categories} initialCategory={initialCategory} />
                 </div>
             </section>
         </>

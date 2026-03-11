@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useCart } from '@/context/CartContext'
 import { HiOutlineShoppingBag, HiOutlineMenu, HiOutlineX } from 'react-icons/hi'
+import ThemeToggle from '@/components/ThemeToggle'
 
 export default function Navbar() {
     const { totalItems, openCart } = useCart()
@@ -28,8 +29,7 @@ export default function Navbar() {
 
     const navLinks = [
         { href: '/', label: 'Home' },
-        { href: '/products', label: 'Products' },
-        { href: '/categories', label: 'Categories' },
+        { href: '/shop', label: 'Shop' },
         { href: '/about', label: 'About' },
         { href: '/contact', label: 'Contact' },
     ]
@@ -63,6 +63,7 @@ export default function Navbar() {
                 </div>
 
                 <div className="navbar-actions">
+                    <ThemeToggle />
                     <button className="cart-button" onClick={openCart} aria-label="Open cart">
                         <HiOutlineShoppingBag size={24} />
                         {totalItems > 0 && (

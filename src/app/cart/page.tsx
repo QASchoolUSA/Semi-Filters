@@ -24,7 +24,7 @@ export default function CartPage() {
                             <div className="cart-empty-icon">🛒</div>
                             <h2>Your Cart is Empty</h2>
                             <p>Looks like you haven&apos;t added any filters yet. Start browsing our catalog.</p>
-                            <Link href="/products" className="btn btn-primary btn-lg">
+                            <Link href="/shop" className="btn btn-primary btn-lg">
                                 <HiOutlineShoppingBag size={20} />
                                 Shop Filters
                             </Link>
@@ -90,7 +90,7 @@ export default function CartPage() {
                                         )}
                                     </div>
                                     <div className="cart-item-info">
-                                        <Link href={`/products/${item.slug}`}>
+                                        <Link href={`/shop/${item.slug}`}>
                                             <h3 className="cart-item-name">{item.name}</h3>
                                         </Link>
                                         {item.partNumber && (
@@ -147,7 +147,7 @@ export default function CartPage() {
                                 {isCheckingOut ? 'Processing...' : 'Proceed to Checkout'}
                             </button>
                             <Link
-                                href="/products"
+                                href="/shop"
                                 className="btn btn-outline"
                                 style={{ width: '100%', marginTop: '8px' }}
                             >

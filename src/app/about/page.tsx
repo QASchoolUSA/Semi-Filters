@@ -89,7 +89,7 @@ export default function AboutPage() {
                 </div>
 
                 <div className="about-cta">
-                    <Link href="/products" className="btn btn-primary btn-lg">
+                    <Link href="/shop" className="btn btn-primary btn-lg">
                         Shop Our Products
                     </Link>
                 </div>

@@ -34,12 +34,12 @@ export default function HeroBanner({ banner }: HeroBannerProps) {
                 </p>
                 <div className="hero-actions">
                     <Link
-                        href={banner?.ctaLink || '/products'}
+                        href={banner?.ctaLink || '/shop'}
                         className="btn btn-primary btn-lg"
                     >
                         {banner?.ctaText || 'Shop All Filters'}
                     </Link>
-                    <Link href="/categories" className="btn btn-outline btn-lg">
+                    <Link href="/shop" className="btn btn-outline btn-lg">
                         Browse Categories
                     </Link>
                 </div>
