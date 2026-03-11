@@ -215,6 +215,20 @@ select {
   margin: 0 auto;
 }
 
+/* ---- Portable Text Fixes ---- */
+.portable-text p {
+  margin-bottom: 1em;
+}
+
+.portable-text p:last-child {
+  margin-bottom: 0;
+}
+
+/* Prevent empty lines from collapsing when hitting Enter in Sanity */
+.portable-text p:empty::before {
+  content: "\00a0";
+}
+
 /* ---- Buttons ---- */
 .btn {
   display: inline-flex;
