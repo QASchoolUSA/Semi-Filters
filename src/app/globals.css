@@ -83,7 +83,7 @@
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
   --shadow-glow: 0 0 20px var(--color-accent-glow);
   --shadow-glow-strong: 0 0 40px var(--color-accent-glow-strong);
-  
+
   --hero-bg-opacity: 0.2;
 
 }
@@ -174,7 +174,7 @@ select {
 
 /* ---- Section ---- */
 .section {
-  padding: 80px 0;
+  padding: 40px 0;
 }
 
 @media (max-width: 768px) {
@@ -1262,7 +1262,7 @@ select {
   border-radius: var(--radius-full);
   color: var(--color-text-secondary);
   word-break: break-word;
-/* Prevents long continuous text from causing overflow */
+  /* Prevents long continuous text from causing overflow */
   max-width: 100%;
 }
 
@@ -1290,7 +1290,8 @@ select {
   font-weight: 700;
   color: var(--color-text-primary);
   cursor: pointer;
-  list-style: none; /* Hide default arrow */
+  list-style: none;
+  /* Hide default arrow */
 }
 
 .product-accordion-summary::-webkit-details-marker {
@@ -2043,11 +2044,11 @@ select {
     padding: 16px var(--container-padding) 8px;
     border-bottom: none;
   }
-  
+
   .page-header h1 {
     font-size: 1.5rem;
   }
-  
+
   .page-header p {
     font-size: 0.85rem;
     margin-top: 2px;
@@ -2068,6 +2069,7 @@ select {
     width: 5px;
     box-shadow: 0 0 8px var(--color-accent-glow);
   }
+
   .shop-section {
     padding-top: 8px;
   }
@@ -2218,17 +2220,17 @@ select {
     gap: 16px;
     padding: 16px;
   }
-  
+
   .shop-filter-group {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-  
+
   .shop-select {
     width: 100%;
   }
-  
+
   .shop-filter-checkbox {
     margin-left: 0;
     margin-top: 8px;
