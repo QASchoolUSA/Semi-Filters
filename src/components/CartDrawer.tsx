@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/context/CartContext'
@@ -9,6 +9,7 @@ import { HiOutlineX, HiOutlineShoppingBag, HiOutlineTrash, HiOutlineArrowRight }
 
 export default function CartDrawer() {
     const { items, totalItems, totalPrice, removeFromCart, updateQuantity, clearCart, isCartOpen, closeCart } = useCart()
+    const [isCheckingOut, setIsCheckingOut] = useState(false)
 
     const shipping = totalPrice >= 150 ? 0 : 12.99
     const grandTotal = totalPrice + shipping
@@ -22,6 +23,32 @@ export default function CartDrawer() {
         document.addEventListener('keydown', handleEscape)
         return () => document.removeEventListener('keydown', handleEscape)
     }, [isCartOpen, closeCart])
+
+    const handleCheckout = async () => {
+        try {
+            setIsCheckingOut(true)
+            const response = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ items }),
+            })
+
+            const data = await response.json()
+            if (data.url) {
+                window.location.href = data.url
+            } else {
+                console.error(data.error)
+                alert('Failed to initialize checkout.')
+            }
+        } catch (error) {
+            console.error('Error during checkout', error)
+            alert('Something went wrong during checkout.')
+        } finally {
+            setIsCheckingOut(false)
+        }
+    }
 
     return (
         <>
@@ -177,8 +204,12 @@ export default function CartDrawer() {
                                 </div>
                             </div>
 
-                            <button className="btn btn-primary cart-panel__checkout-btn">
-                                Checkout — ${grandTotal.toFixed(2)}
+                            <button 
+                                className="btn btn-primary cart-panel__checkout-btn"
+                                onClick={handleCheckout}
+                                disabled={isCheckingOut || items.length === 0}
+                            >
+                                {isCheckingOut ? 'Processing...' : `Checkout — $${grandTotal.toFixed(2)}`}
                             </button>
 
                             <Link

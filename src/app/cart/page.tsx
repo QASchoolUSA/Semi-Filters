@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { useCart } from '@/context/CartContext'
 import { urlFor } from '@/sanity/lib/image'
@@ -9,6 +9,7 @@ import type { Metadata } from 'next'
 
 export default function CartPage() {
     const { items, totalItems, totalPrice, removeFromCart, updateQuantity, clearCart } = useCart()
+    const [isCheckingOut, setIsCheckingOut] = useState(false)
 
     if (items.length === 0) {
         return (
@@ -36,6 +37,32 @@ export default function CartPage() {
 
     const shipping = totalPrice >= 150 ? 0 : 12.99
     const grandTotal = totalPrice + shipping
+
+    const handleCheckout = async () => {
+        try {
+            setIsCheckingOut(true)
+            const response = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ items }),
+            })
+
+            const data = await response.json()
+            if (data.url) {
+                window.location.href = data.url
+            } else {
+                console.error(data.error)
+                alert('Failed to initialize checkout.')
+            }
+        } catch (error) {
+            console.error('Error during checkout', error)
+            alert('Something went wrong during checkout.')
+        } finally {
+            setIsCheckingOut(false)
+        }
+    }
 
     return (
         <>
@@ -112,8 +139,12 @@ export default function CartPage() {
                                 <span>Total</span>
                                 <span>${grandTotal.toFixed(2)}</span>
                             </div>
-                            <button className="btn btn-primary btn-lg">
-                                Proceed to Checkout
+                            <button 
+                                className="btn btn-primary btn-lg"
+                                onClick={handleCheckout}
+                                disabled={isCheckingOut || items.length === 0}
+                            >
+                                {isCheckingOut ? 'Processing...' : 'Proceed to Checkout'}
                             </button>
                             <Link
                                 href="/products"
