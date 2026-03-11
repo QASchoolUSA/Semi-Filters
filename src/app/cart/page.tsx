@@ -1,11 +1,11 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/context/CartContext'
 import { urlFor } from '@/sanity/lib/image'
 import { HiOutlineShoppingBag } from 'react-icons/hi'
-import type { Metadata } from 'next'
 
 export default function CartPage() {
     const { items, totalItems, totalPrice, removeFromCart, updateQuantity, clearCart } = useCart()
@@ -79,7 +79,12 @@ export default function CartPage() {
                                 <div key={item._id} className="cart-item">
                                     <div className="cart-item-image">
                                         {item.image ? (
-                                            <img src={urlFor(item.image).width(200).height(200).url()} alt={item.name} />
+                                            <Image 
+                                                src={urlFor(item.image).width(200).height(200).url()} 
+                                                alt={item.name}
+                                                width={200}
+                                                height={200}
+                                            />
                                         ) : (
                                             <div className="product-card-placeholder" style={{ width: '100%', height: '100%' }}>
                                                 <svg width="40" height="40" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
