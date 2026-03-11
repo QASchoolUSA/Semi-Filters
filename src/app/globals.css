@@ -1278,6 +1278,7 @@ select {
   color: var(--color-text-secondary);
   font-size: 0.95rem;
   line-height: 1.7;
+  white-space: pre-wrap;
 }
 
 /* ============================================
