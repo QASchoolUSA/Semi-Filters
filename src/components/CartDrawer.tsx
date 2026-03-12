@@ -106,7 +106,7 @@ export default function CartDrawer() {
                     <>
                         {/* ─── Shipping Info ─── */}
                         <div className="cart-panel__shipping-bar">
-                            <p>🚚 Shipping: <strong>${shipping.toFixed(2)}</strong> — $5.99 base + $1 per additional item</p>
+                            <p>🚚 Shipping: <strong>${shipping.toFixed(2)}</strong></p>
                         </div>
 
                         {/* ─── Items List ─── */}
