@@ -4,8 +4,23 @@ import type { Metadata } from 'next'
 import { HiOutlineShieldCheck, HiOutlineTruck, HiOutlineGlobe, HiOutlineHeart } from 'react-icons/hi'
 
 export const metadata: Metadata = {
-    title: 'About Us — Semi Filters',
-    description: 'Learn about Semi Filters — our mission to provide premium filtration solutions for semi trucks and keep fleets running clean and efficient.',
+    title: 'About Us — Semi Filters | Sanford, FL',
+    description: 'Learn about Semi Filters — founded by trucking industry veterans in Sanford, FL. We provide premium OEM-quality filtration solutions for semi trucks and owner-operators.',
+    alternates: {
+        canonical: 'https://semifilters.com/about',
+    },
+    openGraph: {
+        title: 'About Semi Filters — Premium Truck Filtration',
+        description: 'Founded by trucking industry veterans. 5+ years in business, 50K+ filters sold, 99% satisfaction rate. Sanford, FL.',
+        url: 'https://semifilters.com/about',
+        images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'About Semi Filters' }],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'About Semi Filters',
+        description: 'Premium OEM-quality filtration solutions for semi trucks. Trusted by owner-operators across the USA.',
+        images: ['/icon-512.png'],
+    },
 }
 
 export default function AboutPage() {

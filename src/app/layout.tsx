@@ -13,30 +13,78 @@ const inter = Inter({
   preload: true,
 });
 
+const BASE_URL = "https://semifilters.com";
+
 export const metadata: Metadata = {
-  title: "Semi Filters — Premium Filtration for Semi Trucks",
+  metadataBase: new URL(BASE_URL),
+  applicationName: "Semi Filters",
+  title: {
+    default: "Semi Filters — Premium Filtration for Semi Trucks",
+    template: "%s | Semi Filters",
+  },
   description:
-    "OEM-quality oil, air, fuel, and cabin filters for semi trucks. Trusted by owner-operators and fleets across the nation. Shop online with fast shipping.",
+    "OEM-quality oil, air, fuel, and cabin filters for semi trucks. Trusted by owner-operators and fleets across the United States. Fast shipping. 100% satisfaction guarantee.",
   keywords: [
     "semi truck filters",
-    "oil filters",
-    "air filters",
-    "fuel filters",
-    "cabin filters",
-    "truck parts",
-    "fleet maintenance",
+    "oil filters for semi trucks",
+    "air filters for semi trucks",
+    "fuel filters for semi trucks",
+    "cabin air filters",
+    "truck parts online",
+    "fleet maintenance supplies",
+    "OEM truck filters",
+    "Freightliner filters",
+    "Peterbilt filters",
+    "Kenworth filters",
+    "Volvo truck filters",
+    "owner operator truck parts",
+    "diesel engine filters",
+    "heavy duty truck filters",
+    "buy semi truck filters online",
   ],
+  authors: [{ name: "Semi Filters", url: BASE_URL }],
+  creator: "Semi Filters",
+  publisher: "Semi Filters",
+  alternates: {
+    canonical: BASE_URL,
+  },
   openGraph: {
     title: "Semi Filters — Premium Filtration for Semi Trucks",
     description:
-      "OEM-quality filtration solutions for semi trucks. Keep your fleet running clean and efficient.",
+      "OEM-quality oil, air, fuel, and cabin filters for semi trucks. Trusted by owner-operators and fleets across the USA. Shop online with fast shipping.",
     type: "website",
     siteName: "Semi Filters",
+    url: BASE_URL,
+    locale: "en_US",
+    images: [
+      {
+        url: "/icon-512.png",
+        width: 512,
+        height: 512,
+        alt: "Semi Filters — Premium Filtration for Semi Trucks",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Semi Filters — Premium Filtration for Semi Trucks",
+    description:
+      "OEM-quality oil, air, fuel, and cabin filters for semi trucks. Fast shipping, 100% satisfaction guarantee.",
+    images: ["/icon-512.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   icons: {
-    icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-    ],
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
     apple: [
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
@@ -47,6 +95,63 @@ export const metadata: Metadata = {
   },
 };
 
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${BASE_URL}/#organization`,
+      name: "Semi Filters",
+      url: BASE_URL,
+      logo: {
+        "@type": "ImageObject",
+        url: `${BASE_URL}/icon-512.png`,
+        width: 512,
+        height: 512,
+      },
+      description:
+        "Premium OEM-quality oil, air, fuel, and cabin filters for semi trucks. Serving owner-operators and fleets across the United States.",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Sanford",
+        addressRegion: "FL",
+        postalCode: "32771",
+        addressCountry: "US",
+      },
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "customer service",
+        email: "contact@semifilters.com",
+        availableLanguage: "English",
+        hoursAvailable: {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          opens: "07:00",
+          closes: "18:00",
+        },
+      },
+      sameAs: [],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${BASE_URL}/#website`,
+      url: BASE_URL,
+      name: "Semi Filters",
+      description:
+        "Premium filtration solutions for semi trucks — oil, air, fuel, and cabin filters.",
+      publisher: { "@id": `${BASE_URL}/#organization` },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${BASE_URL}/shop?q={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -55,6 +160,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
       <body className={inter.className}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <ClientLayout>{children}</ClientLayout>
         </ThemeProvider>

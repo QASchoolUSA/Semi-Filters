@@ -6,8 +6,23 @@ import type { Product, Category } from '@/types'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-    title: 'All Products — Semi Filters',
-    description: 'Browse our full catalog of premium semi truck filters. Oil filters, air filters, fuel filters, cabin filters and more.',
+    title: 'Shop All Semi Truck Filters — Oil, Air, Fuel & Cabin',
+    description: 'Browse our full catalog of premium semi truck filters. OEM-quality oil filters, air filters, fuel filters, and cabin filters. Fast shipping on every order.',
+    alternates: {
+        canonical: 'https://semifilters.com/shop',
+    },
+    openGraph: {
+        title: 'Shop All Semi Truck Filters — Semi Filters',
+        description: 'Browse OEM-quality oil, air, fuel, and cabin filters for semi trucks. Fast shipping. Shop the full catalog.',
+        url: 'https://semifilters.com/shop',
+        images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'Semi Filters Shop' }],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Shop All Semi Truck Filters — Semi Filters',
+        description: 'OEM-quality oil, air, fuel, and cabin filters for semi trucks. Fast shipping.',
+        images: ['/icon-512.png'],
+    },
 }
 
 export const revalidate = 0
