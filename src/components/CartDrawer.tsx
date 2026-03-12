@@ -104,11 +104,6 @@ export default function CartDrawer() {
                     </div>
                 ) : (
                     <>
-                        {/* ─── Shipping Info ─── */}
-                        <div className="cart-panel__shipping-bar">
-                            <p>🚚 Shipping: <strong>${shipping.toFixed(2)}</strong></p>
-                        </div>
-
                         {/* ─── Items List ─── */}
                         <div className="cart-panel__items">
                             {items.map((item) => (
