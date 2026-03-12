@@ -1053,90 +1053,9 @@ select {
     flex-direction: column;
   }
 
-  /* Compact 2-row promo strip on mobile */
+  /* Promo card hidden on mobile — shown as a popup instead */
   .hero-promo-card {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin: 0;
-    padding: 14px 20px;
-    border-radius: 0;
-    background: linear-gradient(135deg, rgba(255, 107, 0, 0.12) 0%, rgba(255, 107, 0, 0.06) 100%);
-    border: none;
-    border-top: 1px solid rgba(255, 107, 0, 0.25);
-    border-bottom: 1px solid rgba(255, 107, 0, 0.25);
-    box-shadow: none;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    flex: unset;
-    overflow: hidden;
-    animation: none;
-  }
-
-  /* On mobile, hide the desktop-only decorative/verbose elements */
-  .hero-promo-card .hero-promo-big-number,
-  .hero-promo-card .hero-promo-desc,
-  .hero-promo-card .hero-promo-fine {
     display: none;
-  }
-
-  /* Row 1: Badge + Title */
-  .hero-promo-card .hero-promo-badge {
-    margin-bottom: 0;
-    font-size: 0.72rem;
-  }
-
-  .hero-promo-card .hero-promo-title {
-    font-size: 1rem;
-    margin-bottom: 0;
-    font-weight: 700;
-    background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    -webkit-text-fill-color: var(--color-accent);
-    color: var(--color-accent);
-  }
-
-  .light .hero-promo-card .hero-promo-title {
-    -webkit-text-fill-color: var(--color-accent);
-    background: none;
-    background-clip: unset;
-  }
-
-  /* Row 2: Code + Button as flex row */
-  .hero-promo-card .hero-promo-code-wrapper {
-    margin-bottom: 0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .hero-promo-card .hero-promo-code-label {
-    display: none;
-  }
-
-  .hero-promo-card .hero-promo-code {
-    font-size: 0.9rem;
-    padding: 6px 14px;
-    letter-spacing: 0.15em;
-    border-width: 1.5px;
-    width: auto;
-    flex: 1;
-  }
-
-  .hero-promo-card .hero-promo-cta {
-    margin-bottom: 0;
-    width: auto;
-    padding: 8px 18px;
-    font-size: 0.8rem;
-    flex-shrink: 0;
-    box-shadow: none;
-  }
-
-  .light .hero-promo-card {
-    background: linear-gradient(135deg, rgba(255, 107, 0, 0.08) 0%, rgba(255, 107, 0, 0.04) 100%);
-    border-top: 1px solid rgba(255, 107, 0, 0.2);
-    border-bottom: 1px solid rgba(255, 107, 0, 0.2);
   }
 
   .hero-background-wrapper {
@@ -3466,6 +3385,20 @@ select {
     padding: 16px 20px;
     padding-bottom: max(16px, env(safe-area-inset-bottom));
   }
+
+  /* Lock quantity controls to same size as desktop — prevent global mobile button inflation */
+  .cart-item-card__qty button {
+    width: 28px;
+    height: 28px;
+    min-height: 28px;
+    font-size: 0.9rem;
+  }
+
+  .cart-item-card__qty span {
+    width: 32px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
 }
 
 
@@ -3855,4 +3788,169 @@ select {
 
 .fade-in {
   animation: fadeIn 0.5s ease forwards;
+}
+
+/* ===========================================
+   MOBILE PROMO POPUP
+   =========================================== */
+.promo-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9000;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.promo-popup {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9001;
+  padding: 36px 28px 40px;
+  background: var(--color-bg-secondary);
+  border: 1px solid rgba(255, 107, 0, 0.25);
+  border-bottom: none;
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  animation: slideUpPopup 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.light .promo-popup {
+  background: #ffffff;
+  border-color: rgba(255, 107, 0, 0.2);
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes slideUpPopup {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.promo-popup__close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  transition: background var(--transition-fast);
+}
+
+.light .promo-popup__close {
+  background: #f0f0f5;
+}
+
+.promo-popup__close:hover {
+  background: var(--color-border);
+}
+
+/* Decorative large number */
+.promo-popup__big-number {
+  position: absolute;
+  top: -16px;
+  right: 12px;
+  font-size: 7rem;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, rgba(255,107,0,0.18) 0%, rgba(255,107,0,0.05) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -4px;
+}
+
+.promo-popup__big-number span {
+  font-size: 3.5rem;
+  vertical-align: super;
+}
+
+.promo-popup__badge {
+  display: inline-block;
+  background: rgba(255, 107, 0, 0.12);
+  border: 1px solid rgba(255, 107, 0, 0.3);
+  color: var(--color-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  margin-bottom: 12px;
+}
+
+.promo-popup__title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  margin-bottom: 10px;
+  color: var(--color-text-primary);
+}
+
+.promo-popup__desc {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.promo-popup__desc strong {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.promo-popup__code-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  margin-bottom: 8px;
+}
+
+.promo-popup__code {
+  font-family: 'Courier New', monospace;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: var(--color-accent);
+  background: rgba(255, 107, 0, 0.1);
+  border: 2px dashed rgba(255, 107, 0, 0.4);
+  border-radius: var(--radius-md);
+  padding: 12px 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.promo-popup__cta {
+  width: 100%;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-accent) 0%, #ff8533 100%);
+  box-shadow: 0 8px 24px rgba(255,107,0,0.35);
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+.promo-popup__fine {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.4;
 }

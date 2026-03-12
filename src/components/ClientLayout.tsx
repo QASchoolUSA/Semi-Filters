@@ -8,6 +8,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import CartDrawer from '@/components/CartDrawer'
 import MobileTabBar from '@/components/MobileTabBar'
+import MobilePromoPopup from '@/components/MobilePromoPopup'
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
@@ -32,6 +33,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 }}
             />
             <CartDrawer />
+            <MobilePromoPopup />
             <Navbar />
             <main>{children}</main>
             <Footer />
@@ -39,5 +41,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         </CartProvider>
     )
 }
+
 
 
