@@ -137,9 +137,7 @@ export default function CartPage() {
                                 <span>Shipping</span>
                                 <span>${shipping.toFixed(2)}</span>
                             </div>
-                            <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-                                $5.99 base + $1.00 per additional item
-                            </p>
+
                             <div className="cart-summary-row total">
                                 <span>Total</span>
                                 <span>${grandTotal.toFixed(2)}</span>
