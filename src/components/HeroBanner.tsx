@@ -66,7 +66,7 @@ export default function HeroBanner({ banner }: HeroBannerProps) {
                             </div>
                             <div className="trust-item">
                                 <svg className="trust-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 13l4 4L19 7"></path></svg>
-                                <span className="trust-text">Same-Day Shipping</span>
+                                <span className="trust-text">Fast 3–5 Day Shipping</span>
                             </div>
                         </div>
                     </div>

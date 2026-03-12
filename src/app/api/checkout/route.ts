@@ -42,43 +42,26 @@ export async function POST(request: Request) {
             };
         });
 
-        // Calculate if we need to add a shipping fee line item. (E.g. Free shipping over $150 threshold)
-        // Note: Better to handle this via Stripe Shipping Rates if you need robust logic
-        // But since requirements specifically mentioned "auto shipping" logic was in frontend ($12.99 under $150),
-        // we can pass it as a shipping option.
-        
+        // Shipping: $5.99 base + $1.00 per additional item beyond the first
+        const totalItemCount = items.reduce((total: number, item: any) => total + item.quantity, 0)
+        const shippingCents = totalItemCount > 0
+            ? Math.round((5.99 + Math.max(0, totalItemCount - 1) * 1.00) * 100)
+            : 0
+
         // Define shipping options
-        const shipping_options: Stripe.Checkout.SessionCreateParams.ShippingOption[] = [];
-        
-        const totalCartPrice = items.reduce((total: number, item: any) => total + (item.price * item.quantity), 0);
-        
-        if (totalCartPrice >= 150) {
-            // Free shipping
-            shipping_options.push({
+        const shipping_options: Stripe.Checkout.SessionCreateParams.ShippingOption[] = [
+            {
                 shipping_rate_data: {
                     type: 'fixed_amount',
-                    fixed_amount: { amount: 0, currency: 'usd' },
-                    display_name: 'Free Shipping',
-                    delivery_estimate: {
-                        minimum: { unit: 'business_day', value: 3 },
-                        maximum: { unit: 'business_day', value: 5 },
-                    },
-                },
-            });
-        } else {
-            // Flat rate $12.99
-            shipping_options.push({
-                shipping_rate_data: {
-                    type: 'fixed_amount',
-                    fixed_amount: { amount: 1299, currency: 'usd' },
+                    fixed_amount: { amount: shippingCents, currency: 'usd' },
                     display_name: 'Standard Shipping',
                     delivery_estimate: {
                         minimum: { unit: 'business_day', value: 3 },
                         maximum: { unit: 'business_day', value: 5 },
                     },
                 },
-            });
-        }
+            },
+        ];
 
         // Create Checkout Session
         const session = await stripe.checkout.sessions.create({

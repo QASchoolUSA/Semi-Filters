@@ -11,9 +11,10 @@ export default function CartDrawer() {
     const { items, totalItems, totalPrice, removeFromCart, updateQuantity, clearCart, isCartOpen, closeCart } = useCart()
     const [isCheckingOut, setIsCheckingOut] = useState(false)
 
-    const shipping = totalPrice >= 150 ? 0 : 12.99
+    // $5.99 base + $1 for each additional item beyond the first
+    const itemQuantityCount = items.reduce((sum, item) => sum + item.quantity, 0)
+    const shipping = itemQuantityCount > 0 ? 5.99 + Math.max(0, itemQuantityCount - 1) * 1.00 : 0
     const grandTotal = totalPrice + shipping
-    const freeShippingProgress = Math.min((totalPrice / 150) * 100, 100)
 
     // Close drawer on Escape key
     useEffect(() => {
@@ -103,25 +104,10 @@ export default function CartDrawer() {
                     </div>
                 ) : (
                     <>
-                        {/* ─── Free Shipping Progress ─── */}
-                        {totalPrice < 150 && (
-                            <div className="cart-panel__shipping-bar">
-                                <p>
-                                    Add <strong>${(150 - totalPrice).toFixed(2)}</strong> more for <strong>FREE</strong> shipping!
-                                </p>
-                                <div className="cart-panel__progress-track">
-                                    <div
-                                        className="cart-panel__progress-fill"
-                                        style={{ width: `${freeShippingProgress}%` }}
-                                    />
-                                </div>
-                            </div>
-                        )}
-                        {totalPrice >= 150 && (
-                            <div className="cart-panel__shipping-bar cart-panel__shipping-bar--free">
-                                <p>🎉 You qualify for <strong>FREE shipping!</strong></p>
-                            </div>
-                        )}
+                        {/* ─── Shipping Info ─── */}
+                        <div className="cart-panel__shipping-bar">
+                            <p>🚚 Shipping: <strong>${shipping.toFixed(2)}</strong> — $5.99 base + $1 per additional item</p>
+                        </div>
 
                         {/* ─── Items List ─── */}
                         <div className="cart-panel__items">

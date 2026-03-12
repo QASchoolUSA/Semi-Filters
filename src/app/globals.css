@@ -1053,8 +1053,90 @@ select {
     flex-direction: column;
   }
 
+  /* Compact 2-row promo strip on mobile */
   .hero-promo-card {
-    display: none; /* Desktop only */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 14px 20px;
+    border-radius: 0;
+    background: linear-gradient(135deg, rgba(255, 107, 0, 0.12) 0%, rgba(255, 107, 0, 0.06) 100%);
+    border: none;
+    border-top: 1px solid rgba(255, 107, 0, 0.25);
+    border-bottom: 1px solid rgba(255, 107, 0, 0.25);
+    box-shadow: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    flex: unset;
+    overflow: hidden;
+    animation: none;
+  }
+
+  /* On mobile, hide the desktop-only decorative/verbose elements */
+  .hero-promo-card .hero-promo-big-number,
+  .hero-promo-card .hero-promo-desc,
+  .hero-promo-card .hero-promo-fine {
+    display: none;
+  }
+
+  /* Row 1: Badge + Title */
+  .hero-promo-card .hero-promo-badge {
+    margin-bottom: 0;
+    font-size: 0.72rem;
+  }
+
+  .hero-promo-card .hero-promo-title {
+    font-size: 1rem;
+    margin-bottom: 0;
+    font-weight: 700;
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .light .hero-promo-card .hero-promo-title {
+    -webkit-text-fill-color: var(--color-accent);
+    background: none;
+    background-clip: unset;
+  }
+
+  /* Row 2: Code + Button as flex row */
+  .hero-promo-card .hero-promo-code-wrapper {
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-promo-card .hero-promo-code-label {
+    display: none;
+  }
+
+  .hero-promo-card .hero-promo-code {
+    font-size: 0.9rem;
+    padding: 6px 14px;
+    letter-spacing: 0.15em;
+    border-width: 1.5px;
+    width: auto;
+    flex: 1;
+  }
+
+  .hero-promo-card .hero-promo-cta {
+    margin-bottom: 0;
+    width: auto;
+    padding: 8px 18px;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    box-shadow: none;
+  }
+
+  .light .hero-promo-card {
+    background: linear-gradient(135deg, rgba(255, 107, 0, 0.08) 0%, rgba(255, 107, 0, 0.04) 100%);
+    border-top: 1px solid rgba(255, 107, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 107, 0, 0.2);
   }
 
   .hero-background-wrapper {

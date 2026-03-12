@@ -35,7 +35,9 @@ export default function CartPage() {
         )
     }
 
-    const shipping = totalPrice >= 150 ? 0 : 12.99
+    // $5.99 base + $1 for each additional item beyond the first
+    const totalItemCount = items.reduce((sum, item) => sum + item.quantity, 0)
+    const shipping = totalItemCount > 0 ? 5.99 + Math.max(0, totalItemCount - 1) * 1.00 : 0
     const grandTotal = totalPrice + shipping
 
     const handleCheckout = async () => {
@@ -133,13 +135,11 @@ export default function CartPage() {
                             </div>
                             <div className="cart-summary-row">
                                 <span>Shipping</span>
-                                <span>{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
+                                <span>${shipping.toFixed(2)}</span>
                             </div>
-                            {shipping > 0 && (
-                                <p style={{ fontSize: '0.8rem', color: 'var(--color-accent)', marginTop: '8px' }}>
-                                    Add ${(150 - totalPrice).toFixed(2)} more for FREE shipping!
-                                </p>
-                            )}
+                            <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+                                $5.99 base + $1.00 per additional item
+                            </p>
                             <div className="cart-summary-row total">
                                 <span>Total</span>
                                 <span>${grandTotal.toFixed(2)}</span>

@@ -111,7 +111,7 @@ export default function HomeClient({ products, categories }: HomeClientProps) {
                     <div className="cta-banner">
                         <h2 className="cta-heading">Ready to Stock Up?</h2>
                         <p className="cta-text">
-                            Get free shipping on orders over $150. Bulk discounts available for fleet operators.
+                            Shipping from $5.99. Bulk discounts available for fleet operators.
                         </p>
                         <Link href="/shop" className="btn btn-white btn-lg">
                             Shop All Filters
