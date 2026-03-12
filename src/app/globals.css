@@ -1058,6 +1058,70 @@ select {
     display: none;
   }
 
+  /* ── Carousel Swipe Hint ── */
+  .product-image-carousel {
+    position: relative; /* Needed to anchor the hint */
+  }
+
+  .carousel-swipe-hint {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 18px;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    pointer-events: none;
+    /* Show briefly then fade out */
+    animation: swipeHintLifecycle 3s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+  }
+
+  @keyframes swipeHintLifecycle {
+    0%   { opacity: 0; transform: translateX(-50%) translateY(6px); }
+    15%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+    70%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+  }
+
+  .swipe-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.03em;
+  }
+
+  .swipe-chevron {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1;
+  }
+
+  .swipe-chevron--left {
+    animation: bounceLeft 1.2s ease-in-out 1.2s 2;
+  }
+
+  .swipe-chevron--right {
+    animation: bounceRight 1.2s ease-in-out 1.2s 2;
+  }
+
+  @keyframes bounceLeft {
+    0%, 100% { transform: translateX(0); }
+    50%       { transform: translateX(-4px); }
+  }
+
+  @keyframes bounceRight {
+    0%, 100% { transform: translateX(0); }
+    50%       { transform: translateX(4px); }
+  }
+
   .hero-background-wrapper {
     position: relative;
     width: 100%;

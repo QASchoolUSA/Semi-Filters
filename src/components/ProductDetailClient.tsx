@@ -97,6 +97,14 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
 
                     {/* Mobile swipeable carousel */}
                     <div className="product-image-carousel mobile-only">
+                        {/* Swipe hint — CSS-animated, auto-fades after 2s */}
+                        {product.images && product.images.length > 1 && (
+                            <div className="carousel-swipe-hint" aria-hidden="true">
+                                <span className="swipe-chevron swipe-chevron--left">‹</span>
+                                <span className="swipe-label">Swipe to browse</span>
+                                <span className="swipe-chevron swipe-chevron--right">›</span>
+                            </div>
+                        )}
                         {product.images && product.images.length > 0 ? (
                             product.images.map((img, i) => (
                                 <div key={i} className="carousel-slide" onClick={() => openLightbox(i)}>
