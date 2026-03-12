@@ -75,7 +75,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                         {product.images?.[selectedImage] ? (
                             <>
                                 <Image
-                                    src={urlFor(product.images[selectedImage]).width(600).height(600).fit('crop').url()}
+                                    src={urlFor(product.images[selectedImage]).width(600).height(600).fit('max').url()}
                                     alt={product.name}
                                     width={600}
                                     height={600}
@@ -101,7 +101,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                             product.images.map((img, i) => (
                                 <div key={i} className="carousel-slide" onClick={() => openLightbox(i)}>
                                     <Image
-                                        src={urlFor(img).width(600).height(600).fit('crop').url()}
+                                        src={urlFor(img).width(600).height(600).fit('max').url()}
                                         alt={`${product.name} - Image ${i + 1}`}
                                         width={600}
                                         height={600}

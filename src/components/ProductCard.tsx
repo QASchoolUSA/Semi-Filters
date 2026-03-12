@@ -39,11 +39,12 @@ export default function ProductCard({ product }: ProductCardProps) {
                 <div className="product-card-image-wrapper">
                     {product.images?.[0] ? (
                         <Image
-                            src={urlFor(product.images[0]).width(400).height(400).url()}
+                            src={urlFor(product.images[0]).width(400).height(400).fit('max').url()}
                             alt={product.name}
                             className="product-card-image"
                             width={400}
                             height={400}
+                            style={{ objectFit: 'contain', width: '100%', height: '100%' }}
                         />
                     ) : (
                         <div className="product-card-placeholder">
