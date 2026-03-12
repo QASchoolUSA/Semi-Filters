@@ -1,6 +1,17 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "@/components/ClientLayout";
+import { ThemeProvider } from "@/components/ThemeProvider";
+
+// Load Inter via next/font — self-hosted at build time, zero render-blocking network request
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  display: "swap",
+  variable: "--font-inter",
+  preload: true,
+});
 
 export const metadata: Metadata = {
   title: "Semi Filters — Premium Filtration for Semi Trucks",
@@ -24,16 +35,14 @@ export const metadata: Metadata = {
   },
 };
 
-import { ThemeProvider } from "@/components/ThemeProvider";
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
+    <html lang="en" suppressHydrationWarning className={inter.variable}>
+      <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <ClientLayout>{children}</ClientLayout>
         </ThemeProvider>
