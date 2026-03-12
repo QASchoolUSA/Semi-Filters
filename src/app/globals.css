@@ -649,6 +649,170 @@ select {
   width: 100%;
 }
 
+/* ── Hero Split: two-column desktop layout ── */
+.hero-split {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  width: 100%;
+}
+
+/* ── Promo Card (Desktop only — hidden on mobile) ── */
+.hero-promo-card {
+  position: relative;
+  flex: 0 0 320px;
+  padding: 36px 32px;
+  background: rgba(18, 18, 26, 0.55);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 107, 0, 0.25);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,107,0,0.08) inset;
+  overflow: hidden;
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+.light .hero-promo-card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 107, 0, 0.3);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,107,0,0.1) inset;
+}
+
+/* Decorative big percentage number in the background */
+.hero-promo-big-number {
+  position: absolute;
+  top: -20px;
+  right: -10px;
+  font-size: 8rem;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, rgba(255,107,0,0.15) 0%, rgba(255,107,0,0.04) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -4px;
+}
+
+.hero-promo-big-number span {
+  font-size: 4rem;
+  vertical-align: super;
+}
+
+.hero-promo-badge {
+  display: inline-block;
+  background: rgba(255, 107, 0, 0.15);
+  border: 1px solid rgba(255, 107, 0, 0.3);
+  color: var(--color-accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  margin-bottom: 16px;
+}
+
+.hero-promo-title {
+  font-size: 1.7rem;
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #ffffff 0%, #ccccdd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.light .hero-promo-title {
+  background: linear-gradient(135deg, #12121a 0%, #4a4a5a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.hero-promo-desc {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.light .hero-promo-desc {
+  color: var(--color-text-secondary);
+}
+
+.hero-promo-desc strong {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.hero-promo-code-wrapper {
+  margin-bottom: 20px;
+}
+
+.hero-promo-code-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 8px;
+}
+
+.light .hero-promo-code-label {
+  color: var(--color-text-muted);
+}
+
+.hero-promo-code {
+  display: inline-block;
+  font-family: 'Courier New', monospace;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: var(--color-accent);
+  background: rgba(255, 107, 0, 0.1);
+  border: 2px dashed rgba(255, 107, 0, 0.4);
+  border-radius: var(--radius-md);
+  padding: 10px 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.hero-promo-cta {
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, var(--color-accent) 0%, #ff8533 100%);
+  box-shadow: 0 8px 24px rgba(255,107,0,0.4);
+  font-weight: 700;
+}
+
+.hero-promo-cta:hover {
+  box-shadow: 0 12px 32px rgba(255,107,0,0.6);
+  transform: translateY(-2px);
+}
+
+.hero-promo-fine {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.35);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.light .hero-promo-fine {
+  color: var(--color-text-muted);
+}
+
+/* Ensure promo big number is visible in both themes */
+.light .hero-promo-big-number {
+  background: linear-gradient(135deg, rgba(255,107,0,0.2) 0%, rgba(255,107,0,0.06) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
 .hero-content {
   max-width: 680px;
   padding: 48px;
@@ -882,6 +1046,15 @@ select {
     align-items: stretch;
     padding-bottom: 0;
     background-color: var(--color-bg-primary);
+  }
+
+  /* Single-column on mobile — only show the text card */
+  .hero-split {
+    flex-direction: column;
+  }
+
+  .hero-promo-card {
+    display: none; /* Desktop only */
   }
 
   .hero-background-wrapper {
