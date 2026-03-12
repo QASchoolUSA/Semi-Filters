@@ -60,6 +60,19 @@ export default function ProductCard({ product }: ProductCardProps) {
                     {product.inStock === false && (
                         <span className="product-card-badge product-card-badge-oos">Out of Stock</span>
                     )}
+
+                    {/* Premium Quick Add Overlay */}
+                    {product.inStock !== false && (
+                        <div className="product-card-quick-add">
+                            <button
+                                className="product-card-quick-add-btn"
+                                onClick={handleAddToCart}
+                            >
+                                <HiOutlineShoppingCart size={18} />
+                                Quick Add
+                            </button>
+                        </div>
+                    )}
                 </div>
                 <div className="product-card-info">
                     {product.category && (

@@ -14,7 +14,9 @@ export default function CategoryCard({ category }: CategoryCardProps) {
                 {category.description && (
                     <p className="category-card-description">{category.description}</p>
                 )}
-                <span className="category-card-cta">Explore Filters →</span>
+                <span className="category-card-cta">
+                    Explore Filters <span className="category-card-cta-icon">→</span>
+                </span>
             </div>
         </Link>
     )
