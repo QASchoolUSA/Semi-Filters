@@ -121,7 +121,7 @@ const organizationJsonLd = {
       contactPoint: {
         "@type": "ContactPoint",
         contactType: "customer service",
-        email: "contact@semifilters.com",
+        email: "support@semifilters.com",
         availableLanguage: "English",
         hoursAvailable: {
           "@type": "OpeningHoursSpecification",

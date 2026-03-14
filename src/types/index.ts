@@ -27,6 +27,7 @@ export interface Product {
     specifications?: Specification[]
     partNumber?: string
     compatibility?: string[]
+    vehicleFit?: string[]
     inStock: boolean
     featured?: boolean
 }

@@ -2,13 +2,15 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { urlFor } from '@/sanity/lib/image'
-import type { Banner } from '@/types'
+import HeroProductCarousel from './HeroProductCarousel'
+import type { Banner, Product } from '@/types'
 
 interface HeroBannerProps {
     banner?: Banner | null
+    products?: Product[]
 }
 
-export default function HeroBanner({ banner }: HeroBannerProps) {
+export default function HeroBanner({ banner, products }: HeroBannerProps) {
     return (
         <section className="hero">
             {/* Background Layer with Ken Burns Animation & Radial Backlight */}
@@ -53,9 +55,6 @@ export default function HeroBanner({ banner }: HeroBannerProps) {
                             >
                                 {banner?.ctaText || 'Shop All Filters'}
                             </Link>
-                            <Link href="/shop" className="btn btn-outline btn-lg hero-cta-secondary">
-                                Browse Categories
-                            </Link>
                         </div>
 
                         {/* Trust Indicators */}
@@ -94,11 +93,11 @@ export default function HeroBanner({ banner }: HeroBannerProps) {
                         <p className="hero-promo-fine">Valid for new customers only. One use per account.</p>
                     </div>
                 </div>
-            </div>
 
-            {/* Scroll Indicator */}
-            <div className="hero-scroll-indicator">
-                <div className="mouse"></div>
+                {/* Products Carousel */}
+                {products && products.length > 0 && (
+                    <HeroProductCarousel products={products} />
+                )}
             </div>
         </section>
     )

@@ -17,11 +17,24 @@ export default function ContactPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setSubmitting(true)
-        // Simulate form submission
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-        toast.success('Message sent! We\'ll get back to you within 24 hours.')
-        setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
-        setSubmitting(false)
+        try {
+            const res = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            })
+            const data = await res.json()
+            if (res.ok) {
+                toast.success('Message sent! We\'ll get back to you within 24 hours.')
+                setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
+            } else {
+                toast.error(data.error || 'Something went wrong. Please try again.')
+            }
+        } catch {
+            toast.error('Failed to send message. Please try again later.')
+        } finally {
+            setSubmitting(false)
+        }
     }
 
     return (
@@ -69,7 +82,7 @@ export default function ContactPage() {
                                             type="tel"
                                             value={formData.phone}
                                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                            placeholder="(555) 123-4567"
+                                            placeholder="(407) 768-1488"
                                         />
                                     </div>
                                     <div className="form-group">
@@ -116,7 +129,7 @@ export default function ContactPage() {
                                     </div>
                                     <div className="contact-info-text">
                                         <h4>Phone</h4>
-                                        <p>(555) 123-4567</p>
+                                        <p>(407) 768-1488</p>
                                     </div>
                                 </div>
                                 <div className="contact-info-item">
@@ -125,7 +138,7 @@ export default function ContactPage() {
                                     </div>
                                     <div className="contact-info-text">
                                         <h4>Email</h4>
-                                        <p>contact@semifilters.com</p>
+                                        <p>support@semifilters.com</p>
                                     </div>
                                 </div>
                                 <div className="contact-info-item">

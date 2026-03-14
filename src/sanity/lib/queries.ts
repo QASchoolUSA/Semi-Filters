@@ -11,6 +11,7 @@ export const allProductsQuery = `*[_type == "product"] | order(_createdAt desc) 
   category->{name, slug},
   partNumber,
   compatibility,
+  vehicleFit,
   inStock,
   featured
 }`
@@ -28,6 +29,7 @@ export const productBySlugQuery = `*[_type == "product" && slug.current == $slug
   specifications,
   partNumber,
   compatibility,
+  vehicleFit,
   inStock,
   featured
 }`
@@ -42,6 +44,7 @@ export const featuredProductsQuery = `*[_type == "product"] | order(featured des
   description,
   category->{name, slug},
   partNumber,
+  vehicleFit,
   inStock,
   featured
 }`
@@ -57,6 +60,7 @@ export const productsByCategoryQuery = `*[_type == "product" && category->slug.c
   category->{name, slug},
   partNumber,
   compatibility,
+  vehicleFit,
   inStock,
   featured
 }`

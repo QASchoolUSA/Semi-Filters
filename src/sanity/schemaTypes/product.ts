@@ -133,11 +133,22 @@ export const product = defineType({
         }),
         defineField({
             name: 'vehicleFit',
-            title: 'Vehicle Fitment',
+            title: 'Truck Fitment',
             type: 'array',
             of: [{ type: 'string' }],
-            options: { layout: 'tags' },
-            description: 'Vehicles this product fits (e.g. freightliner, kenworth)',
+            options: {
+                list: [
+                    { title: 'Volvo', value: 'Volvo' },
+                    { title: 'Freightliner', value: 'Freightliner' },
+                    { title: 'Kenworth', value: 'Kenworth' },
+                    { title: 'Peterbilt', value: 'Peterbilt' },
+                    { title: 'Mack', value: 'Mack' },
+                    { title: 'International', value: 'International' },
+                    { title: 'Western Star', value: 'Western Star' },
+                    { title: 'DAF', value: 'DAF' },
+                ],
+            },
+            description: 'Select which truck brands this filter fits',
         }),
     ],
     groups: [

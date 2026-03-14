@@ -53,11 +53,11 @@ export default function Footer() {
                         <ul className="footer-contact">
                             <li>
                                 <HiOutlinePhone size={18} />
-                                <span>(555) 123-4567</span>
+                                <span>(407) 768-1488</span>
                             </li>
                             <li>
                                 <HiOutlineMail size={18} />
-                                <span>contact@semifilters.com</span>
+                                <span>support@semifilters.com</span>
                             </li>
                             <li>
                                 <HiOutlineLocationMarker size={18} />

@@ -21,7 +21,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <HeroBanner banner={banner} />
+      <HeroBanner banner={banner} products={products} />
       <HomeClient products={products} categories={categories} />
     </>
   )
