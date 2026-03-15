@@ -4,12 +4,14 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useCart } from '@/context/CartContext'
-import { HiOutlineShoppingBag, HiOutlineMenu, HiOutlineX } from 'react-icons/hi'
+import { HiOutlineShoppingBag, HiOutlineMenu, HiOutlineX, HiOutlineSearch } from 'react-icons/hi'
 import ThemeToggle from '@/components/ThemeToggle'
+import SearchOverlay from '@/components/SearchOverlay'
 
 export default function Navbar() {
     const { totalItems, openCart } = useCart()
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const [searchOpen, setSearchOpen] = useState(false)
     const pathname = usePathname()
 
     // Close mobile menu on route change
@@ -63,6 +65,9 @@ export default function Navbar() {
                 </div>
 
                 <div className="navbar-actions">
+                    <button className="search-button" onClick={() => setSearchOpen(true)} aria-label="Search products">
+                        <HiOutlineSearch size={22} />
+                    </button>
                     <ThemeToggle />
                     <button className="cart-button" onClick={openCart} aria-label="Open cart">
                         <HiOutlineShoppingBag size={24} />
@@ -105,6 +110,8 @@ export default function Navbar() {
                     </button>
                 </div>
             </div>
+
+            <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
         </nav>
     )
 }

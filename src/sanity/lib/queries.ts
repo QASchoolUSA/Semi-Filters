@@ -81,6 +81,22 @@ export const categoryBySlugQuery = `*[_type == "category" && slug.current == $sl
   image
 }`
 
+export const searchProductsQuery = `*[_type == "product" && (
+  partNumber match $term ||
+  name match $term ||
+  pt::text(description) match $term
+)] | order(_createdAt desc) [0...12] {
+  _id,
+  name,
+  slug,
+  images,
+  price,
+  compareAtPrice,
+  category->{name, slug},
+  partNumber,
+  inStock
+}`
+
 export const heroBannerQuery = `*[_type == "banner" && isActive == true][0] {
   _id,
   heading,
