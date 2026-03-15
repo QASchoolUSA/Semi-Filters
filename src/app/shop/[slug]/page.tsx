@@ -7,7 +7,7 @@ import type { Product } from '@/types'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-export const revalidate = 0
+export const revalidate = 60
 
 const BASE_URL = 'https://semifilters.com'
 
@@ -48,6 +48,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             description,
             images: [imageUrl],
         },
+        other: {
+            'product:price:amount': String(product.price ?? 0),
+            'product:price:currency': 'USD',
+            'product:availability': product.inStock ? 'in stock' : 'out of stock',
+            ...(product.partNumber ? { 'product:retailer_item_id': product.partNumber } : {}),
+        },
     }
 }
 
@@ -86,12 +92,55 @@ export default async function ProductDetailPage({ params }: Props) {
             availability: product.inStock
                 ? 'https://schema.org/InStock'
                 : 'https://schema.org/OutOfStock',
+            itemCondition: 'https://schema.org/NewCondition',
             seller: {
                 '@type': 'Organization',
                 name: 'Semi Filters',
             },
+            shippingDetails: {
+                '@type': 'OfferShippingDetails',
+                shippingRate: {
+                    '@type': 'MonetaryAmount',
+                    value: '5.99',
+                    currency: 'USD',
+                },
+                shippingDestination: {
+                    '@type': 'DefinedRegion',
+                    addressCountry: 'US',
+                },
+                deliveryTime: {
+                    '@type': 'ShippingDeliveryTime',
+                    handlingTime: {
+                        '@type': 'QuantitativeValue',
+                        minValue: 0,
+                        maxValue: 1,
+                        unitCode: 'DAY',
+                    },
+                    transitTime: {
+                        '@type': 'QuantitativeValue',
+                        minValue: 2,
+                        maxValue: 5,
+                        unitCode: 'DAY',
+                    },
+                },
+            },
+            hasMerchantReturnPolicy: {
+                '@type': 'MerchantReturnPolicy',
+                applicableCountry: 'US',
+                returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+                merchantReturnDays: 30,
+                returnMethod: 'https://schema.org/ReturnByMail',
+                returnFees: 'https://schema.org/FreeReturn',
+            },
         },
         ...(product.category?.name && { category: product.category.name }),
+        ...(product.compatibility?.length && {
+            additionalProperty: product.compatibility.map((v: string) => ({
+                '@type': 'PropertyValue',
+                name: 'Compatible With',
+                value: v,
+            })),
+        }),
     }
 
     const breadcrumbJsonLd = {

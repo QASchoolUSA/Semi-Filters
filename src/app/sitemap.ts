@@ -19,8 +19,22 @@ async function getProductSlugs(): Promise<SanitySlug[]> {
         .catch(() => [])
 }
 
+async function getCategorySlugs(): Promise<SanitySlug[]> {
+    return client
+        .fetch(
+            `*[_type == "category"] {
+        slug,
+        _updatedAt
+      }`
+        )
+        .catch(() => [])
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const products = await getProductSlugs()
+    const [products, categories] = await Promise.all([
+        getProductSlugs(),
+        getCategorySlugs(),
+    ])
 
     const productUrls: MetadataRoute.Sitemap = products
         .filter((p) => p.slug?.current)
@@ -29,6 +43,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             lastModified: new Date(p._updatedAt),
             changeFrequency: 'weekly',
             priority: 0.8,
+        }))
+
+    const categoryUrls: MetadataRoute.Sitemap = categories
+        .filter((c) => c.slug?.current)
+        .map((c) => ({
+            url: `${BASE_URL}/shop?category=${c.slug.current}`,
+            lastModified: new Date(c._updatedAt),
+            changeFrequency: 'weekly',
+            priority: 0.7,
         }))
 
     return [
@@ -44,6 +67,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             changeFrequency: 'daily',
             priority: 0.9,
         },
+        ...categoryUrls,
         {
             url: `${BASE_URL}/about`,
             lastModified: new Date(),
@@ -55,6 +79,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             lastModified: new Date(),
             changeFrequency: 'monthly',
             priority: 0.5,
+        },
+        {
+            url: `${BASE_URL}/privacy`,
+            lastModified: new Date(),
+            changeFrequency: 'yearly',
+            priority: 0.3,
+        },
+        {
+            url: `${BASE_URL}/terms`,
+            lastModified: new Date(),
+            changeFrequency: 'yearly',
+            priority: 0.3,
         },
         ...productUrls,
     ]

@@ -92,10 +92,22 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   other: {
     "msapplication-TileColor": "#12121A",
+    "geo.region": "US-FL",
+    "geo.placename": "Sanford",
+    "geo.position": "28.8003;-81.2731",
+    "ICBM": "28.8003, -81.2731",
+  },
+  verification: {
+    // Add your verification codes here after registering with each search console:
+    // google: "YOUR_GOOGLE_VERIFICATION_CODE",
+    // yandex: "YOUR_YANDEX_VERIFICATION_CODE",
+    other: {
+      "msvalidate.01": "",
+    },
   },
 };
 
-const organizationJsonLd = {
+const siteJsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
@@ -111,6 +123,66 @@ const organizationJsonLd = {
       },
       description:
         "Premium OEM-quality oil, air, fuel, and cabin filters for semi trucks. Serving owner-operators and fleets across the United States.",
+      foundingDate: "2020",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "",
+        addressLocality: "Sanford",
+        addressRegion: "FL",
+        postalCode: "32771",
+        addressCountry: "US",
+      },
+      contactPoint: [
+        {
+          "@type": "ContactPoint",
+          contactType: "customer service",
+          telephone: "+1-407-768-1488",
+          email: "support@semifilters.com",
+          availableLanguage: "English",
+          hoursAvailable: [
+            {
+              "@type": "OpeningHoursSpecification",
+              dayOfWeek: [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+              ],
+              opens: "07:00",
+              closes: "18:00",
+            },
+            {
+              "@type": "OpeningHoursSpecification",
+              dayOfWeek: "Saturday",
+              opens: "08:00",
+              closes: "14:00",
+            },
+          ],
+        },
+        {
+          "@type": "ContactPoint",
+          contactType: "sales",
+          telephone: "+1-407-768-1488",
+          email: "support@semifilters.com",
+          availableLanguage: "English",
+        },
+      ],
+      areaServed: {
+        "@type": "Country",
+        name: "United States",
+      },
+      sameAs: [],
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": `${BASE_URL}/#localbusiness`,
+      name: "Semi Filters",
+      url: BASE_URL,
+      telephone: "+1-407-768-1488",
+      email: "support@semifilters.com",
+      image: `${BASE_URL}/icon-512.png`,
+      priceRange: "$$",
       address: {
         "@type": "PostalAddress",
         addressLocality: "Sanford",
@@ -118,19 +190,57 @@ const organizationJsonLd = {
         postalCode: "32771",
         addressCountry: "US",
       },
-      contactPoint: {
-        "@type": "ContactPoint",
-        contactType: "customer service",
-        email: "support@semifilters.com",
-        availableLanguage: "English",
-        hoursAvailable: {
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: 28.8003,
+        longitude: -81.2731,
+      },
+      openingHoursSpecification: [
+        {
           "@type": "OpeningHoursSpecification",
-          dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          dayOfWeek: [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+          ],
           opens: "07:00",
           closes: "18:00",
         },
+        {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: "Saturday",
+          opens: "08:00",
+          closes: "14:00",
+        },
+      ],
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Semi Truck Filters",
+        itemListElement: [
+          {
+            "@type": "OfferCatalog",
+            name: "Oil Filters",
+            itemListElement: [],
+          },
+          {
+            "@type": "OfferCatalog",
+            name: "Air Filters",
+            itemListElement: [],
+          },
+          {
+            "@type": "OfferCatalog",
+            name: "Fuel Filters",
+            itemListElement: [],
+          },
+          {
+            "@type": "OfferCatalog",
+            name: "Cabin Filters",
+            itemListElement: [],
+          },
+        ],
       },
-      sameAs: [],
     },
     {
       "@type": "WebSite",
@@ -140,6 +250,7 @@ const organizationJsonLd = {
       description:
         "Premium filtration solutions for semi trucks — oil, air, fuel, and cabin filters.",
       publisher: { "@id": `${BASE_URL}/#organization` },
+      inLanguage: "en-US",
       potentialAction: {
         "@type": "SearchAction",
         target: {
@@ -160,9 +271,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
       <body className={inter.className}>
+        <link rel="preconnect" href="https://cdn.sanity.io" />
+        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
         />
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <ClientLayout>{children}</ClientLayout>

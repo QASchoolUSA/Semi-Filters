@@ -3,16 +3,18 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import { HiOutlineShieldCheck, HiOutlineTruck, HiOutlineGlobe, HiOutlineHeart } from 'react-icons/hi'
 
+const BASE_URL = 'https://semifilters.com'
+
 export const metadata: Metadata = {
     title: 'About Us — Semi Filters | Sanford, FL',
     description: 'Learn about Semi Filters — founded by trucking industry veterans in Sanford, FL. We provide premium OEM-quality filtration solutions for semi trucks and owner-operators.',
     alternates: {
-        canonical: 'https://semifilters.com/about',
+        canonical: `${BASE_URL}/about`,
     },
     openGraph: {
         title: 'About Semi Filters — Premium Truck Filtration',
         description: 'Founded by trucking industry veterans. 5+ years in business, 50K+ filters sold, 99% satisfaction rate. Sanford, FL.',
-        url: 'https://semifilters.com/about',
+        url: `${BASE_URL}/about`,
         images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'About Semi Filters' }],
     },
     twitter: {
@@ -23,9 +25,81 @@ export const metadata: Metadata = {
     },
 }
 
+const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
+        { '@type': 'ListItem', position: 2, name: 'About', item: `${BASE_URL}/about` },
+    ],
+}
+
+const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+        {
+            '@type': 'Question',
+            name: 'What types of filters does Semi Filters sell?',
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Semi Filters sells premium OEM-quality oil filters, air filters, fuel filters, and cabin air filters for semi trucks including Freightliner, Peterbilt, Kenworth, Volvo, Mack, and International models.',
+            },
+        },
+        {
+            '@type': 'Question',
+            name: 'Do Semi Filters products meet OEM specifications?',
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Yes. Every filter we sell meets or exceeds OEM specifications. Our team includes certified diesel mechanics who carefully vet every product in our catalog to ensure maximum engine protection.',
+            },
+        },
+        {
+            '@type': 'Question',
+            name: 'How fast is shipping from Semi Filters?',
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'We offer same-day shipping on orders placed before 2 PM. Standard delivery takes 2–5 business days nationwide. Free shipping is available on orders over $150.',
+            },
+        },
+        {
+            '@type': 'Question',
+            name: 'Does Semi Filters offer bulk or fleet pricing?',
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Yes. We offer volume discounts, dedicated account managers, and scheduled delivery programs for fleet operators. Contact us at support@semifilters.com or call (407) 768-1488 for a custom quote.',
+            },
+        },
+        {
+            '@type': 'Question',
+            name: 'What is the return policy at Semi Filters?',
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'We offer a 100% satisfaction guarantee on every filter. If you are not satisfied, contact our support team within 30 days for a full refund or exchange. Returns are free.',
+            },
+        },
+        {
+            '@type': 'Question',
+            name: 'Where is Semi Filters located?',
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Semi Filters is based in Sanford, Florida (ZIP 32771). We ship to all 50 US states and Canada.',
+            },
+        },
+    ],
+}
+
 export default function AboutPage() {
     return (
         <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+            />
             <div className="about-hero">
                 <h1>About Semi Filters</h1>
                 <p>

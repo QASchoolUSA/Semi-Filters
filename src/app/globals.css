@@ -3003,6 +3003,14 @@ select {
   box-shadow: 0 0 12px var(--color-accent-glow);
 }
 
+.shop-page-title-banner p {
+  color: var(--color-text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-top: 10px;
+  max-width: 680px;
+}
+
 .shop-section {
   padding-top: 24px;
 }
@@ -3052,6 +3060,39 @@ select {
 .page-header p {
   font-size: 1.05rem;
   color: var(--color-text-secondary);
+}
+
+/* Legal Pages (Privacy, Terms) */
+.legal-content {
+  max-width: 780px;
+  line-height: 1.75;
+}
+
+.legal-content h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 32px 0 12px;
+  color: var(--color-text-primary);
+}
+
+.legal-content p {
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+
+.legal-content ul {
+  padding-left: 24px;
+  margin-bottom: 16px;
+  color: var(--color-text-secondary);
+}
+
+.legal-content ul li {
+  margin-bottom: 6px;
+}
+
+.legal-content a {
+  color: var(--color-accent);
+  text-decoration: underline;
 }
 
 /* Breadcrumb */
