@@ -1,15 +1,5 @@
 import { NextResponse } from 'next/server'
-import nodemailer from 'nodemailer'
-
-const transporter = nodemailer.createTransport({
-  host: 'mail.spacemail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-})
+import { sendEmail } from '@/lib/email'
 
 export async function POST(req: Request) {
   try {
@@ -33,8 +23,7 @@ export async function POST(req: Request) {
 
     const readableSubject = subjectLabels[subject] || subject
 
-    await transporter.sendMail({
-      from: `"Semi Filters" <${process.env.SMTP_USER}>`,
+    await sendEmail({
       to: 'support@semifilters.com',
       replyTo: email,
       subject: `[Contact Form] ${readableSubject} — ${name}`,
