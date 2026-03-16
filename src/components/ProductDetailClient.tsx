@@ -250,16 +250,16 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                             </details>
                         )}
 
-                        {/* Compatibility */}
-                        {product.compatibility && product.compatibility.length > 0 && (
+                        {/* Truck Fitment */}
+                        {product.vehicleFit && product.vehicleFit.length > 0 && (
                             <details className="product-accordion">
                                 <summary className="product-accordion-summary">
-                                    Compatible Trucks
+                                    Truck Fitment
                                     <HiOutlineChevronDown className="accordion-icon" size={20} />
                                 </summary>
                                 <div className="accordion-content">
                                     <div className="compatibility-tags">
-                                        {product.compatibility.map((truck, index) => (
+                                        {product.vehicleFit.map((truck, index) => (
                                             <span key={index} className="compat-tag">{truck}</span>
                                         ))}
                                     </div>

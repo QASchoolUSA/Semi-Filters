@@ -26,7 +26,6 @@ export interface Product {
     category?: CategoryRef
     specifications?: Specification[]
     partNumber?: string
-    compatibility?: string[]
     vehicleFit?: string[]
     inStock: boolean
     featured?: boolean

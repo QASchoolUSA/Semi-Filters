@@ -134,8 +134,8 @@ export default async function ProductDetailPage({ params }: Props) {
             },
         },
         ...(product.category?.name && { category: product.category.name }),
-        ...(product.compatibility?.length && {
-            additionalProperty: product.compatibility.map((v: string) => ({
+        ...(product.vehicleFit?.length && {
+            additionalProperty: product.vehicleFit.map((v: string) => ({
                 '@type': 'PropertyValue',
                 name: 'Compatible With',
                 value: v,

@@ -77,15 +77,6 @@ export const product = defineType({
             type: 'string',
         }),
         defineField({
-            name: 'compatibility',
-            title: 'Compatible Trucks',
-            type: 'array',
-            of: [{ type: 'string' }],
-            options: {
-                layout: 'tags',
-            },
-        }),
-        defineField({
             name: 'inStock',
             title: 'In Stock',
             type: 'boolean',

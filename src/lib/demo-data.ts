@@ -43,7 +43,7 @@ export const DEMO_PRODUCT_DETAILS: Record<string, Product> = {
             { label: 'Max Pressure', value: '150 PSI' },
             { label: 'Flow Rate', value: '12 GPM' },
         ],
-        compatibility: ['Kenworth T680', 'Peterbilt 579', 'Freightliner Cascadia', 'Volvo VNL', 'International LT'],
+        vehicleFit: ['Kenworth', 'Peterbilt', 'Freightliner', 'Volvo', 'International'],
     },
 }
 

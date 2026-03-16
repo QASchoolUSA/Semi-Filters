@@ -10,7 +10,6 @@ export const allProductsQuery = `*[_type == "product"] | order(_createdAt desc) 
   description,
   category->{name, slug},
   partNumber,
-  compatibility,
   vehicleFit,
   inStock,
   featured
@@ -28,7 +27,6 @@ export const productBySlugQuery = `*[_type == "product" && slug.current == $slug
   category->{name, slug},
   specifications,
   partNumber,
-  compatibility,
   vehicleFit,
   inStock,
   featured
@@ -59,7 +57,6 @@ export const productsByCategoryQuery = `*[_type == "product" && category->slug.c
   description,
   category->{name, slug},
   partNumber,
-  compatibility,
   vehicleFit,
   inStock,
   featured
