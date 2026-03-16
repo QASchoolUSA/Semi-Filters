@@ -28,9 +28,13 @@ export default function ShopClient({ products, categories, initialCategory = 'al
     const [inStockOnly, setInStockOnly] = useState(false)
     const [sortOpen, setSortOpen] = useState(false)
     const [truckOpen, setTruckOpen] = useState(false)
+    const [priceOpen, setPriceOpen] = useState(false)
+    const [priceMin, setPriceMin] = useState<string>('')
+    const [priceMax, setPriceMax] = useState<string>('')
 
     const sortRef = useRef<HTMLDivElement>(null)
     const truckRef = useRef<HTMLDivElement>(null)
+    const priceRef = useRef<HTMLDivElement>(null)
     const chipsRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -41,6 +45,7 @@ export default function ShopClient({ products, categories, initialCategory = 'al
         const handleClickOutside = (e: MouseEvent) => {
             if (sortRef.current && !sortRef.current.contains(e.target as Node)) setSortOpen(false)
             if (truckRef.current && !truckRef.current.contains(e.target as Node)) setTruckOpen(false)
+            if (priceRef.current && !priceRef.current.contains(e.target as Node)) setPriceOpen(false)
         }
         document.addEventListener('mousedown', handleClickOutside)
         return () => document.removeEventListener('mousedown', handleClickOutside)
@@ -62,6 +67,16 @@ export default function ShopClient({ products, categories, initialCategory = 'al
         })
         return Array.from(brands).sort()
     }, [displayProducts])
+
+    const priceRange = useMemo(() => {
+        if (displayProducts.length === 0) return { min: 0, max: 0 }
+        const prices = displayProducts.map(p => p.price)
+        return { min: Math.floor(Math.min(...prices)), max: Math.ceil(Math.max(...prices)) }
+    }, [displayProducts])
+
+    const priceMinNum = priceMin === '' ? null : Number(priceMin)
+    const priceMaxNum = priceMax === '' ? null : Number(priceMax)
+    const hasPriceFilter = priceMin !== '' || priceMax !== ''
 
     const categoryCounts = useMemo(() => {
         const counts: Record<string, number> = { all: displayProducts.length }
@@ -93,6 +108,13 @@ export default function ShopClient({ products, categories, initialCategory = 'al
             filtered = filtered.filter((p) => p.inStock)
         }
 
+        if (priceMinNum !== null && !isNaN(priceMinNum)) {
+            filtered = filtered.filter((p) => p.price >= priceMinNum)
+        }
+        if (priceMaxNum !== null && !isNaN(priceMaxNum)) {
+            filtered = filtered.filter((p) => p.price <= priceMaxNum)
+        }
+
         switch (sortBy) {
             case 'price-asc':
                 filtered.sort((a, b) => a.price - b.price)
@@ -106,16 +128,18 @@ export default function ShopClient({ products, categories, initialCategory = 'al
         }
 
         return filtered
-    }, [displayProducts, selectedCategory, selectedTruck, sortBy, inStockOnly])
+    }, [displayProducts, selectedCategory, selectedTruck, sortBy, inStockOnly, priceMinNum, priceMaxNum])
 
     const activeSortLabel = sortOptions.find(o => o.value === sortBy)?.label || 'Default'
-    const hasActiveFilters = selectedCategory !== 'all' || selectedTruck !== 'all' || inStockOnly || sortBy !== 'default'
+    const hasActiveFilters = selectedCategory !== 'all' || selectedTruck !== 'all' || inStockOnly || sortBy !== 'default' || hasPriceFilter
 
     const resetFilters = () => {
         setSelectedCategory('all')
         setSelectedTruck('all')
         setInStockOnly(false)
         setSortBy('default')
+        setPriceMin('')
+        setPriceMax('')
     }
 
     return (
@@ -183,12 +207,102 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                         <span className="shop-toggle__text">In Stock</span>
                     </label>
 
+                    {/* Price Range Dropdown */}
+                    <div className="shop-sort" ref={priceRef}>
+                        <button
+                            className={`shop-sort__trigger ${hasPriceFilter ? 'shop-sort__trigger--filtered' : ''}`}
+                            onClick={() => { setPriceOpen(!priceOpen); setSortOpen(false); setTruckOpen(false) }}
+                            aria-expanded={priceOpen}
+                            aria-haspopup="dialog"
+                        >
+                            <svg className="shop-sort__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23" />
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                            </svg>
+                            <span className="shop-sort__label">
+                                {hasPriceFilter
+                                    ? `$${priceMin || '0'} – $${priceMax || '∞'}`
+                                    : 'Price'}
+                            </span>
+                            <svg
+                                className="shop-sort__chevron"
+                                width="13"
+                                height="13"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                                style={{ transform: priceOpen ? 'rotate(180deg)' : 'none' }}
+                            >
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                        </button>
+
+                        {priceOpen && (
+                            <>
+                                <div className="shop-sort__backdrop" onClick={() => setPriceOpen(false)} />
+                                <div className="shop-sort__menu shop-price-menu" role="dialog" aria-label="Price range filter">
+                                    <div className="shop-sort__menu-handle" />
+                                    <div className="shop-price__header">Price Range</div>
+                                    <div className="shop-price__inputs">
+                                        <div className="shop-price__field">
+                                            <div className="shop-price__input-wrap">
+                                                <span className="shop-price__currency">$</span>
+                                                <input
+                                                    type="number"
+                                                    className="shop-price__input"
+                                                    placeholder={String(priceRange.min)}
+                                                    value={priceMin}
+                                                    onChange={(e) => setPriceMin(e.target.value)}
+                                                    min={0}
+                                                    step="any"
+                                                />
+                                            </div>
+                                            <label className="shop-price__label">Min</label>
+                                        </div>
+                                        <span className="shop-price__separator">–</span>
+                                        <div className="shop-price__field">
+                                            <div className="shop-price__input-wrap">
+                                                <span className="shop-price__currency">$</span>
+                                                <input
+                                                    type="number"
+                                                    className="shop-price__input"
+                                                    placeholder={String(priceRange.max)}
+                                                    value={priceMax}
+                                                    onChange={(e) => setPriceMax(e.target.value)}
+                                                    min={0}
+                                                    step="any"
+                                                />
+                                            </div>
+                                            <label className="shop-price__label">Max</label>
+                                        </div>
+                                    </div>
+                                    <div className="shop-price__actions">
+                                        <button
+                                            className="shop-price__clear"
+                                            onClick={() => { setPriceMin(''); setPriceMax('') }}
+                                            disabled={!hasPriceFilter}
+                                        >
+                                            Clear
+                                        </button>
+                                        <button
+                                            className="shop-price__apply"
+                                            onClick={() => setPriceOpen(false)}
+                                        >
+                                            Apply
+                                        </button>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                    </div>
+
                     {/* Truck Brand Dropdown */}
                     {truckBrands.length > 0 && (
                         <div className="shop-sort" ref={truckRef}>
                             <button
                                 className={`shop-sort__trigger ${selectedTruck !== 'all' ? 'shop-sort__trigger--filtered' : ''}`}
-                                onClick={() => { setTruckOpen(!truckOpen); setSortOpen(false) }}
+                                onClick={() => { setTruckOpen(!truckOpen); setSortOpen(false); setPriceOpen(false) }}
                                 aria-expanded={truckOpen}
                                 aria-haspopup="listbox"
                             >
@@ -259,7 +373,7 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                     <div className="shop-sort" ref={sortRef}>
                         <button
                             className="shop-sort__trigger"
-                            onClick={() => { setSortOpen(!sortOpen); setTruckOpen(false) }}
+                            onClick={() => { setSortOpen(!sortOpen); setTruckOpen(false); setPriceOpen(false) }}
                             aria-expanded={sortOpen}
                             aria-haspopup="listbox"
                         >
