@@ -12,7 +12,8 @@ export async function GET(request: Request) {
 
   try {
     const term = `${q}*`
-    const results = await client.fetch(searchProductsQuery, { term })
+    const rawTerm = q.toUpperCase()
+    const results = await client.fetch(searchProductsQuery, { term, rawTerm })
     return NextResponse.json({ results })
   } catch (error) {
     console.error('Search error:', error)

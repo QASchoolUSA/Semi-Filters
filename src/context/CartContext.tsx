@@ -100,13 +100,34 @@ export function CartProvider({ children }: { children: ReactNode }) {
         return () => { document.body.style.overflow = '' }
     }, [isCartOpen])
 
-    // Load cart from localStorage on mount
+    // Load cart from localStorage on mount and sync slugs with Sanity
     useEffect(() => {
         try {
             const savedCart = localStorage.getItem('semi-filters-cart')
             if (savedCart) {
-                const items = JSON.parse(savedCart)
+                const items: CartItem[] = JSON.parse(savedCart)
                 dispatch({ type: 'LOAD_CART', payload: items })
+
+                if (items.length > 0) {
+                    const ids = items.map((item) => item._id)
+                    fetch('/api/product-slugs', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ids }),
+                    })
+                        .then((res) => res.json())
+                        .then(({ slugs }: { slugs: Record<string, string> }) => {
+                            const updated = items.map((item) =>
+                                slugs[item._id] && slugs[item._id] !== item.slug
+                                    ? { ...item, slug: slugs[item._id] }
+                                    : item
+                            )
+                            if (updated.some((item, i) => item.slug !== items[i].slug)) {
+                                dispatch({ type: 'LOAD_CART', payload: updated })
+                            }
+                        })
+                        .catch(() => {})
+                }
             }
         } catch (error) {
             console.error('Failed to load cart:', error)

@@ -10,6 +10,7 @@ export const allProductsQuery = `*[_type == "product"] | order(_createdAt desc) 
   description,
   category->{name, slug},
   partNumber,
+  crossReferences,
   vehicleFit,
   inStock,
   featured
@@ -27,6 +28,7 @@ export const productBySlugQuery = `*[_type == "product" && slug.current == $slug
   category->{name, slug},
   specifications,
   partNumber,
+  crossReferences,
   vehicleFit,
   inStock,
   featured
@@ -42,6 +44,7 @@ export const featuredProductsQuery = `*[_type == "product"] | order(featured des
   description,
   category->{name, slug},
   partNumber,
+  crossReferences,
   vehicleFit,
   inStock,
   featured
@@ -57,6 +60,7 @@ export const productsByCategoryQuery = `*[_type == "product" && category->slug.c
   description,
   category->{name, slug},
   partNumber,
+  crossReferences,
   vehicleFit,
   inStock,
   featured
@@ -81,7 +85,9 @@ export const categoryBySlugQuery = `*[_type == "category" && slug.current == $sl
 export const searchProductsQuery = `*[_type == "product" && (
   partNumber match $term ||
   name match $term ||
-  pt::text(description) match $term
+  pt::text(description) match $term ||
+  $rawTerm in crossReferences ||
+  count(crossReferences[@ match $term]) > 0
 )] | order(_createdAt desc) [0...12] {
   _id,
   name,
@@ -91,7 +97,13 @@ export const searchProductsQuery = `*[_type == "product" && (
   compareAtPrice,
   category->{name, slug},
   partNumber,
+  crossReferences,
   inStock
+}`
+
+export const productSlugsByIdsQuery = `*[_type == "product" && _id in $ids] {
+  _id,
+  "slug": slug.current
 }`
 
 export const heroBannerQuery = `*[_type == "banner" && isActive == true][0] {

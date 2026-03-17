@@ -266,6 +266,24 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                                 </div>
                             </details>
                         )}
+
+                        {/* Cross-Reference / Interchange Part Numbers */}
+                        {product.crossReferences && product.crossReferences.length > 0 && (
+                            <details className="product-accordion">
+                                <summary className="product-accordion-summary">
+                                    Cross-Reference Part Numbers
+                                    <HiOutlineChevronDown className="accordion-icon" size={20} />
+                                </summary>
+                                <div className="accordion-content">
+                                    <p className="cross-ref-intro">This filter is an interchange replacement for the following part numbers:</p>
+                                    <div className="compatibility-tags">
+                                        {product.crossReferences.map((ref, index) => (
+                                            <span key={index} className="compat-tag">{ref}</span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </details>
+                        )}
                     </div>
                 </div>
             </div>

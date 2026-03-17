@@ -77,6 +77,13 @@ export const product = defineType({
             type: 'string',
         }),
         defineField({
+            name: 'crossReferences',
+            title: 'Cross-Reference Part Numbers',
+            type: 'array',
+            of: [{ type: 'string' }],
+            description: 'Equivalent part numbers from other manufacturers (Baldwin, WIX, Donaldson, Fleetguard, etc.)',
+        }),
+        defineField({
             name: 'inStock',
             title: 'In Stock',
             type: 'boolean',
