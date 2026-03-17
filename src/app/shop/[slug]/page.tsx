@@ -15,6 +15,18 @@ interface Props {
     params: Promise<{ slug: string }>
 }
 
+function portableTextToPlain(blocks: unknown): string {
+    if (!Array.isArray(blocks)) return ''
+    return blocks
+        .filter((b: Record<string, unknown>) => b._type === 'block' && Array.isArray(b.children))
+        .map((b: Record<string, unknown>) =>
+            (b.children as { text?: string }[]).map((c) => c.text || '').join('')
+        )
+        .join(' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { slug } = await params
     const product = await client.fetch(productBySlugQuery, { slug }).catch(() => null) as Product | null
@@ -25,18 +37,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const imageUrl = product.images?.[0]
         ? urlFor(product.images[0]).width(800).height(800).url()
         : `${BASE_URL}/icon-512.png`
-    const description = product.description
-        ? `${product.description.slice(0, 150)}...`
-        : `Shop ${product.name} at Semi Filters. OEM-quality filtration for semi trucks. Fast shipping.`
+
+    const title = product.seoTitle || product.name
+    const description = product.seoDescription
+        || (product.description
+            ? portableTextToPlain(product.description).slice(0, 155) + '...'
+            : `Shop ${product.name} at Semi Filters. OEM-quality filtration for semi trucks. Fast shipping.`)
 
     return {
-        title: product.name,
+        title,
         description,
         alternates: {
             canonical: productUrl,
         },
         openGraph: {
-            title: `${product.name} — Semi Filters`,
+            title: `${title} — Semi Filters`,
             description,
             url: productUrl,
             type: 'website',
@@ -44,7 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         },
         twitter: {
             card: 'summary_large_image',
-            title: `${product.name} — Semi Filters`,
+            title: `${title} — Semi Filters`,
             description,
             images: [imageUrl],
         },
@@ -71,11 +86,15 @@ export default async function ProductDetailPage({ params }: Props) {
         ? urlFor(product.images[0]).width(800).height(800).url()
         : `${BASE_URL}/icon-512.png`
 
+    const plainDescription = product.seoDescription
+        || (product.description ? portableTextToPlain(product.description).slice(0, 200) : '')
+        || `${product.name} — premium semi truck filter from Semi Filters.`
+
     const productJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'Product',
-        name: product.name,
-        description: product.description || `${product.name} — premium semi truck filter from Semi Filters.`,
+        name: product.seoTitle || product.name,
+        description: plainDescription,
         image: [imageUrl],
         url: productUrl,
         sku: product.partNumber || slug,

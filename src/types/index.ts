@@ -30,6 +30,8 @@ export interface Product {
     vehicleFit?: string[]
     inStock: boolean
     featured?: boolean
+    seoTitle?: string
+    seoDescription?: string
 }
 
 export interface CategoryRef {

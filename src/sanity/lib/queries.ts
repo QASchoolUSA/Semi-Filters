@@ -31,7 +31,9 @@ export const productBySlugQuery = `*[_type == "product" && slug.current == $slug
   crossReferences,
   vehicleFit,
   inStock,
-  featured
+  featured,
+  seoTitle,
+  seoDescription
 }`
 
 export const featuredProductsQuery = `*[_type == "product"] | order(featured desc, _createdAt desc) [0...8] {
