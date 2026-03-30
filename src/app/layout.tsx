@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "@/components/ClientLayout";
+import ClarityAnalytics from "@/components/ClarityAnalytics";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 // Load Inter via next/font — self-hosted at build time, zero render-blocking network request
@@ -273,6 +274,8 @@ export default function RootLayout({
       <body className={inter.className}>
         <link rel="preconnect" href="https://cdn.sanity.io" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+        <link rel="dns-prefetch" href="https://www.clarity.ms" />
+        <ClarityAnalytics />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
