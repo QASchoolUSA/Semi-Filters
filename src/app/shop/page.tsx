@@ -31,10 +31,21 @@ export const metadata: Metadata = {
 export const revalidate = 60
 
 async function getData() {
+    console.log('Fetching products and categories...')
     const [products, categories] = await Promise.all([
-        client.fetch(allProductsQuery).catch(() => []) as Promise<Product[]>,
-        client.fetch(allCategoriesQuery).catch(() => []) as Promise<Category[]>,
+        client.fetch(allProductsQuery).catch((err) => {
+            console.error('Error fetching products:', err)
+            return []
+        }) as Promise<Product[]>,
+        client.fetch(allCategoriesQuery).catch((err) => {
+            console.error('Error fetching categories:', err)
+            return []
+        }) as Promise<Category[]>,
     ])
+    console.log(`Fetched ${products.length} products and ${categories.length} categories`)
+    if (products.length > 0) {
+        console.log('Sample product category:', JSON.stringify(products[0].category))
+    }
     return { products, categories }
 }
 
@@ -76,6 +87,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
     const { products, categories } = await getData()
     const resolvedParams = await searchParams
     const initialCategory = typeof resolvedParams.category === 'string' ? resolvedParams.category : 'all'
+    const initialTruck = typeof resolvedParams.truck === 'string' ? resolvedParams.truck : 'all'
     const shopJsonLd = buildShopJsonLd(products)
 
     return (
@@ -96,7 +108,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
             </div>
             <section className="section shop-section">
                 <div className="container">
-                    <ShopClient products={products} categories={categories} initialCategory={initialCategory} />
+                    <ShopClient products={products} categories={categories} initialCategory={initialCategory} initialTruck={initialTruck} />
                 </div>
             </section>
         </>

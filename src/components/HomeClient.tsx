@@ -3,7 +3,8 @@
 import React from 'react'
 import Link from 'next/link'
 import ProductCard from '@/components/ProductCard'
-import CategoryCard from '@/components/CategoryCard'
+import TruckMakerFilters from '@/components/TruckMakerFilters'
+import HeroProductCarousel from '@/components/HeroProductCarousel'
 import { HiOutlineShieldCheck, HiOutlineTruck, HiOutlineClock, HiOutlineSupport } from 'react-icons/hi'
 import type { Product, Category } from '@/types'
 
@@ -42,23 +43,8 @@ export default function HomeClient({ products, categories }: HomeClientProps) {
 
     return (
         <>
-            {/* Categories Section */}
-            <section className="section">
-                <div className="container">
-                    <div className="section-header">
-                        <span className="section-label">Shop by Type</span>
-                        <h2 className="section-title">Filter Categories</h2>
-                        <p className="section-subtitle">
-                            Find the right filter for your semi truck. We carry every type of filtration solution you need.
-                        </p>
-                    </div>
-                    <div className="category-grid mobile-scroll-x">
-                        {displayCategories.map((category) => (
-                            <CategoryCard key={category._id} category={category} />
-                        ))}
-                    </div>
-                </div>
-            </section>
+            {/* Truck Maker Filters Section */}
+            <TruckMakerFilters categories={displayCategories} />
 
             {/* Featured Products */}
             <section className="section" style={{ background: 'var(--color-bg-secondary)' }}>

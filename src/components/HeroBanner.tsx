@@ -93,11 +93,6 @@ export default function HeroBanner({ banner, products }: HeroBannerProps) {
                         <p className="hero-promo-fine">Valid for new customers only. One use per account.</p>
                     </div>
                 </div>
-
-                {/* Products Carousel */}
-                {products && products.length > 0 && (
-                    <HeroProductCarousel products={products} />
-                )}
             </div>
         </section>
     )

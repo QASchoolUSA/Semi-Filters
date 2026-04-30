@@ -9,6 +9,7 @@ interface ShopClientProps {
     products: Product[]
     categories: Category[]
     initialCategory?: string
+    initialTruck?: string
 }
 
 const sortOptions = [
@@ -18,12 +19,12 @@ const sortOptions = [
     { value: 'name', label: 'Name: A → Z' },
 ]
 
-export default function ShopClient({ products, categories, initialCategory = 'all' }: ShopClientProps) {
+export default function ShopClient({ products, categories, initialCategory = 'all', initialTruck = 'all' }: ShopClientProps) {
     const displayProducts = products || []
     const displayCategories = categories || []
 
     const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory)
-    const [selectedTruck, setSelectedTruck] = useState<string>('all')
+    const [selectedTruck, setSelectedTruck] = useState<string>(initialTruck)
     const [sortBy, setSortBy] = useState<string>('default')
     const [inStockOnly, setInStockOnly] = useState(false)
     const [sortOpen, setSortOpen] = useState(false)
@@ -37,9 +38,14 @@ export default function ShopClient({ products, categories, initialCategory = 'al
     const priceRef = useRef<HTMLDivElement>(null)
     const chipsRef = useRef<HTMLDivElement>(null)
 
+    // Sync state with URL params when they change
     useEffect(() => {
         if (initialCategory) setSelectedCategory(initialCategory)
     }, [initialCategory])
+
+    useEffect(() => {
+        if (initialTruck) setSelectedTruck(initialTruck)
+    }, [initialTruck])
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -59,11 +65,19 @@ export default function ShopClient({ products, categories, initialCategory = 'al
     }, [selectedCategory])
 
     const truckBrands = useMemo(() => {
-        const brands = new Set<string>()
+        const brands = new Set<string>(['Volvo', 'Kenworth', 'Freightliner', 'Peterbilt', 'Mack', 'International'])
         displayProducts.forEach(p => {
             p.vehicleFit?.forEach(v => {
-                brands.add(v.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' '))
+                if (v) {
+                    const normalized = v.trim().charAt(0).toUpperCase() + v.trim().slice(1).toLowerCase()
+                    brands.add(normalized)
+                }
             })
+            // Also check name for brands to populate filter list
+            const lowerName = p.name.toLowerCase()
+            if (lowerName.includes('volvo')) brands.add('Volvo')
+            if (lowerName.includes('kenworth')) brands.add('Kenworth')
+            if (lowerName.includes('freightliner')) brands.add('Freightliner')
         })
         return Array.from(brands).sort()
     }, [displayProducts])
@@ -81,9 +95,11 @@ export default function ShopClient({ products, categories, initialCategory = 'al
     const categoryCounts = useMemo(() => {
         const counts: Record<string, number> = { all: displayProducts.length }
         displayCategories.forEach(cat => {
-            counts[cat.slug.current] = displayProducts.filter(
-                p => p.category?.slug?.current === cat.slug.current
-            ).length
+            if (!cat.slug?.current) return
+            counts[cat.slug.current] = displayProducts.filter(p => {
+                const pCatSlug = p.category?.slug?.current
+                return pCatSlug === cat.slug.current || p.name.toLowerCase().includes(cat.name.toLowerCase().replace(' filters', '').trim())
+            }).length
         })
         return counts
     }, [displayProducts, displayCategories])
@@ -92,16 +108,30 @@ export default function ShopClient({ products, categories, initialCategory = 'al
         let filtered = [...displayProducts]
 
         if (selectedCategory !== 'all') {
-            filtered = filtered.filter(
-                (p) => p.category?.slug?.current === selectedCategory
-            )
+            filtered = filtered.filter((p) => {
+                // Check if the product has a category object with a slug
+                if (p.category?.slug?.current === selectedCategory) return true
+                
+                // Smart fallback: Check if the category name is in the product's name
+                const catObj = displayCategories.find(c => c.slug?.current === selectedCategory)
+                if (catObj && p.name.toLowerCase().includes(catObj.name.toLowerCase().replace(' filters', '').trim())) return true
+
+                return false
+            })
         }
 
         if (selectedTruck !== 'all') {
             const target = selectedTruck.toLowerCase()
-            filtered = filtered.filter(
-                (p) => p.vehicleFit?.some(v => v.toLowerCase() === target)
-            )
+            filtered = filtered.filter((p) => {
+                // 1. Check explicit vehicleFit tags
+                const hasTag = p.vehicleFit?.some(v => v && v.toLowerCase().includes(target))
+                if (hasTag) return true
+
+                // 2. Smart Fallback: Check if the brand name is in the product title
+                if (p.name.toLowerCase().includes(target)) return true
+
+                return false
+            })
         }
 
         if (inStockOnly) {
@@ -128,7 +158,7 @@ export default function ShopClient({ products, categories, initialCategory = 'al
         }
 
         return filtered
-    }, [displayProducts, selectedCategory, selectedTruck, sortBy, inStockOnly, priceMinNum, priceMaxNum])
+    }, [displayProducts, selectedCategory, selectedTruck, sortBy, inStockOnly, priceMinNum, priceMaxNum, displayCategories])
 
     const activeSortLabel = sortOptions.find(o => o.value === sortBy)?.label || 'Default'
     const hasActiveFilters = selectedCategory !== 'all' || selectedTruck !== 'all' || inStockOnly || sortBy !== 'default' || hasPriceFilter
