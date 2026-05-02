@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { getCategoryIcon } from '@/components/CategoryIcons'
-import { HiOutlineArrowNarrowRight, HiOutlineFilter } from 'react-icons/hi'
+import { HiOutlineArrowNarrowRight } from 'react-icons/hi'
 import { DEMO_CATEGORIES } from '@/lib/demo-data'
 import type { Category } from '@/types'
 
@@ -15,30 +15,30 @@ const truckMakers = [
     {
         name: 'Volvo',
         slug: 'Volvo',
-        description: 'OEM-grade filtration systems for VNL, VNR, and VHD models with D11 & D13 engines.',
-        color: '#003057',
-        tagline: 'Precision Engineering'
+        tagline: 'VNL · VNR · VHD',
+        description: 'OEM-grade filtration for D11 & D13 engines.',
+        accent: '#1E5BA8',
     },
     {
         name: 'Kenworth',
         slug: 'Kenworth',
-        description: 'Elite protection for heavy-duty T680, T880, and W900 PACCAR-powered trucks.',
-        color: '#E31837',
-        tagline: 'The World\'s Best'
+        tagline: 'T680 · T880 · W900',
+        description: 'Heavy-duty protection for PACCAR-powered trucks.',
+        accent: '#E31837',
     },
     {
         name: 'Freightliner',
         slug: 'Freightliner',
-        description: 'Maximum efficiency filters for Cascadia, M2, and SD vocational fleet vehicles.',
-        color: '#DA291C',
-        tagline: 'Run Smart'
-    }
+        tagline: 'Cascadia · M2 · SD',
+        description: 'Maximum efficiency for fleet & vocational rigs.',
+        accent: '#0066B2',
+    },
 ]
 
 export default function TruckMakerFilters({ categories }: TruckMakerFiltersProps) {
     const sourceCategories = (categories && categories.length > 0) ? categories : DEMO_CATEGORIES
     const priorityTerms = ['oil', 'air', 'fuel', 'cabin']
-    
+
     let mainCategories = sourceCategories.filter(cat => {
         const slug = cat.slug?.current?.toLowerCase() || ''
         const name = cat.name?.toLowerCase() || ''
@@ -64,368 +64,310 @@ export default function TruckMakerFilters({ categories }: TruckMakerFiltersProps
         <section className="section maker-filters-section">
             <div className="container">
                 <div className="section-header">
-                    <span className="section-label">Fleet-Ready Solutions</span>
-                    <h2 className="section-title">Filter by Truck Maker</h2>
+                    <span className="section-label">Shop By Truck</span>
+                    <h2 className="section-title">Find Filters For Your Rig</h2>
                     <p className="section-subtitle">
-                        Find high-performance filtration kits specifically engineered for your truck's engine architecture.
+                        Pick your truck, then jump straight to the filter you need — engineered fits for every major make.
                     </p>
                 </div>
 
                 <div className="maker-grid">
                     {truckMakers.map((maker) => (
-                        <div key={maker.name} className="maker-card" style={{ '--maker-color': maker.color } as React.CSSProperties}>
-                            {/* --- Visual Header --- */}
-                            <div className="maker-card__header">
-                                <div className="maker-card__header-overlay" />
-                                <div className="maker-card__header-content">
-                                    <div className="maker-card__brand-wrap">
-                                        <span className="maker-card__tagline">{maker.tagline}</span>
-                                        <h3 className="maker-card__brand">{maker.name}</h3>
-                                    </div>
-                                    <p className="maker-card__desc">{maker.description}</p>
+                        <article
+                            key={maker.name}
+                            className="maker-card"
+                            style={{ ['--maker-accent' as string]: maker.accent } as React.CSSProperties}
+                        >
+                            <div className="maker-card__head">
+                                <span className="maker-card__dot" aria-hidden="true" />
+                                <div className="maker-card__head-text">
+                                    <span className="maker-card__tagline">{maker.tagline}</span>
+                                    <h3 className="maker-card__brand">{maker.name}</h3>
                                 </div>
-                                <div className="maker-card__bg-brand">{maker.name}</div>
                             </div>
-                            
-                            {/* --- Category Selector --- */}
-                            <div className="maker-card__body">
-                                <div className="maker-card__body-header">
-                                    <HiOutlineFilter className="maker-card__filter-icon" />
-                                    <h4 className="maker-card__subheading">Select Filter Category</h4>
-                                </div>
-                                
-                                <div className="maker-card__category-grid">
-                                    {mainCategories.map((cat) => (
-                                        <Link 
-                                            key={cat._id} 
+
+                            <p className="maker-card__desc">{maker.description}</p>
+
+                            <ul className="maker-card__cats" role="list">
+                                {mainCategories.map((cat) => (
+                                    <li key={cat._id}>
+                                        <Link
                                             href={`/shop?truck=${maker.slug}&category=${cat.slug?.current || 'all'}`}
-                                            className="maker-cat-box"
+                                            className="maker-cat"
                                         >
-                                            <div className="maker-cat-box__icon">
-                                                {getCategoryIcon(cat.slug?.current || '', 32)}
-                                            </div>
-                                            <div className="maker-cat-box__info">
-                                                <span className="maker-cat-box__name">
-                                                    {cat.name.replace(' Filters', '')}
-                                                </span>
-                                                <span className="maker-cat-box__cta">Browse Items</span>
-                                            </div>
-                                            <div className="maker-cat-box__arrow">
-                                                <HiOutlineArrowNarrowRight size={16} />
-                                            </div>
+                                            <span className="maker-cat__icon">
+                                                {getCategoryIcon(cat.slug?.current || '', 22)}
+                                            </span>
+                                            <span className="maker-cat__name">
+                                                {cat.name.replace(' Filters', '')}
+                                            </span>
+                                            <HiOutlineArrowNarrowRight className="maker-cat__arrow" size={16} />
                                         </Link>
-                                    ))}
-                                </div>
-                                
-                                <Link 
-                                    href={`/shop?truck=${maker.slug}`}
-                                    className="maker-card__footer-link"
-                                >
-                                    <span>Explore All {maker.name} Inventory</span>
-                                    <div className="maker-card__footer-circle">
-                                        <HiOutlineArrowNarrowRight size={18} />
-                                    </div>
-                                </Link>
-                            </div>
-                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+
+                            <Link
+                                href={`/shop?truck=${maker.slug}`}
+                                className="maker-card__cta"
+                            >
+                                <span>View all {maker.name} filters</span>
+                                <HiOutlineArrowNarrowRight size={16} />
+                            </Link>
+                        </article>
                     ))}
                 </div>
             </div>
 
             <style jsx global>{`
                 .maker-filters-section {
-                    background: var(--color-bg-primary);
+                    background: var(--color-bg-secondary);
                     padding-top: 80px;
                     padding-bottom: 80px;
-                    position: relative;
                 }
 
                 .maker-grid {
                     display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-                    gap: 32px;
-                    margin-top: 56px;
+                    grid-template-columns: repeat(3, minmax(0, 1fr));
+                    gap: 24px;
+                    margin-top: 48px;
                 }
 
-                @media (max-width: 768px) {
-                    .maker-grid {
-                        grid-template-columns: 1fr;
-                        gap: 28px;
-                    }
-                    .maker-filters-section {
-                        padding-top: 50px;
-                        padding-bottom: 50px;
-                    }
-                }
-
+                /* ----- Card ----- */
                 .maker-card {
-                    background: var(--color-bg-secondary);
-                    border-radius: 28px;
-                    overflow: hidden;
-                    border: 1px solid var(--color-border);
-                    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+                    position: relative;
                     display: flex;
                     flex-direction: column;
-                    position: relative;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+                    background: var(--color-bg-card);
+                    border: 1px solid var(--color-border);
+                    border-radius: var(--radius-xl);
+                    padding: 28px 26px 22px;
+                    transition: border-color var(--transition-base),
+                                transform var(--transition-base),
+                                box-shadow var(--transition-base);
+                    overflow: hidden;
+                }
+
+                .maker-card::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 3px;
+                    background: var(--maker-accent);
+                    opacity: 0.85;
                 }
 
                 .maker-card:hover {
-                    transform: translateY(-12px);
-                    box-shadow: 0 40px 80px rgba(0,0,0,0.12);
-                    border-color: var(--maker-color);
+                    transform: translateY(-4px);
+                    border-color: var(--color-border-hover);
+                    box-shadow: var(--shadow-lg);
                 }
 
-                /* --- Header Styles --- */
-                .maker-card__header {
-                    padding: 56px 40px;
-                    background: linear-gradient(135deg, var(--maker-color), #0a0a0a);
-                    color: white;
-                    position: relative;
-                    overflow: hidden;
-                    min-height: 240px;
+                /* ----- Header ----- */
+                .maker-card__head {
                     display: flex;
-                    align-items: flex-end;
+                    align-items: center;
+                    gap: 14px;
+                    margin-bottom: 10px;
                 }
 
-                .maker-card__header-overlay {
-                    position: absolute;
-                    inset: 0;
-                    background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 0%, transparent 60%);
-                    pointer-events: none;
+                .maker-card__dot {
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    background: var(--maker-accent);
+                    box-shadow: 0 0 0 4px color-mix(in srgb, var(--maker-accent) 18%, transparent);
+                    flex-shrink: 0;
                 }
 
-                .maker-card__header-content {
-                    position: relative;
-                    z-index: 2;
-                    width: 100%;
+                .maker-card__head-text {
+                    display: flex;
+                    flex-direction: column;
+                    min-width: 0;
                 }
 
                 .maker-card__tagline {
-                    display: inline-block;
-                    font-size: 0.65rem;
-                    font-weight: 800;
+                    font-size: 0.7rem;
+                    font-weight: 600;
+                    letter-spacing: 0.08em;
                     text-transform: uppercase;
-                    letter-spacing: 0.2em;
-                    padding: 4px 12px;
-                    background: rgba(255,255,255,0.1);
-                    backdrop-filter: blur(4px);
-                    border-radius: 100px;
-                    margin-bottom: 12px;
-                    border: 1px solid rgba(255,255,255,0.1);
+                    color: var(--color-text-muted);
+                    line-height: 1.2;
+                    margin-bottom: 4px;
                 }
 
                 .maker-card__brand {
-                    font-size: 42px;
-                    font-weight: 900;
-                    letter-spacing: -0.04em;
-                    margin-bottom: 14px;
-                    text-transform: uppercase;
-                    line-height: 0.9;
+                    font-size: 1.5rem;
+                    font-weight: 800;
+                    letter-spacing: -0.02em;
+                    color: var(--color-text-primary);
+                    line-height: 1.1;
+                    margin: 0;
                 }
 
                 .maker-card__desc {
                     font-size: 0.9rem;
-                    line-height: 1.6;
-                    opacity: 0.8;
-                    margin: 0;
-                    max-width: 320px;
+                    color: var(--color-text-secondary);
+                    line-height: 1.55;
+                    margin: 0 0 22px;
                 }
 
-                .maker-card__bg-brand {
-                    position: absolute;
-                    top: -20px;
-                    right: -20px;
-                    font-size: 140px;
-                    font-weight: 950;
-                    opacity: 0.04;
-                    pointer-events: none;
-                    user-select: none;
-                    font-style: italic;
-                    white-space: nowrap;
+                /* ----- Category list ----- */
+                .maker-card__cats {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0 0 22px;
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 8px;
                 }
 
-                /* --- Body Styles --- */
-                .maker-card__body {
-                    padding: 40px;
-                    flex-grow: 1;
-                    display: flex;
-                    flex-direction: column;
-                }
-
-                .maker-card__body-header {
+                .maker-cat {
                     display: flex;
                     align-items: center;
                     gap: 10px;
-                    margin-bottom: 24px;
-                }
-
-                .maker-card__filter-icon {
-                    color: var(--maker-color);
-                    opacity: 0.7;
-                }
-
-                .maker-card__subheading {
-                    font-size: 0.85rem;
-                    font-weight: 800;
-                    text-transform: uppercase;
-                    letter-spacing: 0.05em;
-                    color: var(--color-text-primary);
-                    margin: 0;
-                }
-
-                .maker-card__category-grid {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 14px;
-                    margin-bottom: 32px;
-                }
-
-                /* --- Category Box --- */
-                .maker-cat-box {
-                    display: flex;
-                    align-items: center;
-                    padding: 18px 24px;
-                    background: var(--color-bg-primary);
-                    border: 1px solid var(--color-border);
-                    border-radius: 20px;
+                    padding: 12px 12px;
+                    background: var(--color-bg-tertiary);
+                    border: 1px solid transparent;
+                    border-radius: var(--radius-md);
                     text-decoration: none;
-                    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-                    position: relative;
-                    overflow: hidden;
+                    color: var(--color-text-secondary);
+                    transition: background var(--transition-fast),
+                                color var(--transition-fast),
+                                border-color var(--transition-fast);
+                    min-height: 48px;
                 }
 
-                .maker-cat-box:hover {
-                    border-color: var(--maker-color);
-                    background: var(--color-bg-secondary);
-                    transform: translateX(6px);
-                    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+                .maker-cat:hover,
+                .maker-cat:focus-visible {
+                    background: var(--color-bg-card-hover);
+                    border-color: var(--color-accent);
+                    color: var(--color-text-primary);
+                    outline: none;
                 }
 
-                .maker-cat-box__icon {
-                    width: 52px;
-                    height: 52px;
-                    background: var(--color-bg-secondary);
-                    border-radius: 14px;
-                    display: flex;
+                .maker-cat__icon {
+                    display: inline-flex;
                     align-items: center;
                     justify-content: center;
-                    margin-right: 20px;
-                    color: var(--color-text-secondary);
-                    transition: all 0.3s ease;
+                    width: 28px;
+                    height: 28px;
+                    color: var(--color-accent);
                     flex-shrink: 0;
                 }
 
-                .maker-cat-box:hover .maker-cat-box__icon {
-                    background: var(--maker-color);
-                    color: white;
-                    transform: rotate(-5deg) scale(1.1);
-                }
-
-                .maker-cat-box__info {
-                    display: flex;
-                    flex-direction: column;
-                    flex-grow: 1;
-                }
-
-                .maker-cat-box__name {
-                    font-size: 1.05rem;
-                    font-weight: 700;
-                    color: var(--color-text-primary);
-                    margin-bottom: 2px;
-                }
-
-                .maker-cat-box__cta {
-                    font-size: 0.75rem;
+                .maker-cat__name {
+                    font-size: 0.875rem;
                     font-weight: 600;
-                    color: var(--color-text-muted);
-                    text-transform: uppercase;
-                    letter-spacing: 0.02em;
+                    flex-grow: 1;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
 
-                .maker-cat-box__arrow {
+                .maker-cat__arrow {
                     color: var(--color-text-muted);
                     opacity: 0;
-                    transform: translateX(-10px);
-                    transition: all 0.3s ease;
+                    transform: translateX(-4px);
+                    transition: opacity var(--transition-fast),
+                                transform var(--transition-fast),
+                                color var(--transition-fast);
+                    flex-shrink: 0;
                 }
 
-                .maker-cat-box:hover .maker-cat-box__arrow {
+                .maker-cat:hover .maker-cat__arrow,
+                .maker-cat:focus-visible .maker-cat__arrow {
                     opacity: 1;
                     transform: translateX(0);
-                    color: var(--maker-color);
+                    color: var(--color-accent);
                 }
 
-                /* --- Footer Link --- */
-                .maker-card__footer-link {
+                /* ----- Footer CTA ----- */
+                .maker-card__cta {
                     margin-top: auto;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    padding: 14px 14px 14px 28px;
-                    background: #1a1a1a;
-                    color: white;
-                    border-radius: 100px;
-                    text-decoration: none;
-                    font-weight: 700;
-                    font-size: 0.95rem;
-                    transition: all 0.3s ease;
-                }
-
-                .maker-card__footer-link:hover {
-                    background: var(--maker-color);
-                    padding-right: 18px;
-                }
-
-                .maker-card__footer-circle {
-                    width: 44px;
-                    height: 44px;
-                    background: rgba(255,255,255,0.15);
-                    border-radius: 50%;
-                    display: flex;
+                    display: inline-flex;
                     align-items: center;
                     justify-content: center;
-                    transition: all 0.3s ease;
+                    gap: 8px;
+                    padding: 12px 18px;
+                    background: var(--color-surface);
+                    border: 1px solid var(--color-border);
+                    border-radius: var(--radius-md);
+                    color: var(--color-text-primary);
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    text-decoration: none;
+                    transition: background var(--transition-base),
+                                border-color var(--transition-base),
+                                color var(--transition-base),
+                                box-shadow var(--transition-base);
                 }
 
-                .maker-card__footer-link:hover .maker-card__footer-circle {
-                    background: rgba(255,255,255,0.25);
-                    transform: rotate(-45deg);
+                .maker-card__cta:hover,
+                .maker-card__cta:focus-visible {
+                    background: var(--color-accent);
+                    border-color: var(--color-accent);
+                    color: #fff;
+                    box-shadow: var(--shadow-glow);
+                    outline: none;
                 }
 
-                [data-theme='dark'] .maker-card__footer-link {
-                    background: #2a2a2a;
-                }
-                
-                [data-theme='dark'] .maker-card__footer-link:hover {
-                    background: var(--maker-color);
+                .maker-card__cta svg {
+                    transition: transform var(--transition-base);
                 }
 
-                @media (max-width: 480px) {
-                    .maker-card__header {
-                        padding: 40px 24px;
-                        min-height: 200px;
+                .maker-card__cta:hover svg {
+                    transform: translateX(3px);
+                }
+
+                /* ----- Responsive ----- */
+                @media (max-width: 1024px) {
+                    .maker-grid {
+                        grid-template-columns: 1fr;
+                        gap: 16px;
+                        margin-top: 36px;
                     }
-                    .maker-card__body {
-                        padding: 24px;
+                    .maker-card {
+                        padding: 24px 22px 20px;
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .maker-filters-section {
+                        padding-top: 48px;
+                        padding-bottom: 48px;
                     }
                     .maker-card__brand {
-                        font-size: 32px;
+                        font-size: 1.35rem;
                     }
-                    .maker-cat-box {
-                        padding: 14px 18px;
+                    .maker-card__desc {
+                        font-size: 0.875rem;
+                        margin-bottom: 18px;
                     }
-                    .maker-cat-box__icon {
-                        width: 44px;
-                        height: 44px;
-                        margin-right: 16px;
+                    .maker-card__cats {
+                        gap: 8px;
+                        margin-bottom: 18px;
                     }
-                    .maker-cat-box__name {
-                        font-size: 0.95rem;
+                    .maker-cat {
+                        padding: 11px 12px;
+                        min-height: 46px;
                     }
-                    .maker-card__footer-link {
-                        font-size: 0.85rem;
-                        padding-left: 20px;
+                    .maker-cat__name {
+                        font-size: 0.8rem;
+                    }
+                }
+
+                @media (max-width: 380px) {
+                    .maker-card__cats {
+                        grid-template-columns: 1fr;
+                    }
+                    .maker-cat {
+                        padding: 12px 14px;
+                    }
+                    .maker-cat__name {
+                        font-size: 0.875rem;
                     }
                 }
             `}</style>
