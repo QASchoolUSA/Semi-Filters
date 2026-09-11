@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { sendEmail } from '@/lib/email'
 import { upsertOrderFromStripeSession } from '@/lib/orders'
+import { sendTelegramMessage } from '@/lib/telegram'
 
 function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY
@@ -79,6 +80,30 @@ export async function POST(request: Request) {
            ${shipping.address.country || ''}`
         : 'Not provided'
 
+      const shippingAddressText = shipping?.address
+        ? [
+            shipping.name,
+            shipping.address.line1,
+            shipping.address.line2,
+            [shipping.address.city, shipping.address.state, shipping.address.postal_code]
+              .filter(Boolean)
+              .join(', '),
+            shipping.address.country,
+          ]
+            .filter(Boolean)
+            .join(', ')
+        : 'Not provided'
+
+      const itemLinesText = lineItems
+        .map((item) => {
+          const product = item.price?.product as Stripe.Product | undefined
+          const name = item.description || product?.name || 'Item'
+          const qty = item.quantity || 1
+          const lineTotal = ((item.amount_total || 0) / 100).toFixed(2)
+          return `• ${qty}× ${name} — $${lineTotal}`
+        })
+        .join('\n')
+
       const orderTableHtml = `
         <table style="width:100%; border-collapse:collapse; font-size:14px;">
           <thead>
@@ -151,6 +176,26 @@ export async function POST(request: Request) {
           </div>
         `,
       })
+
+      try {
+        await sendTelegramMessage(
+          [
+            `🛒 New order — $${amountTotal}`,
+            '',
+            `Customer: ${customerName}`,
+            `Email: ${customerEmail || '—'}`,
+            `Phone: ${customerPhone}`,
+            `Ship to: ${shippingAddressText}`,
+            '',
+            itemLinesText || '• (no line items)',
+            '',
+            `Subtotal $${amountSubtotal} · Shipping $${shippingCost} · Tax $${taxAmount}`,
+            `Stripe: ${session.id}`,
+          ].join('\n')
+        )
+      } catch (telegramErr) {
+        console.error('Failed to send Telegram order alert:', telegramErr)
+      }
 
       if (customerEmail) {
         await sendEmail({

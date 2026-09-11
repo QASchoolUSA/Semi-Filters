@@ -76,6 +76,8 @@ npx tsx scripts/hash-store-password.ts 'your-password' 'you@semifilters.com'
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret |
 | `NEXT_PUBLIC_SITE_URL` | Canonical site URL |
 | `SMTP_USER` / `SMTP_PASS` | Outbound email |
+| `TELEGRAM_BOT_TOKEN` | Bot token for new-order group alerts |
+| `TELEGRAM_CHAT_ID` | Telegram group/chat id (e.g. `-5486379420`) |
 | `INDEXNOW_SECRET` | IndexNow API auth |
 | `NEXT_PUBLIC_CLARITY_PROJECT_ID` | Microsoft Clarity (optional) |
 | `AUTH_SECRET` | Auth.js secret (`openssl rand -base64 32`) |
