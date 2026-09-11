@@ -13,9 +13,10 @@ import MobilePromoPopup from '@/components/MobilePromoPopup'
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
     const isStudio = pathname.startsWith('/studio')
+    const isStoreManagement = pathname.startsWith('/store-management')
 
-    // Sanity Studio needs full control of the page — skip site chrome
-    if (isStudio) {
+    // Studio and store-management use their own shells — skip storefront chrome
+    if (isStudio || isStoreManagement) {
         return <>{children}</>
     }
 

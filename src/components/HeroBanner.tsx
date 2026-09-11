@@ -22,6 +22,7 @@ export default function HeroBanner({ banner, products }: HeroBannerProps) {
                         className="hero-bg-image"
                         width={1920}
                         height={800}
+                        sizes="100vw"
                         priority
                     />
                 )}

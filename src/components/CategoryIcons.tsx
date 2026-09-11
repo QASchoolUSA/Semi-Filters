@@ -1,7 +1,7 @@
 import React from 'react'
 
 // Unique SVG icons for each filter category
-// Used in CategoryCard, HomeClient, and anywhere category icons are needed
+// Used in shop chips, truck maker filters, and elsewhere category icons are needed
 
 export function OilFilterIcon({ size = 48, className }: { size?: number; className?: string }) {
     return (

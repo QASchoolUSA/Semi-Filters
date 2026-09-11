@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { client } from '@/sanity/lib/client'
+import { sanityFetch } from '@/sanity/lib/fetch'
 import { productSlugsByIdsQuery } from '@/sanity/lib/queries'
 
 export async function POST(request: Request) {
@@ -10,14 +10,14 @@ export async function POST(request: Request) {
             return NextResponse.json({ slugs: {} })
         }
 
-        const results: { _id: string; slug: string }[] = await client.fetch(
-            productSlugsByIdsQuery,
-            { ids }
-        )
+        const results = await sanityFetch(productSlugsByIdsQuery, {
+            params: { ids },
+            tags: ['products'],
+        })
 
         const slugMap: Record<string, string> = {}
-        for (const r of results) {
-            slugMap[r._id] = r.slug
+        for (const r of results ?? []) {
+            if (r.slug) slugMap[r._id] = r.slug
         }
 
         return NextResponse.json({ slugs: slugMap })

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { client } from '@/sanity/lib/client'
+import { sanityFetch } from '@/sanity/lib/fetch'
 import { searchProductsQuery } from '@/sanity/lib/queries'
 
 export async function GET(request: Request) {
@@ -13,7 +13,11 @@ export async function GET(request: Request) {
   try {
     const term = `${q}*`
     const rawTerm = q.toUpperCase()
-    const results = await client.fetch(searchProductsQuery, { term, rawTerm })
+    const results = await sanityFetch(searchProductsQuery, {
+      params: { term, rawTerm },
+      revalidate: 30,
+      tags: ['products', 'search'],
+    })
     return NextResponse.json({ results })
   } catch (error) {
     console.error('Search error:', error)

@@ -1,22 +1,28 @@
-// GROQ queries for fetching data from Sanity
+import { defineQuery } from 'next-sanity'
 
-export const allProductsQuery = `*[_type == "product"] | order(_createdAt desc) {
+/** Shared product card fields — no portable text, first image only */
+const productCardProjection = `{
   _id,
   name,
   slug,
-  images,
+  "images": images[0...1],
   price,
   compareAtPrice,
-  description,
   category->{name, slug},
   partNumber,
   crossReferences,
   vehicleFit,
   inStock,
-  featured
+  featured,
+  brand,
+  productType
 }`
 
-export const productBySlugQuery = `*[_type == "product" && slug.current == $slug][0] {
+const publishedProduct = `_type == "product" && published != false && defined(slug.current)`
+
+export const allProductsQuery = defineQuery(`*[${publishedProduct}] | order(_createdAt desc) ${productCardProjection}`)
+
+export const productBySlugQuery = defineQuery(`*[${publishedProduct} && slug.current == $slug][0] {
   _id,
   name,
   slug,
@@ -26,65 +32,36 @@ export const productBySlugQuery = `*[_type == "product" && slug.current == $slug
   description,
   details,
   category->{name, slug},
+  "categoryId": category._ref,
   specifications,
   partNumber,
   crossReferences,
   vehicleFit,
   inStock,
   featured,
+  brand,
+  productType,
   seoTitle,
   seoDescription
-}`
+}`)
 
-export const featuredProductsQuery = `*[_type == "product"] | order(featured desc, _createdAt desc) [0...8] {
-  _id,
-  name,
-  slug,
-  images,
-  price,
-  compareAtPrice,
-  description,
-  category->{name, slug},
-  partNumber,
-  crossReferences,
-  vehicleFit,
-  inStock,
-  featured
-}`
+export const featuredProductsQuery = defineQuery(`*[${publishedProduct}] | order(featured desc, _createdAt desc) [0...8] ${productCardProjection}`)
 
-export const productsByCategoryQuery = `*[_type == "product" && category->slug.current == $categorySlug] | order(_createdAt desc) {
-  _id,
-  name,
-  slug,
-  images,
-  price,
-  compareAtPrice,
-  description,
-  category->{name, slug},
-  partNumber,
-  crossReferences,
-  vehicleFit,
-  inStock,
-  featured
-}`
+export const relatedProductsQuery = defineQuery(`*[
+  ${publishedProduct}
+  && _id != $productId
+  && category._ref == $categoryId
+] | order(_createdAt desc) [0...4] ${productCardProjection}`)
 
-export const allCategoriesQuery = `*[_type == "category"] | order(order asc) {
+export const allCategoriesQuery = defineQuery(`*[_type == "category"] | order(order asc) {
   _id,
   name,
   slug,
   description,
   image
-}`
+}`)
 
-export const categoryBySlugQuery = `*[_type == "category" && slug.current == $slug][0] {
-  _id,
-  name,
-  slug,
-  description,
-  image
-}`
-
-export const searchProductsQuery = `*[_type == "product" && (
+export const searchProductsQuery = defineQuery(`*[${publishedProduct} && (
   partNumber match $term ||
   name match $term ||
   pt::text(description) match $term ||
@@ -94,21 +71,31 @@ export const searchProductsQuery = `*[_type == "product" && (
   _id,
   name,
   slug,
-  images,
+  "images": images[0...1],
   price,
   compareAtPrice,
   category->{name, slug},
   partNumber,
   crossReferences,
   inStock
-}`
+}`)
 
-export const productSlugsByIdsQuery = `*[_type == "product" && _id in $ids] {
+export const productSlugsByIdsQuery = defineQuery(`*[${publishedProduct} && _id in $ids] {
   _id,
   "slug": slug.current
-}`
+}`)
 
-export const heroBannerQuery = `*[_type == "banner" && isActive == true][0] {
+export const productSitemapQuery = defineQuery(`*[${publishedProduct}] {
+  slug,
+  _updatedAt
+}`)
+
+export const categorySitemapQuery = defineQuery(`*[_type == "category" && defined(slug.current)] {
+  slug,
+  _updatedAt
+}`)
+
+export const heroBannerQuery = defineQuery(`*[_type == "banner" && isActive == true][0] {
   _id,
   heading,
   subheading,
@@ -116,4 +103,48 @@ export const heroBannerQuery = `*[_type == "banner" && isActive == true][0] {
   ctaText,
   ctaLink,
   discount
+}`)
+
+/** Lightweight rows for shop facet counts (all published products) */
+export const shopFacetQuery = defineQuery(`*[${publishedProduct}] {
+  _id,
+  name,
+  price,
+  inStock,
+  vehicleFit,
+  "categorySlug": category->slug.current,
+  "categoryName": category->name
+}`)
+
+const orderProjection = `{
+  _id,
+  _createdAt,
+  stripeSessionId,
+  status,
+  customerName,
+  customerEmail,
+  customerPhone,
+  shippingAddress,
+  lineItems,
+  subtotal,
+  shipping,
+  tax,
+  total,
+  trackingNumber,
+  trackingUrl,
+  carrier,
+  servicelevel,
+  labelUrl,
+  shippoRateId,
+  shippoTransactionId,
+  shippedAt,
+  parcel
 }`
+
+export const allOrdersQuery = defineQuery(`*[_type == "order"] | order(_createdAt desc) [0...100] ${orderProjection}`)
+
+export const unshippedOrdersQuery = defineQuery(`*[_type == "order" && status in ["paid", "ready_to_ship"]] | order(_createdAt desc) [0...100] ${orderProjection}`)
+
+export const orderByIdQuery = defineQuery(`*[_type == "order" && _id == $id][0] ${orderProjection}`)
+
+export const orderByStripeSessionQuery = defineQuery(`*[_type == "order" && stripeSessionId == $sessionId][0] { _id }`)

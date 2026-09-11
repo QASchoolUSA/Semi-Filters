@@ -1,6 +1,5 @@
 import React from 'react'
-import { client } from '@/sanity/lib/client'
-import { productBySlugQuery, featuredProductsQuery } from '@/sanity/lib/queries'
+import { getProductBySlug, getRelatedProducts } from '@/sanity/lib/fetch'
 import ProductDetailClient from '@/components/ProductDetailClient'
 import { urlFor } from '@/sanity/lib/image'
 import type { Product } from '@/types'
@@ -29,7 +28,7 @@ function portableTextToPlain(blocks: unknown): string {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { slug } = await params
-    const product = await client.fetch(productBySlugQuery, { slug }).catch(() => null) as Product | null
+    const product = await getProductBySlug(slug)
 
     if (!product) return { title: 'Product Not Found | Semi Filters' }
 
@@ -74,12 +73,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductDetailPage({ params }: Props) {
     const { slug } = await params
-    const product = await client.fetch(productBySlugQuery, { slug }).catch(() => null) as Product | null
-    const relatedProducts = await client.fetch(featuredProductsQuery).catch(() => []) as Product[]
+    const product = await getProductBySlug(slug)
 
     if (!product) {
         notFound()
     }
+
+    const relatedProducts = await getRelatedProducts(product._id, product.categoryId)
 
     const productUrl = `${BASE_URL}/shop/${slug}`
     const imageUrl = product.images?.[0]
@@ -101,7 +101,7 @@ export default async function ProductDetailPage({ params }: Props) {
         mpn: product.partNumber || undefined,
         brand: {
             '@type': 'Brand',
-            name: 'Semi Filters',
+            name: product.brand || 'Semi Filters',
         },
         offers: {
             '@type': 'Offer',

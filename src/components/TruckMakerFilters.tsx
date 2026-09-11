@@ -4,7 +4,6 @@ import React from 'react'
 import Link from 'next/link'
 import { getCategoryIcon } from '@/components/CategoryIcons'
 import { HiOutlineArrowNarrowRight } from 'react-icons/hi'
-import { DEMO_CATEGORIES } from '@/lib/demo-data'
 import type { Category } from '@/types'
 
 interface TruckMakerFiltersProps {
@@ -36,7 +35,7 @@ const truckMakers = [
 ]
 
 export default function TruckMakerFilters({ categories }: TruckMakerFiltersProps) {
-    const sourceCategories = (categories && categories.length > 0) ? categories : DEMO_CATEGORIES
+    const sourceCategories = categories ?? []
     const priorityTerms = ['oil', 'air', 'fuel', 'cabin']
 
     let mainCategories = sourceCategories.filter(cat => {
@@ -58,6 +57,10 @@ export default function TruckMakerFilters({ categories }: TruckMakerFiltersProps
     if (mainCategories.length < 4 && sourceCategories.length > 0) {
         const extras = sourceCategories.filter(c => !mainCategories.find(mc => mc._id === c._id))
         mainCategories = [...mainCategories, ...extras].slice(0, 4)
+    }
+
+    if (mainCategories.length === 0) {
+        return null
     }
 
     return (

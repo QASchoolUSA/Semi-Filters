@@ -1,10 +1,9 @@
 import React from 'react'
-import { client } from '@/sanity/lib/client'
-import { heroBannerQuery, featuredProductsQuery, allCategoriesQuery } from '@/sanity/lib/queries'
+import { getCategories, getFeaturedProducts, getHeroBanner } from '@/sanity/lib/fetch'
 import { urlFor } from '@/sanity/lib/image'
 import HeroBanner from '@/components/HeroBanner'
 import HomeClient from '@/components/HomeClient'
-import type { Product, Category, Banner } from '@/types'
+import type { Product } from '@/types'
 
 export const revalidate = 60
 
@@ -12,9 +11,9 @@ const BASE_URL = 'https://semifilters.com'
 
 async function getData() {
   const [banner, products, categories] = await Promise.all([
-    client.fetch(heroBannerQuery).catch(() => null) as Promise<Banner | null>,
-    client.fetch(featuredProductsQuery).catch(() => []) as Promise<Product[]>,
-    client.fetch(allCategoriesQuery).catch(() => []) as Promise<Category[]>,
+    getHeroBanner(),
+    getFeaturedProducts(),
+    getCategories(),
   ])
   return { banner, products, categories }
 }

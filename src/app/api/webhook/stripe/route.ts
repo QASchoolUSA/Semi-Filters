@@ -1,14 +1,25 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { sendEmail } from '@/lib/email'
+import { upsertOrderFromStripeSession } from '@/lib/orders'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-02-25.clover',
-})
-
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
+function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY
+  if (!key) {
+    throw new Error('STRIPE_SECRET_KEY is not configured')
+  }
+  return new Stripe(key, {
+    apiVersion: '2026-02-25.clover',
+  })
+}
 
 export async function POST(request: Request) {
+  const stripe = getStripe()
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+  if (!webhookSecret) {
+    return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 })
+  }
+
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')!
 
@@ -27,6 +38,12 @@ export async function POST(request: Request) {
       const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
         expand: ['line_items', 'line_items.data.price.product'],
       })
+
+      try {
+        await upsertOrderFromStripeSession(fullSession)
+      } catch (orderErr) {
+        console.error('Failed to persist order to Sanity:', orderErr)
+      }
 
       const customerEmail = fullSession.customer_details?.email
       const customerName = fullSession.customer_details?.name || 'Customer'
@@ -97,7 +114,6 @@ export async function POST(request: Request) {
           </tr>
         </table>`
 
-      // --- Admin notification email ---
       await sendEmail({
         to: 'support@semifilters.com',
         subject: `New Order — ${customerName} ($${amountTotal})`,
@@ -136,7 +152,6 @@ export async function POST(request: Request) {
         `,
       })
 
-      // --- Customer confirmation email ---
       if (customerEmail) {
         await sendEmail({
           to: customerEmail,
@@ -178,7 +193,7 @@ export async function POST(request: Request) {
         })
       }
     } catch (emailErr) {
-      console.error('Failed to send order emails:', emailErr)
+      console.error('Failed to process order webhook:', emailErr)
     }
   }
 

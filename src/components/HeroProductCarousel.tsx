@@ -101,6 +101,7 @@ export default function HeroProductCarousel({ products }: HeroProductCarouselPro
                                             alt={product.name}
                                             width={240}
                                             height={240}
+                                            sizes="(max-width: 768px) 40vw, 240px"
                                             style={{ objectFit: 'contain', width: '100%', height: '100%' }}
                                         />
                                     ) : (

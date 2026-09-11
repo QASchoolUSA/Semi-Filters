@@ -1,9 +1,16 @@
 import React from 'react'
-import { client } from '@/sanity/lib/client'
-import { allProductsQuery, allCategoriesQuery } from '@/sanity/lib/queries'
+import { getAllProducts, getCategories, getShopFacets } from '@/sanity/lib/fetch'
 import { urlFor } from '@/sanity/lib/image'
 import ShopClient from '@/components/ShopClient'
-import type { Product, Category } from '@/types'
+import {
+    buildCategoryCounts,
+    collectTruckBrands,
+    filterProducts,
+    paginateProducts,
+    parseShopFilters,
+    sortProducts,
+} from '@/lib/shop'
+import type { Product } from '@/types'
 import type { Metadata } from 'next'
 
 const BASE_URL = 'https://semifilters.com'
@@ -30,26 +37,7 @@ export const metadata: Metadata = {
 
 export const revalidate = 60
 
-async function getData() {
-    console.log('Fetching products and categories...')
-    const [products, categories] = await Promise.all([
-        client.fetch(allProductsQuery).catch((err) => {
-            console.error('Error fetching products:', err)
-            return []
-        }) as Promise<Product[]>,
-        client.fetch(allCategoriesQuery).catch((err) => {
-            console.error('Error fetching categories:', err)
-            return []
-        }) as Promise<Category[]>,
-    ])
-    console.log(`Fetched ${products.length} products and ${categories.length} categories`)
-    if (products.length > 0) {
-        console.log('Sample product category:', JSON.stringify(products[0].category))
-    }
-    return { products, categories }
-}
-
-function buildShopJsonLd(products: Product[]) {
+function buildShopJsonLd(products: Product[], total: number) {
     const itemList = products.map((p, i) => ({
         '@type': 'ListItem',
         position: i + 1,
@@ -68,7 +56,7 @@ function buildShopJsonLd(products: Product[]) {
         mainEntity: {
             '@type': 'ItemList',
             name: 'All Semi Truck Filters',
-            numberOfItems: products.length,
+            numberOfItems: total,
             itemListElement: itemList,
         },
     }
@@ -83,12 +71,42 @@ const breadcrumbJsonLd = {
     ],
 }
 
-export default async function ProductsPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
-    const { products, categories } = await getData()
+export default async function ProductsPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
     const resolvedParams = await searchParams
-    const initialCategory = typeof resolvedParams.category === 'string' ? resolvedParams.category : 'all'
-    const initialTruck = typeof resolvedParams.truck === 'string' ? resolvedParams.truck : 'all'
-    const shopJsonLd = buildShopJsonLd(products)
+    const filters = parseShopFilters(resolvedParams)
+
+    const [allProducts, categories, facets] = await Promise.all([
+        getAllProducts(),
+        getCategories(),
+        getShopFacets(),
+    ])
+
+    const filtered = filterProducts(allProducts, filters, categories)
+    const sorted = sortProducts(filtered, filters.sort)
+    const { items, total, totalPages, page } = paginateProducts(sorted, filters.page)
+
+    const categoryCounts = buildCategoryCounts(facets, categories, {
+        truck: filters.truck,
+        sort: filters.sort,
+        inStockOnly: filters.inStockOnly,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+    })
+
+    const truckBrands = collectTruckBrands(facets)
+    const pricedFacets = facets.filter((p): p is typeof p & { price: number } => p.price != null)
+    const priceRange = pricedFacets.length
+        ? {
+              min: Math.floor(Math.min(...pricedFacets.map((p) => p.price))),
+              max: Math.ceil(Math.max(...pricedFacets.map((p) => p.price))),
+          }
+        : { min: 0, max: 0 }
+
+    const shopJsonLd = buildShopJsonLd(items, total)
 
     return (
         <>
@@ -103,12 +121,26 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
             <div className="shop-page-title-banner">
                 <div className="container">
                     <h1>All Products</h1>
-                    <p>Premium OEM-quality oil, air, fuel, and cabin filters for semi trucks. Find the exact filter for your Freightliner, Peterbilt, Kenworth, Volvo, or Mack truck.</p>
+                    <p>
+                        Premium OEM-quality oil, air, fuel, and cabin filters for semi trucks. Find
+                        the exact filter for your Freightliner, Peterbilt, Kenworth, Volvo, or Mack
+                        truck.
+                    </p>
                 </div>
             </div>
             <section className="section shop-section">
                 <div className="container">
-                    <ShopClient products={products} categories={categories} initialCategory={initialCategory} initialTruck={initialTruck} />
+                    <ShopClient
+                        products={items}
+                        categories={categories}
+                        filters={filters}
+                        total={total}
+                        totalPages={totalPages}
+                        page={page}
+                        categoryCounts={categoryCounts}
+                        truckBrands={truckBrands}
+                        priceRange={priceRange}
+                    />
                 </div>
             </section>
         </>

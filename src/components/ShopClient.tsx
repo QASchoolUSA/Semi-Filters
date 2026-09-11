@@ -1,51 +1,81 @@
 'use client'
 
-import React, { useState, useMemo, useRef, useEffect } from 'react'
+import React, { useMemo, useRef, useEffect, useTransition } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
 import ProductCard from '@/components/ProductCard'
 import { getCategoryIcon } from '@/components/CategoryIcons'
+import type { ShopFilters, ShopSort } from '@/lib/shop'
 import type { Product, Category } from '@/types'
 
 interface ShopClientProps {
     products: Product[]
     categories: Category[]
-    initialCategory?: string
-    initialTruck?: string
+    filters: ShopFilters
+    total: number
+    totalPages: number
+    page: number
+    categoryCounts: Record<string, number>
+    truckBrands: string[]
+    priceRange: { min: number; max: number }
 }
 
-const sortOptions = [
+const sortOptions: { value: ShopSort; label: string }[] = [
     { value: 'default', label: 'Default' },
     { value: 'price-asc', label: 'Price: Low → High' },
     { value: 'price-desc', label: 'Price: High → Low' },
     { value: 'name', label: 'Name: A → Z' },
 ]
 
-export default function ShopClient({ products, categories, initialCategory = 'all', initialTruck = 'all' }: ShopClientProps) {
-    const displayProducts = products || []
-    const displayCategories = categories || []
+function buildShopQuery(next: Partial<ShopFilters> & { page?: number }, current: ShopFilters) {
+    const merged: ShopFilters = { ...current, ...next }
+    const params = new URLSearchParams()
 
-    const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory)
-    const [selectedTruck, setSelectedTruck] = useState<string>(initialTruck)
-    const [sortBy, setSortBy] = useState<string>('default')
-    const [inStockOnly, setInStockOnly] = useState(false)
-    const [sortOpen, setSortOpen] = useState(false)
-    const [truckOpen, setTruckOpen] = useState(false)
-    const [priceOpen, setPriceOpen] = useState(false)
-    const [priceMin, setPriceMin] = useState<string>('')
-    const [priceMax, setPriceMax] = useState<string>('')
+    if (merged.category !== 'all') params.set('category', merged.category)
+    if (merged.truck !== 'all') params.set('truck', merged.truck)
+    if (merged.sort !== 'default') params.set('sort', merged.sort)
+    if (merged.inStockOnly) params.set('inStock', '1')
+    if (merged.minPrice !== null) params.set('minPrice', String(merged.minPrice))
+    if (merged.maxPrice !== null) params.set('maxPrice', String(merged.maxPrice))
+    if (merged.page > 1) params.set('page', String(merged.page))
+
+    const qs = params.toString()
+    return qs ? `?${qs}` : ''
+}
+
+export default function ShopClient({
+    products,
+    categories,
+    filters,
+    total,
+    totalPages,
+    page,
+    categoryCounts,
+    truckBrands,
+    priceRange,
+}: ShopClientProps) {
+    const router = useRouter()
+    const pathname = usePathname()
+    const [isPending, startTransition] = useTransition()
+
+    const [priceMin, setPriceMin] = React.useState(
+        filters.minPrice !== null ? String(filters.minPrice) : ''
+    )
+    const [priceMax, setPriceMax] = React.useState(
+        filters.maxPrice !== null ? String(filters.maxPrice) : ''
+    )
+    const [sortOpen, setSortOpen] = React.useState(false)
+    const [truckOpen, setTruckOpen] = React.useState(false)
+    const [priceOpen, setPriceOpen] = React.useState(false)
 
     const sortRef = useRef<HTMLDivElement>(null)
     const truckRef = useRef<HTMLDivElement>(null)
     const priceRef = useRef<HTMLDivElement>(null)
     const chipsRef = useRef<HTMLDivElement>(null)
 
-    // Sync state with URL params when they change
     useEffect(() => {
-        if (initialCategory) setSelectedCategory(initialCategory)
-    }, [initialCategory])
-
-    useEffect(() => {
-        if (initialTruck) setSelectedTruck(initialTruck)
-    }, [initialTruck])
+        setPriceMin(filters.minPrice !== null ? String(filters.minPrice) : '')
+        setPriceMax(filters.maxPrice !== null ? String(filters.maxPrice) : '')
+    }, [filters.minPrice, filters.maxPrice])
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -62,123 +92,56 @@ export default function ShopClient({ products, categories, initialCategory = 'al
         if (activeChip && chipsRef.current) {
             activeChip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
         }
-    }, [selectedCategory])
+    }, [filters.category])
 
-    const truckBrands = useMemo(() => {
-        const brands = new Set<string>(['Volvo', 'Kenworth', 'Freightliner', 'Peterbilt', 'Mack', 'International'])
-        displayProducts.forEach(p => {
-            p.vehicleFit?.forEach(v => {
-                if (v) {
-                    const normalized = v.trim().charAt(0).toUpperCase() + v.trim().slice(1).toLowerCase()
-                    brands.add(normalized)
-                }
-            })
-            // Also check name for brands to populate filter list
-            const lowerName = p.name.toLowerCase()
-            if (lowerName.includes('volvo')) brands.add('Volvo')
-            if (lowerName.includes('kenworth')) brands.add('Kenworth')
-            if (lowerName.includes('freightliner')) brands.add('Freightliner')
+    const navigate = (next: Partial<ShopFilters>) => {
+        const query = buildShopQuery(next, filters)
+        startTransition(() => {
+            router.push(`${pathname}${query}`)
         })
-        return Array.from(brands).sort()
-    }, [displayProducts])
-
-    const priceRange = useMemo(() => {
-        if (displayProducts.length === 0) return { min: 0, max: 0 }
-        const prices = displayProducts.map(p => p.price)
-        return { min: Math.floor(Math.min(...prices)), max: Math.ceil(Math.max(...prices)) }
-    }, [displayProducts])
-
-    const priceMinNum = priceMin === '' ? null : Number(priceMin)
-    const priceMaxNum = priceMax === '' ? null : Number(priceMax)
-    const hasPriceFilter = priceMin !== '' || priceMax !== ''
-
-    const categoryCounts = useMemo(() => {
-        const counts: Record<string, number> = { all: displayProducts.length }
-        displayCategories.forEach(cat => {
-            if (!cat.slug?.current) return
-            counts[cat.slug.current] = displayProducts.filter(p => {
-                const pCatSlug = p.category?.slug?.current
-                return pCatSlug === cat.slug.current || p.name.toLowerCase().includes(cat.name.toLowerCase().replace(' filters', '').trim())
-            }).length
-        })
-        return counts
-    }, [displayProducts, displayCategories])
-
-    const filteredProducts = useMemo(() => {
-        let filtered = [...displayProducts]
-
-        if (selectedCategory !== 'all') {
-            filtered = filtered.filter((p) => {
-                // Check if the product has a category object with a slug
-                if (p.category?.slug?.current === selectedCategory) return true
-                
-                // Smart fallback: Check if the category name is in the product's name
-                const catObj = displayCategories.find(c => c.slug?.current === selectedCategory)
-                if (catObj && p.name.toLowerCase().includes(catObj.name.toLowerCase().replace(' filters', '').trim())) return true
-
-                return false
-            })
-        }
-
-        if (selectedTruck !== 'all') {
-            const target = selectedTruck.toLowerCase()
-            filtered = filtered.filter((p) => {
-                // 1. Check explicit vehicleFit tags
-                const hasTag = p.vehicleFit?.some(v => v && v.toLowerCase().includes(target))
-                if (hasTag) return true
-
-                // 2. Smart Fallback: Check if the brand name is in the product title
-                if (p.name.toLowerCase().includes(target)) return true
-
-                return false
-            })
-        }
-
-        if (inStockOnly) {
-            filtered = filtered.filter((p) => p.inStock)
-        }
-
-        if (priceMinNum !== null && !isNaN(priceMinNum)) {
-            filtered = filtered.filter((p) => p.price >= priceMinNum)
-        }
-        if (priceMaxNum !== null && !isNaN(priceMaxNum)) {
-            filtered = filtered.filter((p) => p.price <= priceMaxNum)
-        }
-
-        switch (sortBy) {
-            case 'price-asc':
-                filtered.sort((a, b) => a.price - b.price)
-                break
-            case 'price-desc':
-                filtered.sort((a, b) => b.price - a.price)
-                break
-            case 'name':
-                filtered.sort((a, b) => a.name.localeCompare(b.name))
-                break
-        }
-
-        return filtered
-    }, [displayProducts, selectedCategory, selectedTruck, sortBy, inStockOnly, priceMinNum, priceMaxNum, displayCategories])
-
-    const activeSortLabel = sortOptions.find(o => o.value === sortBy)?.label || 'Default'
-    const hasActiveFilters = selectedCategory !== 'all' || selectedTruck !== 'all' || inStockOnly || sortBy !== 'default' || hasPriceFilter
-
-    const resetFilters = () => {
-        setSelectedCategory('all')
-        setSelectedTruck('all')
-        setInStockOnly(false)
-        setSortBy('default')
-        setPriceMin('')
-        setPriceMax('')
     }
 
+    const hasPriceFilter = filters.minPrice !== null || filters.maxPrice !== null
+    const hasActiveFilters =
+        filters.category !== 'all' ||
+        filters.truck !== 'all' ||
+        filters.inStockOnly ||
+        filters.sort !== 'default' ||
+        hasPriceFilter
+
+    const resetFilters = () => {
+        setPriceMin('')
+        setPriceMax('')
+        startTransition(() => {
+            router.push(pathname)
+        })
+    }
+
+    const applyPriceFilter = () => {
+        const min = priceMin === '' ? null : Number(priceMin)
+        const max = priceMax === '' ? null : Number(priceMax)
+        navigate({
+            minPrice: min !== null && !Number.isNaN(min) ? min : null,
+            maxPrice: max !== null && !Number.isNaN(max) ? max : null,
+            page: 1,
+        })
+        setPriceOpen(false)
+    }
+
+    const activeSortLabel = sortOptions.find((o) => o.value === filters.sort)?.label || 'Default'
+
+    const pageNumbers = useMemo(() => {
+        if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1)
+        const pages = new Set([1, totalPages, page, page - 1, page + 1].filter((p) => p >= 1 && p <= totalPages))
+        return Array.from(pages).sort((a, b) => a - b)
+    }, [page, totalPages])
+
     return (
-        <div className="shop-layout">
-            {/* ── Category Chips ── */}
+        <div className={`shop-layout${isPending ? ' shop-layout--pending' : ''}`}>
             <div className="shop-chips" ref={chipsRef}>
                 <button
-                    className={`shop-chip ${selectedCategory === 'all' ? 'shop-chip--active' : ''}`}
-                    onClick={() => setSelectedCategory('all')}
+                    className={`shop-chip ${filters.category === 'all' ? 'shop-chip--active' : ''}`}
+                    onClick={() => navigate({ category: 'all', page: 1 })}
                 >
                     <span className="shop-chip__icon">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -189,14 +152,14 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                         </svg>
                     </span>
                     <span className="shop-chip__label">All</span>
-                    <span className="shop-chip__count">{categoryCounts.all}</span>
+                    <span className="shop-chip__count">{categoryCounts.all ?? 0}</span>
                 </button>
 
-                {displayCategories.map((cat) => (
+                {categories.map((cat) => (
                     <button
                         key={cat._id}
-                        className={`shop-chip ${selectedCategory === cat.slug.current ? 'shop-chip--active' : ''}`}
-                        onClick={() => setSelectedCategory(cat.slug.current)}
+                        className={`shop-chip ${filters.category === cat.slug.current ? 'shop-chip--active' : ''}`}
+                        onClick={() => navigate({ category: cat.slug.current, page: 1 })}
                     >
                         <span className="shop-chip__icon">
                             {getCategoryIcon(cat.slug.current, 20)}
@@ -209,12 +172,16 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                 ))}
             </div>
 
-            {/* ── Toolbar: Count + Controls ── */}
             <div className="shop-toolbar">
                 <div className="shop-toolbar__left">
                     <p className="shop-toolbar__count">
-                        <strong>{filteredProducts.length}</strong>{' '}
-                        product{filteredProducts.length !== 1 ? 's' : ''}
+                        <strong>{total}</strong> product{total !== 1 ? 's' : ''}
+                        {totalPages > 1 && (
+                            <span className="shop-toolbar__page">
+                                {' '}
+                                · Page {page} of {totalPages}
+                            </span>
+                        )}
                     </p>
                     {hasActiveFilters && (
                         <button className="shop-toolbar__clear" onClick={resetFilters}>
@@ -224,12 +191,13 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                 </div>
 
                 <div className="shop-toolbar__right">
-                    {/* Toggle: In Stock */}
                     <label className="shop-toggle">
                         <input
                             type="checkbox"
-                            checked={inStockOnly}
-                            onChange={() => setInStockOnly(!inStockOnly)}
+                            checked={filters.inStockOnly}
+                            onChange={() =>
+                                navigate({ inStockOnly: !filters.inStockOnly, page: 1 })
+                            }
                         />
                         <span className="shop-toggle__track">
                             <span className="shop-toggle__thumb" />
@@ -237,11 +205,14 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                         <span className="shop-toggle__text">In Stock</span>
                     </label>
 
-                    {/* Price Range Dropdown */}
                     <div className="shop-sort" ref={priceRef}>
                         <button
                             className={`shop-sort__trigger ${hasPriceFilter ? 'shop-sort__trigger--filtered' : ''}`}
-                            onClick={() => { setPriceOpen(!priceOpen); setSortOpen(false); setTruckOpen(false) }}
+                            onClick={() => {
+                                setPriceOpen(!priceOpen)
+                                setSortOpen(false)
+                                setTruckOpen(false)
+                            }}
                             aria-expanded={priceOpen}
                             aria-haspopup="dialog"
                         >
@@ -251,7 +222,7 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                             </svg>
                             <span className="shop-sort__label">
                                 {hasPriceFilter
-                                    ? `$${priceMin || '0'} – $${priceMax || '∞'}`
+                                    ? `$${filters.minPrice ?? '0'} – $${filters.maxPrice ?? '∞'}`
                                     : 'Price'}
                             </span>
                             <svg
@@ -310,15 +281,17 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                                     <div className="shop-price__actions">
                                         <button
                                             className="shop-price__clear"
-                                            onClick={() => { setPriceMin(''); setPriceMax('') }}
-                                            disabled={!hasPriceFilter}
+                                            onClick={() => {
+                                                setPriceMin('')
+                                                setPriceMax('')
+                                                navigate({ minPrice: null, maxPrice: null, page: 1 })
+                                                setPriceOpen(false)
+                                            }}
+                                            disabled={!hasPriceFilter && !priceMin && !priceMax}
                                         >
                                             Clear
                                         </button>
-                                        <button
-                                            className="shop-price__apply"
-                                            onClick={() => setPriceOpen(false)}
-                                        >
+                                        <button className="shop-price__apply" onClick={applyPriceFilter}>
                                             Apply
                                         </button>
                                     </div>
@@ -327,12 +300,15 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                         )}
                     </div>
 
-                    {/* Truck Brand Dropdown */}
                     {truckBrands.length > 0 && (
                         <div className="shop-sort" ref={truckRef}>
                             <button
-                                className={`shop-sort__trigger ${selectedTruck !== 'all' ? 'shop-sort__trigger--filtered' : ''}`}
-                                onClick={() => { setTruckOpen(!truckOpen); setSortOpen(false); setPriceOpen(false) }}
+                                className={`shop-sort__trigger ${filters.truck !== 'all' ? 'shop-sort__trigger--filtered' : ''}`}
+                                onClick={() => {
+                                    setTruckOpen(!truckOpen)
+                                    setSortOpen(false)
+                                    setPriceOpen(false)
+                                }}
                                 aria-expanded={truckOpen}
                                 aria-haspopup="listbox"
                             >
@@ -343,7 +319,7 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                                     <circle cx="18.5" cy="18.5" r="2.5" />
                                 </svg>
                                 <span className="shop-sort__label">
-                                    {selectedTruck === 'all' ? 'All Trucks' : selectedTruck}
+                                    {filters.truck === 'all' ? 'All Trucks' : filters.truck}
                                 </span>
                                 <svg
                                     className="shop-sort__chevron"
@@ -365,12 +341,15 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                                     <div className="shop-sort__menu" role="listbox">
                                         <div className="shop-sort__menu-handle" />
                                         <button
-                                            className={`shop-sort__option ${selectedTruck === 'all' ? 'shop-sort__option--active' : ''}`}
+                                            className={`shop-sort__option ${filters.truck === 'all' ? 'shop-sort__option--active' : ''}`}
                                             role="option"
-                                            aria-selected={selectedTruck === 'all'}
-                                            onClick={() => { setSelectedTruck('all'); setTruckOpen(false) }}
+                                            aria-selected={filters.truck === 'all'}
+                                            onClick={() => {
+                                                navigate({ truck: 'all', page: 1 })
+                                                setTruckOpen(false)
+                                            }}
                                         >
-                                            {selectedTruck === 'all' && (
+                                            {filters.truck === 'all' && (
                                                 <svg className="shop-sort__check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                                                     <polyline points="20 6 9 17 4 12" />
                                                 </svg>
@@ -380,12 +359,15 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                                         {truckBrands.map((brand) => (
                                             <button
                                                 key={brand}
-                                                className={`shop-sort__option ${selectedTruck === brand ? 'shop-sort__option--active' : ''}`}
+                                                className={`shop-sort__option ${filters.truck === brand ? 'shop-sort__option--active' : ''}`}
                                                 role="option"
-                                                aria-selected={selectedTruck === brand}
-                                                onClick={() => { setSelectedTruck(brand); setTruckOpen(false) }}
+                                                aria-selected={filters.truck === brand}
+                                                onClick={() => {
+                                                    navigate({ truck: brand, page: 1 })
+                                                    setTruckOpen(false)
+                                                }}
                                             >
-                                                {selectedTruck === brand && (
+                                                {filters.truck === brand && (
                                                     <svg className="shop-sort__check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                                                         <polyline points="20 6 9 17 4 12" />
                                                     </svg>
@@ -399,11 +381,14 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                         </div>
                     )}
 
-                    {/* Sort Dropdown */}
                     <div className="shop-sort" ref={sortRef}>
                         <button
                             className="shop-sort__trigger"
-                            onClick={() => { setSortOpen(!sortOpen); setTruckOpen(false); setPriceOpen(false) }}
+                            onClick={() => {
+                                setSortOpen(!sortOpen)
+                                setTruckOpen(false)
+                                setPriceOpen(false)
+                            }}
                             aria-expanded={sortOpen}
                             aria-haspopup="listbox"
                         >
@@ -433,12 +418,15 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                                     {sortOptions.map((opt) => (
                                         <button
                                             key={opt.value}
-                                            className={`shop-sort__option ${sortBy === opt.value ? 'shop-sort__option--active' : ''}`}
+                                            className={`shop-sort__option ${filters.sort === opt.value ? 'shop-sort__option--active' : ''}`}
                                             role="option"
-                                            aria-selected={sortBy === opt.value}
-                                            onClick={() => { setSortBy(opt.value); setSortOpen(false) }}
+                                            aria-selected={filters.sort === opt.value}
+                                            onClick={() => {
+                                                navigate({ sort: opt.value, page: 1 })
+                                                setSortOpen(false)
+                                            }}
                                         >
-                                            {sortBy === opt.value && (
+                                            {filters.sort === opt.value && (
                                                 <svg className="shop-sort__check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                                                     <polyline points="20 6 9 17 4 12" />
                                                 </svg>
@@ -453,14 +441,13 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                 </div>
             </div>
 
-            {/* ── Product Grid ── */}
             <div className="product-grid">
-                {filteredProducts.map((product) => (
+                {products.map((product) => (
                     <ProductCard key={product._id} product={product} />
                 ))}
             </div>
 
-            {filteredProducts.length === 0 && (
+            {products.length === 0 && (
                 <div className="shop-empty">
                     <div className="shop-empty__icon">
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -474,6 +461,43 @@ export default function ShopClient({ products, categories, initialCategory = 'al
                         Reset All Filters
                     </button>
                 </div>
+            )}
+
+            {totalPages > 1 && (
+                <nav className="shop-pagination" aria-label="Shop pagination">
+                    <button
+                        className="shop-pagination__btn"
+                        disabled={page <= 1}
+                        onClick={() => navigate({ page: page - 1 })}
+                    >
+                        Previous
+                    </button>
+                    <div className="shop-pagination__pages">
+                        {pageNumbers.map((n, i) => {
+                            const prev = pageNumbers[i - 1]
+                            const showEllipsis = prev !== undefined && n - prev > 1
+                            return (
+                                <React.Fragment key={n}>
+                                    {showEllipsis && <span className="shop-pagination__ellipsis">…</span>}
+                                    <button
+                                        className={`shop-pagination__page${n === page ? ' shop-pagination__page--active' : ''}`}
+                                        onClick={() => navigate({ page: n })}
+                                        aria-current={n === page ? 'page' : undefined}
+                                    >
+                                        {n}
+                                    </button>
+                                </React.Fragment>
+                            )
+                        })}
+                    </div>
+                    <button
+                        className="shop-pagination__btn"
+                        disabled={page >= totalPages}
+                        onClick={() => navigate({ page: page + 1 })}
+                    >
+                        Next
+                    </button>
+                </nav>
             )}
         </div>
     )

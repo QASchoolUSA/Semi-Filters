@@ -4,7 +4,6 @@ import React from 'react'
 import Link from 'next/link'
 import ProductCard from '@/components/ProductCard'
 import TruckMakerFilters from '@/components/TruckMakerFilters'
-import HeroProductCarousel from '@/components/HeroProductCarousel'
 import { HiOutlineShieldCheck, HiOutlineTruck, HiOutlineClock, HiOutlineSupport } from 'react-icons/hi'
 import type { Product, Category } from '@/types'
 

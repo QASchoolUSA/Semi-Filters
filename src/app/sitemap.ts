@@ -1,56 +1,30 @@
 import { MetadataRoute } from 'next'
-import { client } from '@/sanity/lib/client'
+import { sanityFetch } from '@/sanity/lib/fetch'
+import { categorySitemapQuery, productSitemapQuery } from '@/sanity/lib/queries'
 
 const BASE_URL = 'https://semifilters.com'
 
-interface SanitySlug {
-    slug: { current: string }
-    _updatedAt: string
-}
-
-async function getProductSlugs(): Promise<SanitySlug[]> {
-    return client
-        .fetch(
-            `*[_type == "product"] {
-        slug,
-        _updatedAt
-      }`
-        )
-        .catch(() => [])
-}
-
-async function getCategorySlugs(): Promise<SanitySlug[]> {
-    return client
-        .fetch(
-            `*[_type == "category"] {
-        slug,
-        _updatedAt
-      }`
-        )
-        .catch(() => [])
-}
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const [products, categories] = await Promise.all([
-        getProductSlugs(),
-        getCategorySlugs(),
+        sanityFetch(productSitemapQuery, { tags: ['products'] }).catch(() => []),
+        sanityFetch(categorySitemapQuery, { tags: ['categories'] }).catch(() => []),
     ])
 
-    const productUrls: MetadataRoute.Sitemap = products
+    const productUrls: MetadataRoute.Sitemap = (products ?? [])
         .filter((p) => p.slug?.current)
         .map((p) => ({
-            url: `${BASE_URL}/shop/${p.slug.current}`,
+            url: `${BASE_URL}/shop/${p.slug!.current}`,
             lastModified: new Date(p._updatedAt),
-            changeFrequency: 'weekly',
+            changeFrequency: 'weekly' as const,
             priority: 0.8,
         }))
 
-    const categoryUrls: MetadataRoute.Sitemap = categories
+    const categoryUrls: MetadataRoute.Sitemap = (categories ?? [])
         .filter((c) => c.slug?.current)
         .map((c) => ({
-            url: `${BASE_URL}/shop?category=${c.slug.current}`,
+            url: `${BASE_URL}/shop?category=${c.slug!.current}`,
             lastModified: new Date(c._updatedAt),
-            changeFrequency: 'weekly',
+            changeFrequency: 'weekly' as const,
             priority: 0.7,
         }))
 
