@@ -1,14 +1,18 @@
-import { createClient } from 'next-sanity'
-import type { QueryParams } from 'next-sanity'
+import { createClient, type QueryParams } from 'next-sanity'
 
-/** Fresh reads for store-management (never CDN — orders must show immediately after write). */
+/**
+ * Store-management reads: API direct (no CDN) so new orders show immediately.
+ *
+ * Intentionally **no token**. The previous regression was attaching SANITY_API_TOKEN
+ * to these reads — a rejected/expired/mismatched token returns
+ * "Unauthorized - Session not found" even for public datasets. Writes still use
+ * writeClient + SANITY_API_TOKEN.
+ */
 export const adminClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4jrvr61',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   apiVersion: '2025-03-01',
   useCdn: false,
-  token: process.env.SANITY_API_TOKEN,
-  perspective: 'published',
 })
 
 export async function adminFetch<const Q extends string>(
@@ -16,7 +20,6 @@ export async function adminFetch<const Q extends string>(
   params: QueryParams = {}
 ) {
   return adminClient.fetch(query, params, {
-    // Bypass Next.js Data Cache — revalidate:0 alone still cached empty lists in practice
     cache: 'no-store',
     next: { tags: ['orders'] },
   })

@@ -44,8 +44,7 @@ export default async function OrdersPage() {
 
       {loadError && (
         <p className="sm-alert sm-alert--error" role="alert">
-          Could not load orders: {loadError}. Check SANITY_API_TOKEN and that the
-          order schema is deployed.
+          Could not load orders: {loadError}
         </p>
       )}
 

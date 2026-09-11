@@ -1,5 +1,6 @@
 import { createClient } from 'next-sanity'
 
+/** Mutations only (webhook upserts, label patches). Keep token off read clients. */
 export const writeClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4jrvr61',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
