@@ -1,4 +1,5 @@
 import { Shippo } from 'shippo'
+import type { ParcelTemplateEnumSet } from 'shippo/models/components/parceltemplateenumset.js'
 import type { OrderParcel, OrderShippingAddress } from '@/types'
 
 export type ShippoRateOption = {
@@ -10,6 +11,67 @@ export type ShippoRateOption = {
   estimatedDays: number | null
   durationTerms: string | null
 }
+
+export type UspsBoxTemplate = {
+  token: string
+  label: string
+  sizeHint: string
+  defaultWeight: number
+}
+
+/** USPS Flat Rate / Regional Rate boxes only (no envelopes). */
+export const USPS_BOX_TEMPLATES: UspsBoxTemplate[] = [
+  {
+    token: 'USPS_SmallFlatRateBox',
+    label: 'Small Flat Rate Box',
+    sizeHint: '8.69 × 5.44 × 1.75 in',
+    defaultWeight: 1.5,
+  },
+  {
+    token: 'USPS_MediumFlatRateBox1',
+    label: 'Medium Flat Rate Box',
+    sizeHint: '11.25 × 8.75 × 6 in · top-load',
+    defaultWeight: 3,
+  },
+  {
+    token: 'USPS_MediumFlatRateBox2',
+    label: 'Medium Flat Rate Box (side)',
+    sizeHint: '14 × 12 × 3.5 in · side-load',
+    defaultWeight: 3,
+  },
+  {
+    token: 'USPS_LargeFlatRateBox',
+    label: 'Large Flat Rate Box',
+    sizeHint: '12.25 × 12.25 × 6 in',
+    defaultWeight: 5,
+  },
+  {
+    token: 'USPS_RegionalRateBoxA1',
+    label: 'Regional Rate Box A1',
+    sizeHint: '10.13 × 7.13 × 5 in',
+    defaultWeight: 2,
+  },
+  {
+    token: 'USPS_RegionalRateBoxA2',
+    label: 'Regional Rate Box A2',
+    sizeHint: '13.06 × 11.06 × 2.5 in',
+    defaultWeight: 2,
+  },
+  {
+    token: 'USPS_RegionalRateBoxB1',
+    label: 'Regional Rate Box B1',
+    sizeHint: '12.25 × 10.5 × 5.5 in',
+    defaultWeight: 4,
+  },
+  {
+    token: 'USPS_RegionalRateBoxB2',
+    label: 'Regional Rate Box B2',
+    sizeHint: '16.25 × 14.5 × 3 in',
+    defaultWeight: 4,
+  },
+]
+
+export const DEFAULT_BOX_TOKEN = USPS_BOX_TEMPLATES[0].token
 
 function getShippo() {
   const token = process.env.SHIPPO_API_TOKEN
@@ -43,18 +105,20 @@ function getShipFromAddress() {
   }
 }
 
-export const PARCEL_PRESETS = {
-  filter_box: { length: 8, width: 6, height: 4, weight: 1.5, label: 'Filter box' },
-  multi_item: { length: 12, width: 10, height: 8, weight: 4, label: 'Multi-item' },
-} as const
+export function resolveBoxTemplate(token?: string) {
+  return (
+    USPS_BOX_TEMPLATES.find((t) => t.token === token) || USPS_BOX_TEMPLATES[0]
+  )
+}
 
+/** Build Shippo parcel using a USPS box template + weight only. */
 export function normalizeParcel(parcel: OrderParcel) {
+  const box = resolveBoxTemplate(parcel.template)
+  const weight = parcel.weight ?? box.defaultWeight
+
   return {
-    length: String(parcel.length ?? PARCEL_PRESETS.filter_box.length),
-    width: String(parcel.width ?? PARCEL_PRESETS.filter_box.width),
-    height: String(parcel.height ?? PARCEL_PRESETS.filter_box.height),
-    distanceUnit: 'in' as const,
-    weight: String(parcel.weight ?? PARCEL_PRESETS.filter_box.weight),
+    template: box.token as ParcelTemplateEnumSet,
+    weight: String(weight),
     massUnit: 'lb' as const,
   }
 }

@@ -2,7 +2,12 @@
 
 import React, { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { PARCEL_PRESETS, type ShippoRateOption } from '@/lib/shippo'
+import {
+  DEFAULT_BOX_TOKEN,
+  USPS_BOX_TEMPLATES,
+  resolveBoxTemplate,
+  type ShippoRateOption,
+} from '@/lib/shippo'
 import StatusChip from './StatusChip'
 import type { OrderParcel, StoreOrder } from '@/types'
 
@@ -25,6 +30,14 @@ function formatAddress(order: StoreOrder) {
     .join('\n')
 }
 
+function initialParcel(order?: StoreOrder | null): OrderParcel {
+  const box = resolveBoxTemplate(order?.parcel?.template || DEFAULT_BOX_TOKEN)
+  return {
+    template: box.token,
+    weight: order?.parcel?.weight ?? box.defaultWeight,
+  }
+}
+
 export default function ShipOrderPanel({
   orders,
   initialOrderId,
@@ -40,15 +53,9 @@ export default function ShipOrderPanel({
     [orders, selectedId]
   )
 
-  const [parcel, setParcel] = useState<OrderParcel>(() => {
-    const fromOrder = orders.find((o) => o._id === (initialOrderId || orders[0]?._id))?.parcel
-    return {
-      length: fromOrder?.length ?? PARCEL_PRESETS.filter_box.length,
-      width: fromOrder?.width ?? PARCEL_PRESETS.filter_box.width,
-      height: fromOrder?.height ?? PARCEL_PRESETS.filter_box.height,
-      weight: fromOrder?.weight ?? PARCEL_PRESETS.filter_box.weight,
-    }
-  })
+  const [parcel, setParcel] = useState<OrderParcel>(() =>
+    initialParcel(orders.find((o) => o._id === (initialOrderId || orders[0]?._id)))
+  )
 
   const [rates, setRates] = useState<ShippoRateOption[]>([])
   const [selectedRateId, setSelectedRateId] = useState('')
@@ -61,14 +68,21 @@ export default function ShipOrderPanel({
     trackingUrl?: string
   } | null>(null)
 
-  const applyPreset = (key: keyof typeof PARCEL_PRESETS) => {
-    const preset = PARCEL_PRESETS[key]
-    setParcel({
-      length: preset.length,
-      width: preset.width,
-      height: preset.height,
-      weight: preset.weight,
-    })
+  const selectOrder = (order: StoreOrder) => {
+    setSelectedId(order._id)
+    setParcel(initialParcel(order))
+    setRates([])
+    setSelectedRateId('')
+    setSuccess(null)
+    setError(null)
+  }
+
+  const selectBox = (token: string) => {
+    const box = resolveBoxTemplate(token)
+    setParcel((prev) => ({
+      template: box.token,
+      weight: prev.weight ?? box.defaultWeight,
+    }))
     setRates([])
     setSelectedRateId('')
     setSuccess(null)
@@ -91,7 +105,7 @@ export default function ShipOrderPanel({
       if (!res.ok) throw new Error(data.error || 'Failed to load rates')
       setRates(data.rates || [])
       if ((data.rates || []).length === 0) {
-        setError('No rates returned. Check Shippo carrier accounts and address.')
+        setError('No rates returned. Check Shippo USPS carrier setup and addresses.')
       }
     } catch (err: any) {
       setError(err.message || 'Failed to load rates')
@@ -138,8 +152,11 @@ export default function ShipOrderPanel({
     return (
       <div className="sm-empty">
         <h2>Nothing to ship</h2>
-        <p>Paid orders waiting for labels will show up in this queue.</p>
-        <Link href="/store-management/orders" className="sm-link-btn">
+        <p>
+          Paid orders waiting for labels will show here. Seed a demo order with{' '}
+          <code>npm run seed-demo-order</code> or wait for a Stripe checkout.
+        </p>
+        <Link href="/store-management/orders" className="sm-btn">
           View all orders
         </Link>
       </div>
@@ -149,29 +166,20 @@ export default function ShipOrderPanel({
   return (
     <div className="sm-ship">
       <aside className="sm-ship__queue">
-        <h2 className="sm-ship__queue-title">Queue</h2>
+        <div className="sm-ship__queue-head">
+          <h2>Queue</h2>
+          <span>{orders.length}</span>
+        </div>
         <ul className="sm-ship__list">
           {orders.map((order) => (
             <li key={order._id}>
               <button
                 type="button"
-                className={`sm-ship__queue-item${selectedId === order._id ? ' sm-ship__queue-item--active' : ''}`}
-                onClick={() => {
-                  setSelectedId(order._id)
-                  setRates([])
-                  setSelectedRateId('')
-                  setSuccess(null)
-                  setError(null)
-                  setParcel({
-                    length: order.parcel?.length ?? PARCEL_PRESETS.filter_box.length,
-                    width: order.parcel?.width ?? PARCEL_PRESETS.filter_box.width,
-                    height: order.parcel?.height ?? PARCEL_PRESETS.filter_box.height,
-                    weight: order.parcel?.weight ?? PARCEL_PRESETS.filter_box.weight,
-                  })
-                }}
+                className={`sm-ship__queue-item${selectedId === order._id ? ' is-active' : ''}`}
+                onClick={() => selectOrder(order)}
               >
                 <span className="sm-cell-primary">{order.customerName || 'Customer'}</span>
-                <span className="sm-cell-muted">{formatMoney(order.total)}</span>
+                <span className="sm-cell-muted sm-num">{formatMoney(order.total)}</span>
                 <StatusChip status={order.status} />
               </button>
             </li>
@@ -183,14 +191,14 @@ export default function ShipOrderPanel({
         <section className="sm-ship__panel sm-panel-enter">
           <header className="sm-ship__header">
             <div>
-              <p className="sm-eyebrow">Fulfillment</p>
+              <p className="sm-eyebrow">Fulfill</p>
               <h2>{selected.customerName || 'Customer'}</h2>
               <p className="sm-cell-muted">{selected.customerEmail}</p>
             </div>
             <StatusChip status={selected.status} />
           </header>
 
-          <div className="sm-ship__grid">
+          <div className="sm-detail-grid">
             <div className="sm-card">
               <h3>Ship to</h3>
               <pre className="sm-address">{formatAddress(selected)}</pre>
@@ -203,83 +211,106 @@ export default function ShipOrderPanel({
             </div>
 
             <div className="sm-card">
-              <h3>Parcel</h3>
-              <div className="sm-presets">
-                <button type="button" className="sm-filter" onClick={() => applyPreset('filter_box')}>
-                  Filter box
-                </button>
-                <button type="button" className="sm-filter" onClick={() => applyPreset('multi_item')}>
-                  Multi-item
-                </button>
-              </div>
-              <div className="sm-parcel-grid">
-                {(['length', 'width', 'height', 'weight'] as const).map((field) => (
-                  <label key={field} className="sm-login__field">
-                    <span>
-                      {field === 'weight' ? 'Weight (lb)' : `${field} (in)`}
-                    </span>
-                    <input
-                      type="number"
-                      min={0}
-                      step="0.1"
-                      value={parcel[field] ?? ''}
-                      onChange={(e) =>
-                        setParcel((prev) => ({
-                          ...prev,
-                          [field]: e.target.value === '' ? undefined : Number(e.target.value),
-                        }))
-                      }
-                    />
-                  </label>
-                ))}
-              </div>
-              <button
-                type="button"
-                className="sm-login__submit"
-                onClick={fetchRates}
-                disabled={loadingRates}
-              >
-                {loadingRates ? 'Getting rates…' : 'Get rates'}
-              </button>
+              <h3>Package weight</h3>
+              <label className="sm-field">
+                <span>Weight (lb)</span>
+                <input
+                  type="number"
+                  min={0.1}
+                  step="0.1"
+                  value={parcel.weight ?? ''}
+                  onChange={(e) => {
+                    setParcel((prev) => ({
+                      ...prev,
+                      weight: e.target.value === '' ? undefined : Number(e.target.value),
+                    }))
+                    setRates([])
+                    setSelectedRateId('')
+                  }}
+                />
+              </label>
+              <p className="sm-help">
+                USPS Flat Rate boxes only need weight — dimensions come from the box type.
+              </p>
             </div>
           </div>
 
+          <div className="sm-card sm-card--spaced">
+            <h3>USPS box</h3>
+            <div className="sm-box-grid" role="radiogroup" aria-label="USPS box type">
+              {USPS_BOX_TEMPLATES.map((box) => {
+                const active = parcel.template === box.token
+                return (
+                  <button
+                    key={box.token}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    className={`sm-box-tile${active ? ' is-active' : ''}`}
+                    onClick={() => selectBox(box.token)}
+                  >
+                    <span className="sm-box-tile__label">{box.label}</span>
+                    <span className="sm-box-tile__hint">{box.sizeHint}</span>
+                  </button>
+                )
+              })}
+            </div>
+            <button
+              type="button"
+              className="sm-btn sm-btn--primary"
+              onClick={fetchRates}
+              disabled={loadingRates || !parcel.weight}
+            >
+              {loadingRates ? 'Getting rates…' : 'Get rates'}
+            </button>
+          </div>
+
           {error && (
-            <p className="sm-login__error" role="alert">
+            <p className="sm-alert sm-alert--error" role="alert">
               {error}
             </p>
           )}
 
           {rates.length > 0 && (
-            <div className="sm-card sm-rates sm-panel-enter">
+            <div className="sm-card sm-card--spaced sm-panel-enter">
               <h3>Rates</h3>
-              <ul className="sm-rate-list">
-                {rates.map((rate) => (
-                  <li key={rate.objectId}>
-                    <button
-                      type="button"
-                      className={`sm-rate${selectedRateId === rate.objectId ? ' sm-rate--active' : ''}`}
-                      onClick={() => setSelectedRateId(rate.objectId)}
-                    >
-                      <span className="sm-rate__main">
-                        <strong>{rate.provider}</strong>
-                        <span>{rate.servicelevel}</span>
-                      </span>
-                      <span className="sm-rate__meta">
-                        {rate.estimatedDays != null
-                          ? `${rate.estimatedDays} day${rate.estimatedDays === 1 ? '' : 's'}`
-                          : rate.durationTerms || '—'}
-                      </span>
-                      <span className="sm-rate__price">
-                        ${Number(rate.amount).toFixed(2)}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              <div className="sm-table-wrap">
+                <table className="sm-table sm-table--rates">
+                  <thead>
+                    <tr>
+                      <th>Carrier</th>
+                      <th>Service</th>
+                      <th>ETA</th>
+                      <th className="sm-num">Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rates.map((rate) => (
+                      <tr
+                        key={rate.objectId}
+                        className={selectedRateId === rate.objectId ? 'is-selected' : undefined}
+                        onClick={() => setSelectedRateId(rate.objectId)}
+                      >
+                        <td>
+                          <strong>{rate.provider}</strong>
+                        </td>
+                        <td>{rate.servicelevel}</td>
+                        <td className="sm-cell-muted">
+                          {rate.estimatedDays != null
+                            ? `${rate.estimatedDays} day${rate.estimatedDays === 1 ? '' : 's'}`
+                            : rate.durationTerms || '—'}
+                        </td>
+                        <td className="sm-num sm-rate-price">
+                          ${Number(rate.amount).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
               <button
                 type="button"
-                className="sm-login__submit"
+                className="sm-btn sm-btn--primary"
                 onClick={buyLabel}
                 disabled={!selectedRateId || buying}
               >
@@ -289,7 +320,7 @@ export default function ShipOrderPanel({
           )}
 
           {success && (
-            <div className="sm-success sm-panel-enter" role="status">
+            <div className="sm-success sm-card--spaced sm-panel-enter" role="status">
               <h3>Label ready</h3>
               <p>
                 Tracking{' '}
@@ -302,7 +333,7 @@ export default function ShipOrderPanel({
                 )}
               </p>
               <a
-                className="sm-link-btn sm-link-btn--accent"
+                className="sm-btn sm-btn--primary"
                 href={success.labelUrl}
                 target="_blank"
                 rel="noreferrer"

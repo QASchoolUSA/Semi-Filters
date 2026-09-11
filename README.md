@@ -35,6 +35,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run typegen` | Extract Sanity schema + generate TypeScript types |
 | `npx tsx scripts/hash-store-password.ts 'pass'` | Hash a password + print one-line `STORE_MANAGEMENT_USERS` |
 | `npx tsx scripts/minify-store-users.ts users.json` | Minify multi-line users JSON to one env line |
+| `npm run seed-demo-order` | Upsert a paid demo order for Shippo label testing |
 
 Hash a store-management password:
 
@@ -43,6 +44,16 @@ npx tsx scripts/hash-store-password.ts 'your-password'
 ```
 
 Paste the printed JSON into `STORE_MANAGEMENT_USERS` (Vercel / `.env.local`).
+
+### Demo order (shipping labels)
+
+```bash
+npm run seed-demo-order
+```
+
+Requires `SANITY_API_TOKEN`. Creates/updates a paid order (`demo_cs_test_seed`) shippable in `/store-management/shipping`. Use a **Shippo test API token** when buying labels so you are not charged.
+
+Store-management reads orders **without the Sanity CDN** so new checkouts and seeds show up immediately. Shipping uses **USPS Flat Rate / Regional Rate boxes** (template + weight only — no manual L×W×H).
 
 ## Environment
 

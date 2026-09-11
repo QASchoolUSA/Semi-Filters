@@ -58,7 +58,7 @@ export default function OrdersTable({ orders }: { orders: StoreOrder[] }) {
             <button
               key={value}
               type="button"
-              className={`sm-filter${status === value ? ' sm-filter--active' : ''}`}
+              className={`sm-filter${status === value ? ' is-active' : ''}`}
               onClick={() => setStatus(value)}
             >
               {value === 'all'
@@ -71,10 +71,21 @@ export default function OrdersTable({ orders }: { orders: StoreOrder[] }) {
         </div>
       </div>
 
-      {filtered.length === 0 ? (
+      {orders.length === 0 ? (
         <div className="sm-empty">
-          <h2>No orders found</h2>
-          <p>New Stripe checkouts will appear here after payment.</p>
+          <h2>No open orders</h2>
+          <p>
+            Paid Stripe checkouts appear here automatically. For local testing, seed a demo order:
+          </p>
+          <code className="sm-empty__code">npm run seed-demo-order</code>
+          <Link href="/store-management/shipping" className="sm-btn">
+            Go to shipping
+          </Link>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="sm-empty">
+          <h2>No matching orders</h2>
+          <p>Try clearing search or switching the status filter.</p>
         </div>
       ) : (
         <div className="sm-table-wrap">
@@ -84,9 +95,9 @@ export default function OrdersTable({ orders }: { orders: StoreOrder[] }) {
                 <th>Created</th>
                 <th>Customer</th>
                 <th>Items</th>
-                <th>Total</th>
+                <th className="sm-num">Total</th>
                 <th>Status</th>
-                <th />
+                <th className="sm-table__actions-head">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -95,7 +106,7 @@ export default function OrdersTable({ orders }: { orders: StoreOrder[] }) {
                   order.lineItems?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0
                 return (
                   <tr key={order._id} className="sm-row-enter">
-                    <td>{formatDate(order._createdAt)}</td>
+                    <td className="sm-cell-muted">{formatDate(order._createdAt)}</td>
                     <td>
                       <div className="sm-cell-primary">{order.customerName || 'Customer'}</div>
                       <div className="sm-cell-muted">{order.customerEmail || '—'}</div>
@@ -103,7 +114,7 @@ export default function OrdersTable({ orders }: { orders: StoreOrder[] }) {
                     <td>
                       {itemCount} item{itemCount === 1 ? '' : 's'}
                     </td>
-                    <td>{formatMoney(order.total)}</td>
+                    <td className="sm-num">{formatMoney(order.total)}</td>
                     <td>
                       <StatusChip status={order.status} />
                     </td>

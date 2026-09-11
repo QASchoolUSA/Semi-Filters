@@ -105,6 +105,8 @@ export interface OrderParcel {
     width?: number
     height?: number
     weight?: number
+    /** Shippo USPS carrier parcel template token, e.g. USPS_SmallFlatRateBox */
+    template?: string
 }
 
 export interface StoreOrder {

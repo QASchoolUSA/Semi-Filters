@@ -136,6 +136,7 @@ export const order = defineType({
       title: 'Last Parcel Used',
       type: 'object',
       fields: [
+        { name: 'template', type: 'string', title: 'USPS box template' },
         { name: 'length', type: 'number', title: 'Length (in)' },
         { name: 'width', type: 'number', title: 'Width (in)' },
         { name: 'height', type: 'number', title: 'Height (in)' },

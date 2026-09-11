@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
-import { sanityFetch } from '@/sanity/lib/fetch'
+import { adminFetch } from '@/sanity/lib/admin-client'
 import { orderByIdQuery } from '@/sanity/lib/queries'
 import { writeClient } from '@/sanity/lib/write-client'
-import { purchaseShippingLabel } from '@/lib/shippo'
+import { purchaseShippingLabel, resolveBoxTemplate } from '@/lib/shippo'
 import { sendEmail } from '@/lib/email'
 import type { OrderParcel, StoreOrder } from '@/types'
 
@@ -25,10 +25,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'orderId and rateId are required' }, { status: 400 })
     }
 
-    const order = (await sanityFetch(orderByIdQuery, {
-      params: { id: orderId },
-      tags: [`order:${orderId}`],
-    })) as StoreOrder | null
+    const order = (await adminFetch(orderByIdQuery, { id: orderId })) as StoreOrder | null
 
     if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 })
@@ -45,6 +42,7 @@ export async function POST(request: Request) {
 
     const label = await purchaseShippingLabel(rateId)
     const shippedAt = new Date().toISOString()
+    const box = resolveBoxTemplate(parcel.template)
 
     await writeClient
       .patch(orderId)
@@ -59,10 +57,8 @@ export async function POST(request: Request) {
         servicelevel,
         shippedAt,
         parcel: {
-          length: parcel.length,
-          width: parcel.width,
-          height: parcel.height,
-          weight: parcel.weight,
+          template: box.token,
+          weight: parcel.weight ?? box.defaultWeight,
         },
       })
       .commit()

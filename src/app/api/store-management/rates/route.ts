@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
-import { sanityFetch } from '@/sanity/lib/fetch'
+import { adminFetch } from '@/sanity/lib/admin-client'
 import { orderByIdQuery } from '@/sanity/lib/queries'
 import { getShippingRates } from '@/lib/shippo'
 import type { OrderParcel, StoreOrder } from '@/types'
@@ -20,10 +20,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'orderId is required' }, { status: 400 })
     }
 
-    const order = (await sanityFetch(orderByIdQuery, {
-      params: { id: orderId },
-      tags: [`order:${orderId}`],
-    })) as StoreOrder | null
+    const order = (await adminFetch(orderByIdQuery, { id: orderId })) as StoreOrder | null
 
     if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 })

@@ -1,8 +1,23 @@
 import React from 'react'
-import Link from 'next/link'
 import type { Metadata } from 'next'
+import { IBM_Plex_Mono, IBM_Plex_Sans } from 'next/font/google'
 import { auth } from '@/auth'
+import StoreNav from '@/components/store-management/StoreNav'
 import { signOutAction } from './actions'
+
+const smSans = IBM_Plex_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-sm-sans',
+  display: 'swap',
+})
+
+const smMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-sm-mono',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: {
@@ -19,30 +34,26 @@ export default async function StoreManagementLayout({
 }) {
   const session = await auth()
   const isAuthed = !!session?.user
+  const fontClass = `${smSans.variable} ${smMono.variable}`
 
   if (!isAuthed) {
-    return <div className="sm-shell sm-shell--public">{children}</div>
+    return (
+      <div className={`sm-shell sm-shell--public ${fontClass}`}>{children}</div>
+    )
   }
 
   return (
-    <div className="sm-shell">
+    <div className={`sm-shell ${fontClass}`}>
       <aside className="sm-nav">
         <div className="sm-nav__brand">
           <span className="sm-nav__mark" aria-hidden="true" />
           <div>
             <p className="sm-nav__eyebrow">Semi Filters</p>
-            <p className="sm-nav__title">Store management</p>
+            <p className="sm-nav__title">Ops</p>
           </div>
         </div>
 
-        <nav className="sm-nav__links" aria-label="Store management">
-          <Link href="/store-management/orders" className="sm-nav__link">
-            Orders
-          </Link>
-          <Link href="/store-management/shipping" className="sm-nav__link">
-            Shipping
-          </Link>
-        </nav>
+        <StoreNav variant="side" />
 
         <div className="sm-nav__footer">
           <p className="sm-nav__user">{session.user?.email}</p>
@@ -56,10 +67,11 @@ export default async function StoreManagementLayout({
 
       <div className="sm-main">
         <header className="sm-topbar">
-          <nav className="sm-topbar__tabs" aria-label="Sections">
-            <Link href="/store-management/orders">Orders</Link>
-            <Link href="/store-management/shipping">Shipping</Link>
-          </nav>
+          <div className="sm-topbar__brand">
+            <span className="sm-nav__mark" aria-hidden="true" />
+            <span>Semi Filters Ops</span>
+          </div>
+          <StoreNav variant="top" />
           <div className="sm-topbar__user">
             <span>{session.user?.email}</span>
             <form action={signOutAction}>

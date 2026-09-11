@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { sanityFetch } from '@/sanity/lib/fetch'
+import { adminFetch } from '@/sanity/lib/admin-client'
 import { orderByIdQuery } from '@/sanity/lib/queries'
 import StatusChip from '@/components/store-management/StatusChip'
 import type { StoreOrder } from '@/types'
@@ -25,11 +25,7 @@ export default async function OrderDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const order = (await sanityFetch(orderByIdQuery, {
-    params: { id },
-    revalidate: 0,
-    tags: [`order:${id}`],
-  }).catch(() => null)) as StoreOrder | null
+  const order = (await adminFetch(orderByIdQuery, { id }).catch(() => null)) as StoreOrder | null
 
   if (!order) notFound()
 
@@ -41,7 +37,7 @@ export default async function OrderDetailPage({
         <div>
           <p className="sm-eyebrow">
             <Link href="/store-management/orders" className="sm-text-link">
-              Orders
+              ← Orders
             </Link>
           </p>
           <h1>{order.customerName || 'Order'}</h1>
@@ -50,7 +46,7 @@ export default async function OrderDetailPage({
         <StatusChip status={order.status} />
       </header>
 
-      <div className="sm-ship__grid">
+      <div className="sm-detail-grid">
         <div className="sm-card">
           <h3>Customer</h3>
           <dl className="sm-dl">
@@ -81,7 +77,7 @@ export default async function OrderDetailPage({
           {order.status !== 'shipped' && order.status !== 'cancelled' && (
             <Link
               href={`/store-management/shipping?order=${order._id}`}
-              className="sm-link-btn sm-link-btn--accent"
+              className="sm-btn sm-btn--primary"
             >
               Create shipping label
             </Link>
@@ -89,53 +85,55 @@ export default async function OrderDetailPage({
         </div>
       </div>
 
-      <div className="sm-card" style={{ marginTop: 20 }}>
+      <div className="sm-card sm-card--spaced">
         <h3>Line items</h3>
-        <table className="sm-table">
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Qty</th>
-              <th>Unit</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(order.lineItems || []).map((item, i) => (
-              <tr key={`${item.name}-${i}`}>
-                <td>
-                  <div className="sm-cell-primary">{item.name}</div>
-                  {item.partNumber && (
-                    <div className="sm-cell-muted">Part# {item.partNumber}</div>
-                  )}
-                </td>
-                <td>{item.quantity}</td>
-                <td>{formatMoney(item.unitAmount)}</td>
+        <div className="sm-table-wrap">
+          <table className="sm-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th className="sm-num">Unit</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {(order.lineItems || []).map((item, i) => (
+                <tr key={`${item.name}-${i}`}>
+                  <td>
+                    <div className="sm-cell-primary">{item.name}</div>
+                    {item.partNumber && (
+                      <div className="sm-cell-muted">Part# {item.partNumber}</div>
+                    )}
+                  </td>
+                  <td>{item.quantity}</td>
+                  <td className="sm-num">{formatMoney(item.unitAmount)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <dl className="sm-totals">
           <div>
             <dt>Subtotal</dt>
-            <dd>{formatMoney(order.subtotal)}</dd>
+            <dd className="sm-num">{formatMoney(order.subtotal)}</dd>
           </div>
           <div>
             <dt>Shipping</dt>
-            <dd>{formatMoney(order.shipping)}</dd>
+            <dd className="sm-num">{formatMoney(order.shipping)}</dd>
           </div>
           <div>
             <dt>Tax</dt>
-            <dd>{formatMoney(order.tax)}</dd>
+            <dd className="sm-num">{formatMoney(order.tax)}</dd>
           </div>
           <div className="sm-totals__grand">
             <dt>Total</dt>
-            <dd>{formatMoney(order.total)}</dd>
+            <dd className="sm-num">{formatMoney(order.total)}</dd>
           </div>
         </dl>
       </div>
 
       {order.status === 'shipped' && (
-        <div className="sm-success" style={{ marginTop: 20 }}>
+        <div className="sm-success sm-card--spaced">
           <h3>Shipped</h3>
           <p>
             {order.carrier} · {order.servicelevel}
@@ -155,7 +153,7 @@ export default async function OrderDetailPage({
           </p>
           {order.labelUrl && (
             <a
-              className="sm-link-btn sm-link-btn--accent"
+              className="sm-btn sm-btn--primary"
               href={order.labelUrl}
               target="_blank"
               rel="noreferrer"

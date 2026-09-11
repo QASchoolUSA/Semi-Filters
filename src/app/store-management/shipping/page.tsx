@@ -1,7 +1,7 @@
 import React from 'react'
 import type { Metadata } from 'next'
-import { sanityFetch } from '@/sanity/lib/fetch'
-import { unshippedOrdersQuery } from '@/sanity/lib/queries'
+import { adminFetch } from '@/sanity/lib/admin-client'
+import { orderByIdQuery, unshippedOrdersQuery } from '@/sanity/lib/queries'
 import ShipOrderPanel from '@/components/store-management/ShipOrderPanel'
 import type { StoreOrder } from '@/types'
 
@@ -18,10 +18,17 @@ export default async function ShippingPage({
   searchParams: Promise<{ order?: string }>
 }) {
   const { order: initialOrderId } = await searchParams
-  const orders = ((await sanityFetch(unshippedOrdersQuery, {
-    revalidate: 0,
-    tags: ['orders'],
-  }).catch(() => [])) || []) as StoreOrder[]
+
+  let orders = ((await adminFetch(unshippedOrdersQuery).catch(() => [])) || []) as StoreOrder[]
+
+  if (initialOrderId && !orders.some((o) => o._id === initialOrderId)) {
+    const extra = (await adminFetch(orderByIdQuery, { id: initialOrderId }).catch(
+      () => null
+    )) as StoreOrder | null
+    if (extra) {
+      orders = [extra, ...orders]
+    }
+  }
 
   return (
     <div className="sm-page">
@@ -30,12 +37,12 @@ export default async function ShippingPage({
           <p className="sm-eyebrow">Fulfillment</p>
           <h1>Shipping labels</h1>
           <p className="sm-page__lede">
-            Pick an order, confirm the parcel, compare Shippo rates, then print a 4×6 label.
+            Choose a USPS Flat Rate box, enter weight, compare rates, then print a 4×6 label.
           </p>
         </div>
-        <div className="sm-page__stat">
-          <span className="sm-page__stat-value">{orders.length}</span>
-          <span className="sm-page__stat-label">to ship</span>
+        <div className="sm-stat-card">
+          <span className="sm-stat-card__value">{orders.length}</span>
+          <span className="sm-stat-card__label">In queue</span>
         </div>
       </header>
       <ShipOrderPanel orders={orders} initialOrderId={initialOrderId} />
