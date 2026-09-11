@@ -8,6 +8,7 @@ export const adminClient = createClient({
   apiVersion: '2025-03-01',
   useCdn: false,
   token: process.env.SANITY_API_TOKEN,
+  perspective: 'published',
 })
 
 export async function adminFetch<const Q extends string>(
@@ -15,6 +16,8 @@ export async function adminFetch<const Q extends string>(
   params: QueryParams = {}
 ) {
   return adminClient.fetch(query, params, {
-    next: { revalidate: 0, tags: ['orders'] },
+    // Bypass Next.js Data Cache — revalidate:0 alone still cached empty lists in practice
+    cache: 'no-store',
+    next: { tags: ['orders'] },
   })
 }

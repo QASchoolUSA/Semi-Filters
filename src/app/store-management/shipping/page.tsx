@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 }
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function ShippingPage({
   searchParams,
@@ -19,15 +20,25 @@ export default async function ShippingPage({
 }) {
   const { order: initialOrderId } = await searchParams
 
-  let orders = ((await adminFetch(unshippedOrdersQuery).catch(() => [])) || []) as StoreOrder[]
+  let orders: StoreOrder[] = []
+  let loadError: string | null = null
 
-  if (initialOrderId && !orders.some((o) => o._id === initialOrderId)) {
-    const extra = (await adminFetch(orderByIdQuery, { id: initialOrderId }).catch(
-      () => null
-    )) as StoreOrder | null
-    if (extra) {
-      orders = [extra, ...orders]
+  try {
+    const result = await adminFetch(unshippedOrdersQuery)
+    orders = (Array.isArray(result) ? result : []) as StoreOrder[]
+
+    if (initialOrderId && !orders.some((o) => o._id === initialOrderId)) {
+      const extra = (await adminFetch(orderByIdQuery, {
+        id: initialOrderId,
+      })) as StoreOrder | null
+      if (extra) {
+        orders = [extra, ...orders]
+      }
     }
+  } catch (err) {
+    console.error('[store-management/shipping] Failed to load queue:', err)
+    loadError =
+      err instanceof Error ? err.message : 'Failed to load shipping queue'
   }
 
   return (
@@ -45,6 +56,13 @@ export default async function ShippingPage({
           <span className="sm-stat-card__label">In queue</span>
         </div>
       </header>
+
+      {loadError && (
+        <p className="sm-alert sm-alert--error" role="alert">
+          Could not load shipping queue: {loadError}
+        </p>
+      )}
+
       <ShipOrderPanel orders={orders} initialOrderId={initialOrderId} />
     </div>
   )

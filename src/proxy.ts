@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
 
+/**
+ * Next.js 16 proxy (replaces middleware). Auth.js default export is picked up as the handler.
+ */
 export default auth((req) => {
   const { pathname } = req.nextUrl
   const isLogin = pathname.startsWith('/store-management/login')

@@ -11,9 +11,20 @@ export const metadata: Metadata = {
 }
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function OrdersPage() {
-  const orders = ((await adminFetch(allOrdersQuery).catch(() => [])) || []) as StoreOrder[]
+  let orders: StoreOrder[] = []
+  let loadError: string | null = null
+
+  try {
+    const result = await adminFetch(allOrdersQuery)
+    orders = (Array.isArray(result) ? result : []) as StoreOrder[]
+  } catch (err) {
+    console.error('[store-management/orders] Failed to load orders:', err)
+    loadError =
+      err instanceof Error ? err.message : 'Failed to load orders from Sanity'
+  }
 
   return (
     <div className="sm-page">
@@ -30,6 +41,14 @@ export default async function OrdersPage() {
           <span className="sm-stat-card__label">Recent orders</span>
         </div>
       </header>
+
+      {loadError && (
+        <p className="sm-alert sm-alert--error" role="alert">
+          Could not load orders: {loadError}. Check SANITY_API_TOKEN and that the
+          order schema is deployed.
+        </p>
+      )}
+
       <OrdersTable orders={orders} />
     </div>
   )

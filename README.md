@@ -55,6 +55,16 @@ Requires `SANITY_API_TOKEN`. Creates/updates a paid order (`demo_cs_test_seed`) 
 
 Store-management reads orders **without the Sanity CDN** so new checkouts and seeds show up immediately. Shipping uses **USPS Flat Rate / Regional Rate boxes** (template + weight only — no manual L×W×H).
 
+Local login also needs Auth.js env (see table below). Minimal `.env.local` for orders + login:
+
+```bash
+# after setting SANITY_* …
+openssl rand -base64 32   # paste as AUTH_SECRET
+npx tsx scripts/hash-store-password.ts 'your-password' 'you@semifilters.com'
+# paste the printed STORE_MANAGEMENT_USERS=... line into .env.local
+# then restart: npm run dev
+```
+
 ## Environment
 
 | Variable | Purpose |
