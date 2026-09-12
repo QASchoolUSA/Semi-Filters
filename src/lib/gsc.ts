@@ -84,8 +84,36 @@ export function parseGscRange(value: string | null): GscRangeDays {
   return 28
 }
 
-export function getGscRedirectUri(): string {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '')
+/** Public origin for OAuth redirect_uri. Prefer the live request host. */
+export function resolveRequestOrigin(request: Request): string {
+  const forwardedHost = request.headers.get('x-forwarded-host')?.split(',')[0]?.trim()
+  const host = forwardedHost || request.headers.get('host')?.trim()
+  const forwardedProto = request.headers.get('x-forwarded-proto')?.split(',')[0]?.trim()
+
+  if (host) {
+    const proto =
+      forwardedProto ||
+      (host.startsWith('localhost') || host.startsWith('127.0.0.1') ? 'http' : 'https')
+    return `${proto}://${host}`.replace(/\/$/, '')
+  }
+
+  try {
+    const fromUrl = new URL(request.url).origin
+    if (fromUrl && !fromUrl.includes('localhost') && !fromUrl.includes('127.0.0.1')) {
+      return fromUrl
+    }
+  } catch {
+    // ignore
+  }
+
+  return (process.env.NEXT_PUBLIC_SITE_URL || 'https://semifilters.com').replace(/\/$/, '')
+}
+
+export function getGscRedirectUri(origin?: string): string {
+  const base = (origin || process.env.NEXT_PUBLIC_SITE_URL || 'https://semifilters.com').replace(
+    /\/$/,
+    ''
+  )
   return `${base}/api/store-management/gsc/callback`
 }
 
@@ -131,18 +159,18 @@ export function decryptSecret(payload: string): string {
   ]).toString('utf8')
 }
 
-function getOAuth2Client() {
+function getOAuth2Client(origin?: string) {
   const clientId = process.env.GOOGLE_CLIENT_ID
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET
   if (!clientId || !clientSecret) {
     throw new GscConfigError('GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET are required')
   }
 
-  return new google.auth.OAuth2(clientId, clientSecret, getGscRedirectUri())
+  return new google.auth.OAuth2(clientId, clientSecret, getGscRedirectUri(origin))
 }
 
-export function getGscAuthUrl(): string {
-  const client = getOAuth2Client()
+export function getGscAuthUrl(origin?: string): string {
+  const client = getOAuth2Client(origin)
   return client.generateAuthUrl({
     access_type: 'offline',
     prompt: 'consent',
@@ -150,8 +178,8 @@ export function getGscAuthUrl(): string {
   })
 }
 
-export async function exchangeGscCode(code: string) {
-  const client = getOAuth2Client()
+export async function exchangeGscCode(code: string, origin?: string) {
+  const client = getOAuth2Client(origin)
   const { tokens } = await client.getToken(code)
   return tokens
 }

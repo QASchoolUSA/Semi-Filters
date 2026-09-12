@@ -104,10 +104,10 @@ The **SEO** tab at `/store-management/seo` shows clicks, impressions, CTR, avera
 One-time setup:
 
 1. In [Google Cloud Console](https://console.cloud.google.com/), create/select a project and enable **Google Search Console API**.
-2. Create an **OAuth 2.0 Web application** client. Add authorized redirect URI:
+2. Create an **OAuth 2.0 Web application** client. Add **both** authorized redirect URIs (exact match required):
    - Production: `https://semifilters.com/api/store-management/gsc/callback`
    - Local: `http://localhost:3000/api/store-management/gsc/callback`
-3. Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `AUTH_SECRET`, and `NEXT_PUBLIC_SITE_URL` (must match the host you use for the redirect URI). `SANITY_API_TOKEN` is required to save the connection.
+3. Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `AUTH_SECRET`, and `SANITY_API_TOKEN`. `NEXT_PUBLIC_SITE_URL` is optional for GSC now (redirect uses the request origin), but still recommended for canonical URLs.
 4. Sign in to store-management → **SEO** → **Connect Google** with an account that has access to the semifilters.com property.
 5. The refresh token is encrypted and stored in Sanity automatically. The app picks the matching GSC property from your account (override with `GSC_SITE_URL` if needed).
 

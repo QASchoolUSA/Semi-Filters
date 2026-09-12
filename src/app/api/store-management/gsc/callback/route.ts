@@ -4,6 +4,7 @@ import {
   exchangeGscCode,
   GscConfigError,
   resolveGscSiteUrl,
+  resolveRequestOrigin,
   saveGscConnection,
 } from '@/lib/gsc'
 
@@ -16,7 +17,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
   const oauthError = searchParams.get('error')
-  const origin = new URL(request.url).origin
+  const origin = resolveRequestOrigin(request)
   const seoUrl = new URL('/store-management/seo', origin)
 
   if (oauthError) {
@@ -30,7 +31,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const tokens = await exchangeGscCode(code)
+    const tokens = await exchangeGscCode(code, origin)
     const refreshToken = tokens.refresh_token
 
     if (!refreshToken) {

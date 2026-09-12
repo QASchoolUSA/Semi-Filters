@@ -436,6 +436,14 @@ export default function SearchConsoleDashboard() {
             Sign in once with the Google account that has access to the semifilters.com property.
             Connection is saved automatically — no env token paste needed.
           </p>
+          <p className="sm-cell-muted" style={{ marginTop: 12 }}>
+            If Google shows <code className="sm-empty__code">redirect_uri_mismatch</code>, add the
+            exact callback for this host under Authorized redirect URIs in Google Cloud Console —
+            e.g. <code className="sm-empty__code">http://localhost:3000/api/store-management/gsc/callback</code>{' '}
+            locally, or{' '}
+            <code className="sm-empty__code">https://semifilters.com/api/store-management/gsc/callback</code>{' '}
+            in production.
+          </p>
           <p style={{ marginTop: 16 }}>
             <a className="sm-btn sm-btn--primary" href="/api/store-management/gsc/connect">
               Connect Google
