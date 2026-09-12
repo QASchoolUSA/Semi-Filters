@@ -204,6 +204,7 @@ export default function SearchConsoleDashboard() {
   const [reloadKey, setReloadKey] = useState(0)
   const [status, setStatus] = useState<LoadStatus>('loading')
   const [error, setError] = useState<string | null>(null)
+  const [oauthNote, setOauthNote] = useState<string | null>(null)
   const [overview, setOverview] = useState<OverviewPayload | null>(null)
   const [queries, setQueries] = useState<GscDimensionRow[]>([])
   const [pages, setPages] = useState<GscDimensionRow[]>([])
@@ -219,7 +220,7 @@ export default function SearchConsoleDashboard() {
     const err = params.get('error')
     if (err) {
       const decoded = decodeURIComponent(err)
-      setError(
+      const message =
         decoded === 'no_refresh_token'
           ? 'Google did not return a refresh token. Open https://myaccount.google.com/permissions , remove Semi Filters access, then connect again.'
           : decoded === 'oauth_failed' || decoded.startsWith('oauth_failed:')
@@ -233,7 +234,8 @@ export default function SearchConsoleDashboard() {
                 : decoded === 'missing_code'
                   ? 'Google callback was missing an auth code. Try Connect again.'
                   : decoded
-      )
+      setOauthNote(message)
+      setError(message)
       window.history.replaceState({}, '', SEO_PATH)
     }
   }, [])
@@ -243,7 +245,10 @@ export default function SearchConsoleDashboard() {
 
     async function load() {
       setStatus('loading')
-      setError((prev) => (justConnected ? prev : null))
+      // Keep OAuth callback errors visible — do not wipe them on data reload.
+      if (!oauthNote && !justConnected) {
+        setError(null)
+      }
 
       try {
         const [overviewRes, queriesRes, pagesRes] = await Promise.all([
@@ -271,10 +276,12 @@ export default function SearchConsoleDashboard() {
           setOverview(null)
           setQueries([])
           setPages([])
-          if (justConnected) {
+          if (justConnected && !oauthNote) {
             setError(
-              'Google sign-in finished, but no connection is stored yet. Usually SANITY_API_TOKEN or AUTH_SECRET is missing on the host, or Google did not return a refresh token — revoke app access and connect again.'
+              'Google sign-in finished, but no connection is stored yet. Check SANITY_API_TOKEN / AUTH_SECRET, or revoke Google app access and connect again.'
             )
+          } else if (oauthNote) {
+            setError(oauthNote)
           }
           return
         }
@@ -303,6 +310,7 @@ export default function SearchConsoleDashboard() {
           return
         }
 
+        setOauthNote(null)
         setOverview(overviewJson)
         setQueries(Array.isArray(queriesJson.rows) ? queriesJson.rows : [])
         setPages(Array.isArray(pagesJson.rows) ? pagesJson.rows : [])
@@ -320,7 +328,7 @@ export default function SearchConsoleDashboard() {
     return () => {
       cancelled = true
     }
-  }, [range, justConnected, reloadKey])
+  }, [range, justConnected, reloadKey, oauthNote])
 
   async function disconnect() {
     setDisconnecting(true)
