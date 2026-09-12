@@ -91,8 +91,27 @@ npx tsx scripts/hash-store-password.ts 'your-password' 'you@semifilters.com'
 | `SHIP_FROM_ZIP` | Warehouse ZIP |
 | `SHIP_FROM_COUNTRY` | Usually `US` |
 | `SHIP_FROM_PHONE` | Warehouse phone |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID (Search Console dashboard) |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
+| `GSC_SITE_URL` | Optional override if auto-detect picks the wrong property |
 
 `/store-management` is auth-gated, `noindex`, and not included in the sitemap.
+
+### Google Search Console (store-management)
+
+The **Search** tab at `/store-management/search` shows clicks, impressions, CTR, average position, top keywords, pages, countries, and devices via the Search Console API.
+
+One-time setup:
+
+1. In [Google Cloud Console](https://console.cloud.google.com/), create/select a project and enable **Google Search Console API**.
+2. Create an **OAuth 2.0 Web application** client. Add authorized redirect URI:
+   - Production: `https://semifilters.com/api/store-management/gsc/callback`
+   - Local: `http://localhost:3000/api/store-management/gsc/callback`
+3. Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `AUTH_SECRET`, and `NEXT_PUBLIC_SITE_URL` (must match the host you use for the redirect URI). `SANITY_API_TOKEN` is required to save the connection.
+4. Sign in to store-management → **Search** → **Connect Google** with an account that has access to the semifilters.com property.
+5. The refresh token is encrypted and stored in Sanity automatically. The app picks the matching GSC property from your account (override with `GSC_SITE_URL` if needed).
+
+Clicks are visits from Google Search only — not full-site analytics (Clarity/GA). Data usually lags about two days. Use **Disconnect** on the Search page to remove the saved connection.
 
 ## Content migrations
 

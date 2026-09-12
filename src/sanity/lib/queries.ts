@@ -19,6 +19,7 @@ const productCardProjection = `{
 }`
 
 const publishedProduct = `_type == "product" && published != false && defined(slug.current)`
+const publishedGuide = `_type == "guide" && published != false && defined(slug.current)`
 
 export const allProductsQuery = defineQuery(`*[${publishedProduct}] | order(_createdAt desc) ${productCardProjection}`)
 
@@ -37,6 +38,8 @@ export const productBySlugQuery = defineQuery(`*[${publishedProduct} && slug.cur
   partNumber,
   crossReferences,
   vehicleFit,
+  fitmentDetails[]{brand, models, engines, notes},
+  faqs[]{question, answer},
   inStock,
   featured,
   brand,
@@ -53,12 +56,28 @@ export const relatedProductsQuery = defineQuery(`*[
   && category._ref == $categoryId
 ] | order(_createdAt desc) [0...4] ${productCardProjection}`)
 
+export const productsByCategorySlugQuery = defineQuery(`*[${publishedProduct} && category->slug.current == $slug] | order(featured desc, name asc) ${productCardProjection}`)
+
+export const productsByTruckBrandQuery = defineQuery(`*[${publishedProduct} && $brand in vehicleFit] | order(featured desc, name asc) ${productCardProjection}`)
+
 export const allCategoriesQuery = defineQuery(`*[_type == "category"] | order(order asc) {
   _id,
   name,
   slug,
   description,
-  image
+  image,
+  seoTitle,
+  seoDescription
+}`)
+
+export const categoryBySlugQuery = defineQuery(`*[_type == "category" && slug.current == $slug][0] {
+  _id,
+  name,
+  slug,
+  description,
+  image,
+  seoTitle,
+  seoDescription
 }`)
 
 export const searchProductsQuery = defineQuery(`*[${publishedProduct} && (
@@ -95,6 +114,35 @@ export const categorySitemapQuery = defineQuery(`*[_type == "category" && define
   _updatedAt
 }`)
 
+export const guideSitemapQuery = defineQuery(`*[${publishedGuide}] {
+  slug,
+  _updatedAt
+}`)
+
+export const allGuidesQuery = defineQuery(`*[${publishedGuide}] | order(publishedAt desc) {
+  _id,
+  title,
+  slug,
+  excerpt,
+  publishedAt,
+  seoTitle,
+  seoDescription,
+  relatedTruckBrands
+}`)
+
+export const guideBySlugQuery = defineQuery(`*[${publishedGuide} && slug.current == $slug][0] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  publishedAt,
+  body,
+  faqs[]{question, answer},
+  relatedTruckBrands,
+  seoTitle,
+  seoDescription
+}`)
+
 export const heroBannerQuery = defineQuery(`*[_type == "banner" && isActive == true][0] {
   _id,
   heading,
@@ -121,6 +169,7 @@ const orderProjection = `{
   _createdAt,
   stripeSessionId,
   status,
+  fulfillmentMethod,
   customerName,
   customerEmail,
   customerPhone,
@@ -143,7 +192,7 @@ const orderProjection = `{
 
 export const allOrdersQuery = defineQuery(`*[_type == "order"] | order(_createdAt desc) [0...100] ${orderProjection}`)
 
-export const unshippedOrdersQuery = defineQuery(`*[_type == "order" && status in ["paid", "ready_to_ship"]] | order(_createdAt desc) [0...100] ${orderProjection}`)
+export const unshippedOrdersQuery = defineQuery(`*[_type == "order" && status in ["paid", "ready_to_ship"] && fulfillmentMethod != "pickup"] | order(_createdAt desc) [0...100] ${orderProjection}`)
 
 export const orderByIdQuery = defineQuery(`*[_type == "order" && _id == $id][0] ${orderProjection}`)
 

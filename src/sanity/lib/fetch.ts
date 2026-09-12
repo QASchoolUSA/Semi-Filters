@@ -3,14 +3,19 @@ import type { QueryParams } from 'next-sanity'
 import { client } from './client'
 import {
   allCategoriesQuery,
+  allGuidesQuery,
+  categoryBySlugQuery,
   featuredProductsQuery,
+  guideBySlugQuery,
   heroBannerQuery,
   productBySlugQuery,
+  productsByCategorySlugQuery,
+  productsByTruckBrandQuery,
   relatedProductsQuery,
   shopFacetQuery,
   allProductsQuery,
 } from './queries'
-import type { Banner, Category, Product } from '@/types'
+import type { Banner, Category, Guide, Product } from '@/types'
 import type { ShopFacetQueryResult } from '@/sanity/types'
 
 const DEFAULT_REVALIDATE = 60
@@ -66,6 +71,18 @@ function asBanner(value: unknown): Banner | null {
   const banner = value as Banner
   if (!banner.heading) return null
   return banner
+}
+
+function asGuide(value: unknown): Guide | null {
+  if (!value || typeof value !== 'object') return null
+  const guide = value as Guide
+  if (!guide._id || !guide.title || !guide.slug?.current) return null
+  return guide
+}
+
+function asGuides(value: unknown): Guide[] {
+  if (!Array.isArray(value)) return []
+  return value.map(asGuide).filter((g): g is Guide => g !== null)
 }
 
 export const getProductBySlug = cache(async (slug: string): Promise<Product | null> => {
@@ -124,6 +141,73 @@ export const getCategories = cache(async (): Promise<Category[]> => {
   } catch (error) {
     console.error('Failed to fetch categories:', error)
     return []
+  }
+})
+
+export const getCategoryBySlug = cache(async (slug: string): Promise<Category | null> => {
+  try {
+    const result = await sanityFetch(categoryBySlugQuery, {
+      params: { slug },
+      tags: [`category:${slug}`],
+    })
+    if (!result || typeof result !== 'object') return null
+    const category = result as Category
+    if (!category._id || !category.name || !category.slug?.current) return null
+    return category
+  } catch (error) {
+    console.error('Failed to fetch category by slug:', error)
+    return null
+  }
+})
+
+export const getProductsByCategorySlug = cache(async (slug: string): Promise<Product[]> => {
+  try {
+    return asProducts(
+      await sanityFetch(productsByCategorySlugQuery, {
+        params: { slug },
+        tags: ['products', `category:${slug}`],
+      })
+    )
+  } catch (error) {
+    console.error('Failed to fetch products by category:', error)
+    return []
+  }
+})
+
+export const getProductsByTruckBrand = cache(async (brand: string): Promise<Product[]> => {
+  try {
+    return asProducts(
+      await sanityFetch(productsByTruckBrandQuery, {
+        params: { brand },
+        tags: ['products', `truck:${brand}`],
+      })
+    )
+  } catch (error) {
+    console.error('Failed to fetch products by truck brand:', error)
+    return []
+  }
+})
+
+export const getGuides = cache(async (): Promise<Guide[]> => {
+  try {
+    return asGuides(await sanityFetch(allGuidesQuery, { tags: ['guides'] }))
+  } catch (error) {
+    console.error('Failed to fetch guides:', error)
+    return []
+  }
+})
+
+export const getGuideBySlug = cache(async (slug: string): Promise<Guide | null> => {
+  try {
+    return asGuide(
+      await sanityFetch(guideBySlugQuery, {
+        params: { slug },
+        tags: [`guide:${slug}`],
+      })
+    )
+  } catch (error) {
+    console.error('Failed to fetch guide by slug:', error)
+    return null
   }
 })
 

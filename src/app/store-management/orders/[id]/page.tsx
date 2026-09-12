@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { adminFetch } from '@/sanity/lib/admin-client'
 import { orderByIdQuery } from '@/sanity/lib/queries'
 import StatusChip from '@/components/store-management/StatusChip'
+import { PICKUP_ADDRESS_MULTILINE } from '@/lib/fulfillment'
 import type { StoreOrder } from '@/types'
 
 export const metadata: Metadata = {
@@ -30,6 +31,7 @@ export default async function OrderDetailPage({
   if (!order) notFound()
 
   const address = order.shippingAddress
+  const isPickup = order.fulfillmentMethod === 'pickup'
 
   return (
     <div className="sm-page">
@@ -55,6 +57,10 @@ export default async function OrderDetailPage({
               <dd>{order.customerPhone || '—'}</dd>
             </div>
             <div>
+              <dt>Delivery method</dt>
+              <dd>{isPickup ? 'Pickup' : 'Shipping'}</dd>
+            </div>
+            <div>
               <dt>Stripe session</dt>
               <dd className="sm-mono">{order.stripeSessionId}</dd>
             </div>
@@ -62,19 +68,21 @@ export default async function OrderDetailPage({
         </div>
 
         <div className="sm-card">
-          <h3>Ship to</h3>
+          <h3>{isPickup ? 'Pickup location' : 'Ship to'}</h3>
           <pre className="sm-address">
-            {[
-              address?.name,
-              address?.line1,
-              address?.line2,
-              [address?.city, address?.state, address?.postalCode].filter(Boolean).join(', '),
-              address?.country,
-            ]
-              .filter(Boolean)
-              .join('\n') || 'No address'}
+            {isPickup
+              ? PICKUP_ADDRESS_MULTILINE
+              : [
+                  address?.name,
+                  address?.line1,
+                  address?.line2,
+                  [address?.city, address?.state, address?.postalCode].filter(Boolean).join(', '),
+                  address?.country,
+                ]
+                  .filter(Boolean)
+                  .join('\n') || 'No address'}
           </pre>
-          {order.status !== 'shipped' && order.status !== 'cancelled' && (
+          {!isPickup && order.status !== 'shipped' && order.status !== 'cancelled' && (
             <Link
               href={`/store-management/shipping?order=${order._id}`}
               className="sm-btn sm-btn--primary"

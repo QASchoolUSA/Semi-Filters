@@ -148,6 +148,78 @@ export const product = defineType({
             },
             description: 'Select which truck brands this filter fits',
         }),
+        defineField({
+            name: 'fitmentDetails',
+            title: 'Fitment Details',
+            type: 'array',
+            of: [
+                {
+                    type: 'object',
+                    fields: [
+                        {
+                            name: 'brand',
+                            title: 'Brand',
+                            type: 'string',
+                            options: {
+                                list: [
+                                    { title: 'Volvo', value: 'Volvo' },
+                                    { title: 'Freightliner', value: 'Freightliner' },
+                                    { title: 'Kenworth', value: 'Kenworth' },
+                                    { title: 'Peterbilt', value: 'Peterbilt' },
+                                    { title: 'Mack', value: 'Mack' },
+                                    { title: 'International', value: 'International' },
+                                    { title: 'Western Star', value: 'Western Star' },
+                                    { title: 'DAF', value: 'DAF' },
+                                ],
+                            },
+                            validation: (Rule) => Rule.required(),
+                        },
+                        {
+                            name: 'models',
+                            title: 'Models',
+                            type: 'array',
+                            of: [{ type: 'string' }],
+                            description: 'e.g. VNL, Cascadia, T680',
+                        },
+                        {
+                            name: 'engines',
+                            title: 'Engines',
+                            type: 'array',
+                            of: [{ type: 'string' }],
+                            description: 'e.g. D13, DD15, MX-13',
+                        },
+                        {
+                            name: 'notes',
+                            title: 'Notes',
+                            type: 'string',
+                            description: 'Years, housing, or verify-with-OEM guidance',
+                        },
+                    ],
+                    preview: {
+                        select: { title: 'brand', subtitle: 'notes' },
+                    },
+                },
+            ],
+            description: 'Structured fitment for PDP, schema, and AEO. Only list verified applications.',
+        }),
+        defineField({
+            name: 'faqs',
+            title: 'Product FAQs',
+            type: 'array',
+            of: [
+                {
+                    type: 'object',
+                    fields: [
+                        { name: 'question', type: 'string', title: 'Question', validation: (Rule) => Rule.required() },
+                        { name: 'answer', type: 'text', title: 'Answer', rows: 3, validation: (Rule) => Rule.required() },
+                    ],
+                    preview: {
+                        select: { title: 'question' },
+                    },
+                },
+            ],
+            description: 'Visible FAQs + FAQPage JSON-LD for answer engines',
+        }),
     ],
     groups: [
         { name: 'seo', title: 'SEO', icon: () => '🔍' },

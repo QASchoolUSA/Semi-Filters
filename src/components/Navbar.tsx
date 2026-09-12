@@ -32,6 +32,7 @@ export default function Navbar() {
     const navLinks = [
         { href: '/', label: 'Home' },
         { href: '/shop', label: 'Shop' },
+        { href: '/guides', label: 'Guides' },
         { href: '/about', label: 'About' },
         { href: '/contact', label: 'Contact' },
     ]
@@ -39,7 +40,7 @@ export default function Navbar() {
     return (
         <nav className="navbar">
             <div className="navbar-container">
-                <Link href="/" className="navbar-logo">
+                <Link href="/" className="navbar-logo" aria-label="Semi Filters">
                     <div className="logo-icon">
                         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="2" />
@@ -48,7 +49,7 @@ export default function Navbar() {
                         </svg>
                     </div>
                     <span className="logo-text">
-                        SEMI<span className="logo-accent">FILTERS</span>
+                        SEMI <span className="logo-accent">FILTERS</span>
                     </span>
                 </Link>
 

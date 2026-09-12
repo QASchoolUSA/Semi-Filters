@@ -1,11 +1,43 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
+import { truckBrandToSlug } from '@/lib/seo'
 
 /**
- * Next.js 16 proxy (replaces middleware). Auth.js default export is picked up as the handler.
+ * Next.js 16 proxy (replaces middleware).
+ * - Redirects legacy /shop?category=&truck= URLs to indexable landings
+ * - Protects /store-management with Auth.js
  */
 export default auth((req) => {
-  const { pathname } = req.nextUrl
+  const { pathname, searchParams } = req.nextUrl
+
+  if (pathname === '/shop') {
+    const category = searchParams.get('category')
+    const truck = searchParams.get('truck')
+
+    if (category && category !== 'all' && !truck) {
+      const url = req.nextUrl.clone()
+      url.pathname = `/filters/${category}`
+      url.search = ''
+      return NextResponse.redirect(url, 308)
+    }
+
+    if (truck && (!category || category === 'all')) {
+      const url = req.nextUrl.clone()
+      url.pathname = `/trucks/${truckBrandToSlug(truck)}`
+      url.search = ''
+      return NextResponse.redirect(url, 308)
+    }
+
+    if (truck && category && category !== 'all') {
+      const url = req.nextUrl.clone()
+      url.pathname = `/trucks/${truckBrandToSlug(truck)}`
+      url.search = ''
+      return NextResponse.redirect(url, 308)
+    }
+
+    return NextResponse.next()
+  }
+
   const isLogin = pathname.startsWith('/store-management/login')
   const isAuthed = !!req.auth
 
@@ -23,5 +55,5 @@ export default auth((req) => {
 })
 
 export const config = {
-  matcher: ['/store-management/:path*'],
+  matcher: ['/store-management/:path*', '/shop'],
 }

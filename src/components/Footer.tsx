@@ -9,7 +9,7 @@ export default function Footer() {
                 <div className="footer-grid">
                     {/* Brand */}
                     <div className="footer-section">
-                        <Link href="/" className="footer-logo">
+                        <Link href="/" className="footer-logo" aria-label="Semi Filters">
                             <div className="logo-icon">
                                 <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="2" />
@@ -18,7 +18,7 @@ export default function Footer() {
                                 </svg>
                             </div>
                             <span className="logo-text">
-                                SEMI<span className="logo-accent">FILTERS</span>
+                                SEMI <span className="logo-accent">FILTERS</span>
                             </span>
                         </Link>
                         <p className="footer-description">
@@ -31,6 +31,8 @@ export default function Footer() {
                         <h3 className="footer-heading">Quick Links</h3>
                         <ul className="footer-links">
                             <li><Link href="/shop">All Products</Link></li>
+                            <li><Link href="/guides">Guides</Link></li>
+                            <li><Link href="/faq">FAQ</Link></li>
                             <li><Link href="/about">About Us</Link></li>
                             <li><Link href="/contact">Contact</Link></li>
                         </ul>
@@ -40,10 +42,10 @@ export default function Footer() {
                     <div className="footer-section">
                         <h3 className="footer-heading">Filter Types</h3>
                         <ul className="footer-links">
-                            <li><Link href="/shop?category=oil-filters">Oil Filters</Link></li>
-                            <li><Link href="/shop?category=air-filters">Air Filters</Link></li>
-                            <li><Link href="/shop?category=fuel-filters">Fuel Filters</Link></li>
-                            <li><Link href="/shop?category=cabin-filters">Cabin Filters</Link></li>
+                            <li><Link href="/filters/oil-filters">Oil Filters</Link></li>
+                            <li><Link href="/filters/air-filters">Air Filters</Link></li>
+                            <li><Link href="/filters/fuel-filters">Fuel Filters</Link></li>
+                            <li><Link href="/filters/cabin-filters">Cabin Filters</Link></li>
                         </ul>
                     </div>
 

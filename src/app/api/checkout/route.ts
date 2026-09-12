@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { urlFor } from '@/sanity/lib/image';
+import {
+    calculateShippingDollars,
+    parseFulfillmentMethod,
+    type FulfillmentMethod,
+} from '@/lib/fulfillment';
 
 function getStripe() {
     const key = process.env.STRIPE_SECRET_KEY;
@@ -17,6 +22,7 @@ export async function POST(request: Request) {
         const stripe = getStripe();
         const body = await request.json();
         const { items } = body;
+        const fulfillmentMethod: FulfillmentMethod = parseFulfillmentMethod(body.fulfillmentMethod);
 
         if (!items || items.length === 0) {
             return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
@@ -49,51 +55,65 @@ export async function POST(request: Request) {
             };
         });
 
-        // Shipping: $5.99 base + $1.00 per additional item beyond the first
         const totalItemCount = items.reduce((total: number, item: any) => total + item.quantity, 0)
-        const shippingCents = totalItemCount > 0
-            ? Math.round((5.99 + Math.max(0, totalItemCount - 1) * 1.00) * 100)
-            : 0
+        const isPickup = fulfillmentMethod === 'pickup'
 
-        // Define shipping options
-        const shipping_options: Stripe.Checkout.SessionCreateParams.ShippingOption[] = [
-            {
-                shipping_rate_data: {
-                    type: 'fixed_amount',
-                    fixed_amount: { amount: shippingCents, currency: 'usd' },
-                    display_name: 'Standard Shipping',
-                    delivery_estimate: {
-                        minimum: { unit: 'business_day', value: 3 },
-                        maximum: { unit: 'business_day', value: 5 },
+        const shipping_options: Stripe.Checkout.SessionCreateParams.ShippingOption[] = isPickup
+            ? [
+                {
+                    shipping_rate_data: {
+                        type: 'fixed_amount',
+                        fixed_amount: { amount: 0, currency: 'usd' },
+                        display_name: 'Local Pickup — Sanford, FL',
                     },
                 },
-            },
-        ];
+            ]
+            : [
+                {
+                    shipping_rate_data: {
+                        type: 'fixed_amount',
+                        fixed_amount: {
+                            amount: Math.round(calculateShippingDollars(totalItemCount) * 100),
+                            currency: 'usd',
+                        },
+                        display_name: 'Standard Shipping',
+                        delivery_estimate: {
+                            minimum: { unit: 'business_day', value: 3 },
+                            maximum: { unit: 'business_day', value: 5 },
+                        },
+                    },
+                },
+            ];
 
-        // Create Checkout Session
-        const session = await stripe.checkout.sessions.create({
+        const sessionParams: Stripe.Checkout.SessionCreateParams = {
             payment_method_types: ['card'],
             mode: 'payment',
             line_items,
             shipping_options,
-            // Enable Address Collection
-            shipping_address_collection: {
-                allowed_countries: ['US', 'CA', 'GB'], // Add other allowed countries
-            },
-            // Enable Phone Number Collection
             phone_number_collection: {
                 enabled: true,
             },
-            // Enable automatic tax
             automatic_tax: {
                 enabled: true,
             },
-            // Enable promotion codes
             allow_promotion_codes: true,
+            metadata: {
+                fulfillmentMethod,
+            },
             success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
-            // Redirect cancel user back to cart preserving the state
             cancel_url: `${origin}/cart`,
-        });
+        }
+
+        if (isPickup) {
+            // Billing address required for automatic tax when no shipping address is collected
+            sessionParams.billing_address_collection = 'required'
+        } else {
+            sessionParams.shipping_address_collection = {
+                allowed_countries: ['US', 'CA', 'GB'],
+            }
+        }
+
+        const session = await stripe.checkout.sessions.create(sessionParams);
 
         return NextResponse.json({ url: session.url });
     } catch (error: any) {

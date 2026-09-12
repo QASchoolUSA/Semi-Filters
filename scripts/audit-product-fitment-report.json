@@ -1,0 +1,882 @@
+{
+  "total": 30,
+  "withVehicleFitGaps": 0,
+  "withOrphanTags": 0,
+  "withSparseSpecs": 0,
+  "rows": [
+    {
+      "_id": "product-03-42776-010",
+      "partNumber": "03-42776-010",
+      "name": "03-42776-010 Air Filter — Freightliner Cascadia (2018+)",
+      "slug": "03-42776-010-freightliner-cascadia-air-filter",
+      "category": "Air Filters",
+      "productType": "air-filter",
+      "vehicleFit": [
+        "Freightliner"
+      ],
+      "brandsInCopy": [
+        "Freightliner"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "P628541",
+        "03-42086-010",
+        "831.466010"
+      ],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "03-42776-010 Air Filter for Freightliner Cascadia",
+      "seoDescription": "Shop the 03-42776-010 engine air filter for 2018+ Freightliner Cascadia trucks. Fits Cummins X15 & Detroit DD15. Premium filtration media. Replaces Donaldson P628541.",
+      "descriptionPreview": "The 03-42776-010 is an OEM-specification engine air filter designed for Freightliner Cascadia trucks (2018–2025 model years) equipped with Cummins ISX/X15 or Detroit Diesel DD13, DD15, and DD16 engines. It provides the primary barrier between airborne contaminants and your engine"
+    },
+    {
+      "_id": "product-21707132",
+      "partNumber": "21707132",
+      "name": "Volvo 21707132 Bypass Oil Filter — D11, D12, D13 Engines",
+      "slug": "volvo-21707132-bypass-oil-filter",
+      "category": "Oil Filters",
+      "productType": "oil-filter",
+      "vehicleFit": [
+        "Volvo",
+        "Mack"
+      ],
+      "brandsInCopy": [
+        "Volvo",
+        "Mack"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "P550425",
+        "B7409",
+        "WL10173",
+        "WL10106",
+        "51660",
+        "LF3654",
+        "LF17502",
+        "LFP8642",
+        "20843764",
+        "20845764",
+        "1660",
+        "P9407"
+      ],
+      "specsCount": 3,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Volvo 21707132 Bypass Oil Filter for VNL D11 D12 D13",
+      "seoDescription": "Volvo 21707132 bypass oil filter for VNL/VNM/VHD with D11–D13 engines. Also used on shared Mack MP7/MP8 apps. Replaces Baldwin B7409, Donaldson P550425.",
+      "descriptionPreview": "The 21707132 bypass oil filter is engineered specifically for Volvo D11, D12, and D13 diesel engines. As a secondary filtration stage, it works alongside the primary oil filter to capture ultra-fine contaminants — including carbon residue, soot particles, and microscopic metal fr"
+    },
+    {
+      "_id": "product-21715813",
+      "partNumber": "21715813",
+      "name": "Volvo 21715813 Primary Air Filter — VNL, VNM, VNR, VHD",
+      "slug": "volvo-21715813-air-filter",
+      "category": "Air Filters",
+      "productType": "air-filter",
+      "vehicleFit": [
+        "Volvo"
+      ],
+      "brandsInCopy": [
+        "Volvo"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "RS4642",
+        "49126",
+        "P606720",
+        "CA9901",
+        "LAF9201",
+        "E767L",
+        "AF2414",
+        "83126"
+      ],
+      "specsCount": 3,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Volvo 21715813 Air Filter for VNL VNM VNR VHD",
+      "seoDescription": "Buy the Volvo 21715813 primary engine air filter for VNL, VNM, VNR & VHD trucks. 99% filtration efficiency, expanded cage support. Replaces Baldwin RS4642, WIX 49126.",
+      "descriptionPreview": "The 21715813 is a primary engine air filter engineered for Volvo VNL, VNM, VNR, and VHD heavy-duty trucks. Constructed with premium Italian-sourced filtration media, it provides 99% particle capture efficiency to shield turbochargers, cylinders, and pistons from abrasive airborne"
+    },
+    {
+      "_id": "product-23151592",
+      "partNumber": "23151592",
+      "name": "Volvo 23151592 Full-Flow Oil Filter — D11, D12, D13 Engines",
+      "slug": "volvo-23151592-oil-filter",
+      "category": "Oil Filters",
+      "productType": "oil-filter",
+      "vehicleFit": [
+        "Volvo",
+        "Mack"
+      ],
+      "brandsInCopy": [
+        "Volvo",
+        "Mack"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "LF16465",
+        "B40153",
+        "P582021",
+        "WL10651",
+        "23155587",
+        "LFP3247",
+        "400651",
+        "W11020"
+      ],
+      "specsCount": 3,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Volvo 23151592 Oil Filter for VNL D11 D12 D13",
+      "seoDescription": "Buy the Volvo 23151592 full-flow oil filter for VNL, VNM & VHD trucks. Premium filtration media, OEM fit. Fast shipping. Replaces Baldwin B40153, Fleetguard LF16465.",
+      "descriptionPreview": "The 23151592 is an OEM-specification full-flow oil filter designed for Volvo D11, D12, and D13 heavy-duty diesel engines. It serves as the primary line of defense against harmful contaminants, capturing dirt, metal particles, and combustion byproducts before they can damage criti"
+    },
+    {
+      "_id": "product-23658092",
+      "partNumber": "23658092",
+      "name": "Volvo 23658092 Long Life Oil Filter — D11, D12, D13, D16 Engines",
+      "slug": "volvo-23658092-long-life-oil-filter",
+      "category": "Oil Filters",
+      "productType": "oil-filter",
+      "vehicleFit": [
+        "Volvo"
+      ],
+      "brandsInCopy": [
+        "Volvo"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "LF3675",
+        "LF17503",
+        "51791XD",
+        "P550519",
+        "W11025",
+        "H200W40",
+        "OC370",
+        "2170133",
+        "478736"
+      ],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Volvo 23658092 Long Life Oil Filter for VNL D12 D13",
+      "seoDescription": "Shop the Volvo 23658092 extended-life oil filter for D11–D16 diesel engines. Fits VNL, VNM & VHD trucks. Fast shipping. Replaces Fleetguard LF3675, Donaldson P550519.",
+      "descriptionPreview": "The 23658092 long-life oil filter is a high-capacity spin-on filter engineered for Volvo and Volvo Penta diesel engines. Designed for extended drain intervals, it provides superior contaminant removal across a wide range of heavy-duty D9, D10, D11, D12, D13, and D16 engine platfo"
+    },
+    {
+      "_id": "product-23920469",
+      "partNumber": "23920469",
+      "name": "Volvo 23920469 Secondary Fuel Filter — D11, D13 Engines",
+      "slug": "volvo-23920469-fuel-filter",
+      "category": "Fuel Filters",
+      "productType": "fuel-filter",
+      "vehicleFit": [
+        "Volvo"
+      ],
+      "brandsInCopy": [
+        "Volvo"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "BF46117",
+        "FF42128NN",
+        "DBF5967",
+        "LFH22005",
+        "600447"
+      ],
+      "specsCount": 3,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Volvo 23920469 Fuel Filter for VNL D11 D13",
+      "seoDescription": "Buy the Volvo 23920469 secondary fuel filter for VNL & VHD trucks with D11/D13 engines. 99.9% efficiency, OEM quality. Fast shipping. Replaces Baldwin BF46117.",
+      "descriptionPreview": "The 23920469 is a secondary fuel filter engineered for Volvo D11 and D13 heavy-duty diesel engines. Positioned downstream in the fuel system, it provides a critical final stage of filtration — removing microscopic contaminants and trace water before fuel reaches the high-pressure"
+    },
+    {
+      "_id": "product-24137737",
+      "partNumber": "24137737",
+      "name": "Volvo 24137737 Secondary Fuel Filter — D13 2024+ / Mack MP8",
+      "slug": "volvo-24137737-fuel-filter",
+      "category": "Fuel Filters",
+      "productType": "fuel-filter",
+      "vehicleFit": [
+        "Volvo",
+        "Mack"
+      ],
+      "brandsInCopy": [
+        "Volvo",
+        "Mack"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "24137493",
+        "24470880"
+      ],
+      "specsCount": 5,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Volvo 24137737 Fuel Filter | D13 2024+ & Mack MP8",
+      "seoDescription": "OEM-spec Volvo 24137737 secondary fuel filter for 2024+ D13 and Mack MP8 engines. 99% efficiency at 10 microns. Crosses 24137493 & 24470880. Fast US shipping.",
+      "descriptionPreview": "The 24137737 is an OEM-specification secondary fuel filter engineered for the new-generation Volvo D13 (2024 and newer) and Mack MP8 heavy-duty diesel engines. Positioned as the final filtration stage before the high-pressure common rail system, it delivers the fine-particle and "
+    },
+    {
+      "_id": "product-a4700903151",
+      "partNumber": "A4700903151",
+      "name": "Detroit Diesel Fuel Filter Kit A4700903151",
+      "slug": "detroit-diesel-fuel-filter-kit-a4700903151",
+      "category": "Fuel Filters",
+      "productType": "fuel-filter",
+      "vehicleFit": [
+        "Freightliner",
+        "Western Star"
+      ],
+      "brandsInCopy": [
+        "Freightliner",
+        "Western Star"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "PF9908",
+        "L5104F",
+        "FF1227",
+        "E112KPD276-2"
+      ],
+      "specsCount": 3,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Detroit Diesel Fuel Filter Kit A4700903151 | DD13 DD15 DD16",
+      "seoDescription": "Fuel filter insert kit A4700903151 for Detroit DD13, DD15 & DD16. OEM-style fit for Freightliner & Western Star. Fine filtration for common rail protection. In stock.",
+      "descriptionPreview": "The A4700903151 is a genuine-specification fuel filter insert kit engineered for Detroit Diesel DD13, DD15, and DD16 heavy-duty engines. It replaces the factory fuel filtration elements used in modern common rail systems, providing the fine particulate capture and coalescing perf"
+    },
+    {
+      "_id": "product-a4711800109",
+      "partNumber": "A4711800109",
+      "name": "Detroit Diesel Oil Filter Kit A4711800109",
+      "slug": "detroit-diesel-oil-filter-kit-a4711800109",
+      "category": "Oil Filters",
+      "productType": "oil-filter",
+      "vehicleFit": [
+        "Freightliner",
+        "Western Star"
+      ],
+      "brandsInCopy": [
+        "Freightliner",
+        "Western Star"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "A4711800209",
+        "A4711800009",
+        "A4721800109"
+      ],
+      "specsCount": 3,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Detroit Diesel Oil Filter Kit A4711800109 | DD13 DD15 DD16",
+      "seoDescription": "Oil filter kit A4711800109 for Detroit DD13, DD15 & DD16. Cartridge service kit for Freightliner & Western Star. Crosses A4711800209 / A4711800009 on many apps.",
+      "descriptionPreview": "The A4711800109 is an engine oil filter kit built for Detroit Diesel DD13, DD15, and DD16 power plants. It provides the cartridge-style element and sealing components needed for a complete oil filter service — restoring full-flow lubrication system protection between drain interv"
+    },
+    {
+      "_id": "product-a4711800209",
+      "partNumber": "A4711800209",
+      "name": "Detroit Diesel A4711800209 Oil Filter — DD13 DD15 DD16 (2020+)",
+      "slug": "detroit-a4711800209-oil-filter",
+      "category": "Oil Filters",
+      "productType": "oil-filter",
+      "vehicleFit": [
+        "Freightliner",
+        "Western Star"
+      ],
+      "brandsInCopy": [
+        "Freightliner",
+        "Western Star"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "LF17810",
+        "LF17800",
+        "P582506",
+        "P41000",
+        "WL10663",
+        "LP7184",
+        "400663",
+        "A4711800009",
+        "A4731800509",
+        "A4731800809",
+        "A4721842325",
+        "A4721842425",
+        "A4721842525",
+        "A4721842725",
+        "A4721842925",
+        "A4721841825",
+        "A4721842125"
+      ],
+      "specsCount": 4,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Detroit A4711800209 Oil Filter | DD13 DD15 DD16 2020+",
+      "seoDescription": "Genuine-spec Detroit Diesel A4711800209 oil filter kit for DD13, DD15 & DD16 Gen 5 engines. Fits Freightliner Cascadia & Western Star. Crosses LF17810 / P582506 / WL10663.",
+      "descriptionPreview": "The A4711800209 is a genuine-specification engine oil cartridge filter engineered for the Gen 5 Detroit Diesel DD13, DD15, and DD16 platforms (2020 and newer). As the primary full-flow filter, it captures metal particles, carbon, and combustion byproducts before they can damage b"
+    },
+    {
+      "_id": "product-a4720921705",
+      "partNumber": "A4720921705",
+      "name": "Detroit Diesel A4720921705 Fuel Filter Kit — DD13 DD15 DD16 (2020+)",
+      "slug": "detroit-a4720921705-fuel-filter",
+      "category": "Fuel Filters",
+      "productType": "fuel-filter",
+      "vehicleFit": [
+        "Freightliner",
+        "Western Star",
+        "Peterbilt"
+      ],
+      "brandsInCopy": [
+        "Freightliner",
+        "Peterbilt",
+        "Western Star"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "FK11011",
+        "P582831",
+        "PF46269",
+        "WF10678",
+        "600678",
+        "KX46910",
+        "A4720921405",
+        "A4720921405001"
+      ],
+      "specsCount": 6,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Detroit A4720921705 Fuel Filter Kit | DD13 DD15 DD16 2020+",
+      "seoDescription": "OEM-spec Detroit Diesel A4720921705 fuel filter kit for 2020+ DD13, DD15 & DD16 engines. 4-micron filtration. Crosses Fleetguard FK11011, Donaldson P582831, Baldwin PF46269.",
+      "descriptionPreview": "The A4720921705 is an OEM-specification fuel filter kit engineered for the 2020-and-newer Detroit Diesel DD13, DD15, and DD16 engines. Supplied as a complete service package, it restores factory-grade fuel filtration performance with 4-micron absolute particulate capture and inte"
+    },
+    {
+      "_id": "product-af26163m",
+      "partNumber": "AF26163M",
+      "name": "AF26163M Air Filter for Volvo VNL — Replaces 20411815",
+      "slug": "af26163m-volvo-vnl-air-filter",
+      "category": "Air Filters",
+      "productType": "air-filter",
+      "vehicleFit": [
+        "Volvo"
+      ],
+      "brandsInCopy": [
+        "Volvo"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "RS4642",
+        "49126",
+        "P605551",
+        "P606720",
+        "CA9901",
+        "LAF9201",
+        "9126",
+        "83126",
+        "LX1600",
+        "E767L",
+        "C331630"
+      ],
+      "specsCount": 3,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "AF26163M Air Filter for Volvo VNL VNM VHD",
+      "seoDescription": "Shop the AF26163M primary air filter for Volvo VNL, VNM, VHD & VAH trucks. Direct replacement for 20411815. Fast shipping. Replaces Baldwin RS4642, WIX 49126, Donaldson P606720.",
+      "descriptionPreview": "The AF26163M is a primary engine air filter designed for Volvo trucks from 2004 and newer, including VNL, VNM, VNX, VHD, and VAH model lines. Engineered with advanced synthetic filtration media, it delivers exceptional dust-holding capacity and consistent airflow restriction thro"
+    },
+    {
+      "_id": "product-af27879",
+      "partNumber": "AF27879",
+      "name": "AF27879 Air Filter for Freightliner Cascadia & Columbia",
+      "slug": "af27879-freightliner-air-filter",
+      "category": "Air Filters",
+      "productType": "air-filter",
+      "vehicleFit": [
+        "Freightliner"
+      ],
+      "brandsInCopy": [
+        "Freightliner"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "CA5790",
+        "49478",
+        "P610260",
+        "P618478",
+        "LAF6260",
+        "CA11249",
+        "83478"
+      ],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "AF27879 Air Filter for Freightliner Cascadia",
+      "seoDescription": "Buy the AF27879 engine air filter for Freightliner Cascadia, Columbia & Century trucks. OEM-quality panel element. Fast shipping. Replaces Baldwin CA5790, WIX 49478.",
+      "descriptionPreview": "The AF27879 is a primary engine air filter engineered for Freightliner heavy-duty trucks. Its panel-style design and high-density filtration media deliver superior particulate capture while maintaining the low airflow restriction that modern turbocharged diesel engines demand for"
+    },
+    {
+      "_id": "product-d371061",
+      "partNumber": "D371061",
+      "name": "D371061 Air Filter for Kenworth T680 & Peterbilt 579 (2022+)",
+      "slug": "d371061-kenworth-peterbilt-air-filter",
+      "category": "Air Filters",
+      "productType": "air-filter",
+      "vehicleFit": [
+        "Kenworth",
+        "Peterbilt"
+      ],
+      "brandsInCopy": [
+        "Kenworth",
+        "Peterbilt"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "DBA6329",
+        "D37-1061",
+        "D37-1037"
+      ],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "D371061 Air Filter for Kenworth T680 & Peterbilt 579",
+      "seoDescription": "Shop the D371061 Paccar OEM engine air filter for 2022+ Kenworth T680 and Peterbilt 579 trucks. Premium glass fiber media. Replaces Donaldson DBA6329.",
+      "descriptionPreview": "The D371061 is a Paccar OEM engine air filter designed for the latest generation of Kenworth T680 and Peterbilt 579 trucks (2022 and newer). Manufactured with premium glass fiber filter paper, it provides high filtration efficiency and consistent performance across a wide range o"
+    },
+    {
+      "_id": "product-fs19764",
+      "partNumber": "FS19764",
+      "name": "FS19764 Fuel Water Separator — Volvo & Mack Heavy-Duty Diesel",
+      "slug": "fs19764-volvo-mack-fuel-water-separator",
+      "category": "Fuel Filters",
+      "productType": "fuel-water-separator",
+      "vehicleFit": [
+        "Volvo",
+        "Mack"
+      ],
+      "brandsInCopy": [
+        "Volvo",
+        "Mack"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "PF9814",
+        "33964",
+        "P550849",
+        "P179960",
+        "L9763FXL",
+        "3964",
+        "86964",
+        "FF1216",
+        "CS11023"
+      ],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "FS19764 Fuel Water Separator for Volvo & Mack Trucks",
+      "seoDescription": "Shop the FS19764 fuel water separator with StrataPore media. Fits Volvo & Mack trucks with Davco Fuel Pro systems. Fast shipping. Replaces Baldwin PF9814, WIX 33964.",
+      "descriptionPreview": "The FS19764 is a high-performance fuel/water separator designed for heavy-duty diesel engines. Utilizing StrataPore multi-layer filtration media, it delivers exceptional water separation and particulate removal to protect fuel injectors, pumps, and other sensitive fuel system com"
+    },
+    {
+      "_id": "product-fs19765",
+      "partNumber": "FS19765",
+      "name": "FS19765 Fuel Water Separator — Kenworth & Peterbilt Diesel",
+      "slug": "fs19765-kenworth-fuel-water-separator",
+      "category": "Fuel Filters",
+      "productType": "fuel-water-separator",
+      "vehicleFit": [
+        "Kenworth",
+        "Peterbilt"
+      ],
+      "brandsInCopy": [
+        "Kenworth",
+        "Peterbilt"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "PF7930",
+        "P550851",
+        "P568522",
+        "102528",
+        "102761",
+        "382136"
+      ],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "FS19765 Fuel Water Separator for Kenworth & Peterbilt",
+      "seoDescription": "Buy the FS19765 fuel water separator for Kenworth & Peterbilt Fuel Pro / Diesel Pro systems. 95% water separation. Replaces Baldwin PF7930, Donaldson P550851.",
+      "descriptionPreview": "The FS19765 fuel/water separator delivers multi-stage filtration for diesel fuel processors used on Kenworth and Peterbilt trucks. Built with StrataPore-style media, it separates emulsified water and traps solid contaminants to protect high-pressure injectors and pumps.\nVerified "
+    },
+    {
+      "_id": "product-fs19915",
+      "partNumber": "FS19915",
+      "name": "FS19915 Fuel Filter with Water Separator — Freightliner DD15",
+      "slug": "fs19915-freightliner-fuel-water-separator",
+      "category": "Fuel Filters",
+      "productType": "fuel-water-separator",
+      "vehicleFit": [
+        "Freightliner"
+      ],
+      "brandsInCopy": [
+        "Freightliner"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "PF9804",
+        "33655",
+        "P551011",
+        "L9915F",
+        "3655",
+        "86655",
+        "CS11122"
+      ],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "FS19915 Fuel Water Separator for Freightliner Cascadia",
+      "seoDescription": "Shop the FS19915 fuel filter with water separator for Freightliner Cascadia & Columbia with Detroit DD13/DD15/DD16 engines. Replaces Baldwin PF9804, WIX 33655.",
+      "descriptionPreview": "The FS19915 fuel filter with integrated water separator is engineered for Freightliner trucks equipped with Detroit Diesel DD13, DD15, and DD16 engines. High-capacity StrataPore-style media delivers fine particulate filtration and aggressive water separation in one service elemen"
+    },
+    {
+      "_id": "product-fs20083",
+      "partNumber": "FS20083",
+      "name": "FS20083 Fuel Water Separator — DAVCO Fuel Pro 485/487/488, DD13/15/16, ISX",
+      "slug": "fs20083-fuel-water-separator",
+      "category": "Fuel Filters",
+      "productType": "fuel-water-separator",
+      "vehicleFit": [
+        "Freightliner",
+        "Western Star",
+        "Peterbilt",
+        "International",
+        "Volvo"
+      ],
+      "brandsInCopy": [
+        "Volvo",
+        "Freightliner",
+        "Peterbilt",
+        "International",
+        "Western Star"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "PF46145",
+        "P580710",
+        "FS20385",
+        "L20083F",
+        "A0000905051",
+        "A485007",
+        "485007"
+      ],
+      "specsCount": 8,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "FS20083 Fuel Water Separator | DAVCO Fuel Pro 485 487 488",
+      "seoDescription": "FS20083 EleMax StrataPore fuel/water separator for DAVCO Fuel Pro 485/487/488. Fits Detroit DD13/15/16, Cummins ISX & Navistar A26. Crosses PF46145 / P580710.",
+      "descriptionPreview": "The FS20083 is a high-performance fuel/water separator cartridge built with Fleetguard EleMax StrataPore multi-layer coalescing media. Sized as the standard-length element for DAVCO Fuel Pro 485, 487, and 488 fuel processors, it delivers class-leading water separation and fine-pa"
+    },
+    {
+      "_id": "product-fs20313",
+      "partNumber": "FS20313",
+      "name": "FS20313 Fuel Water Separator — Volvo D11, D13 & Mack MP7, MP8",
+      "slug": "fs20313-volvo-mack-fuel-water-separator",
+      "category": "Fuel Filters",
+      "productType": "fuel-water-separator",
+      "vehicleFit": [
+        "Volvo",
+        "Mack"
+      ],
+      "brandsInCopy": [
+        "Volvo",
+        "Mack"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "24009058",
+        "24009059"
+      ],
+      "specsCount": 3,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "FS20313 Fuel Water Separator for Volvo D13 & Mack MP8",
+      "seoDescription": "Buy the FS20313 EleMax fuel water separator for Volvo VNL (D11/D13) and Mack Anthem/Pinnacle (MP7/MP8) trucks. Three-stage water removal. Fast shipping.",
+      "descriptionPreview": "The FS20313 is a next-generation fuel/water separator cartridge featuring Fleetguard EleMax multi-layer water separation technology. Designed for Volvo D11 and D13 as well as Mack MP7 and MP8 engines, it provides three-stage water removal architecture for the most demanding diese"
+    },
+    {
+      "_id": "product-kit--1",
+      "partNumber": "KIT #1",
+      "name": "Volvo VNL D13 Engine Filter Kit — 21707132, 23658092, 23920469",
+      "slug": "volvo-vnl-d13-engine-filter-kit",
+      "category": "Accessories & Kits",
+      "productType": "multi-system-filter-kit",
+      "vehicleFit": [
+        "Volvo"
+      ],
+      "brandsInCopy": [
+        "Volvo"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Volvo VNL D13 Engine Filter Kit — Oil & Fuel Filters",
+      "seoDescription": "Complete engine filter kit for Volvo VNL D12/D13 trucks. Includes bypass oil filter 21707132, 2× oil filters 23658092 & fuel filter 23920469. Save vs buying separately.",
+      "descriptionPreview": "This comprehensive engine filter kit bundles the essential oil and fuel filters for Volvo VNL trucks equipped with D12 and D13 engines. Pre-packaged for a complete scheduled maintenance service, it eliminates the hassle of sourcing individual filters and ensures every component o"
+    },
+    {
+      "_id": "product-kit--2",
+      "partNumber": "KIT #2",
+      "name": "Volvo VNL D13 Fuel & Oil Filter Change Kit — FS20313, 23920469, 23151592",
+      "slug": "volvo-vnl-fuel-oil-filter-change-kit",
+      "category": "Accessories & Kits",
+      "productType": "multi-system-filter-kit",
+      "vehicleFit": [
+        "Volvo"
+      ],
+      "brandsInCopy": [
+        "Volvo"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Volvo VNL D13 Fuel & Oil Filter Change Kit",
+      "seoDescription": "Fuel & oil filter change kit for Volvo VNL D12/D13 trucks. Includes 2× oil filters 23151592, fuel filter 23920469 & fuel water separator FS20313. Bundle pricing.",
+      "descriptionPreview": "A complete fuel and oil filter change kit packaged for Volvo VNL trucks with D12 and D13 engines. This all-in-one bundle covers both the fuel system and lubrication system, giving you everything needed for a thorough scheduled maintenance service.\nKit Includes\n2× Oil Filters 2315"
+    },
+    {
+      "_id": "product-kit--3",
+      "partNumber": "KIT #3",
+      "name": "Volvo VNL D13 Oil Filter Change Kit — 21707132, 23658092",
+      "slug": "volvo-vnl-oil-filter-change-kit",
+      "category": "Accessories & Kits",
+      "productType": "multi-system-filter-kit",
+      "vehicleFit": [
+        "Volvo"
+      ],
+      "brandsInCopy": [
+        "Volvo"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Volvo VNL D12 D13 Oil Filter Change Kit",
+      "seoDescription": "Oil filter change kit for Volvo VNL D12/D13 trucks. Includes bypass filter 21707132 & 2× long-life filters 23658092. Complete two-stage oil filtration. Bundle pricing.",
+      "descriptionPreview": "This oil filter change kit provides a convenient two-part solution for scheduled oil service on Volvo VNL trucks. It includes the bypass and primary long-life filters required for a complete oil filtration system refresh.\nKit Includes\n1× Bypass Oil Filter 21707132 — captures ultr"
+    },
+    {
+      "_id": "product-kit--4",
+      "partNumber": "KIT #4",
+      "name": "Volvo VNL Complete Engine Filter Kit — Oil, Fuel & Water Separator",
+      "slug": "volvo-vnl-complete-engine-filter-kit",
+      "category": "Accessories & Kits",
+      "productType": "multi-system-filter-kit",
+      "vehicleFit": [
+        "Volvo"
+      ],
+      "brandsInCopy": [
+        "Volvo"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Volvo VNL D12 D13 Complete Engine Filter Kit",
+      "seoDescription": "Complete filter maintenance kit for Volvo VNL D12/D13 trucks. Includes bypass oil filter, oil filters, fuel filter & water separator. 4 filters, 1 kit, full protection.",
+      "descriptionPreview": "The most comprehensive filter maintenance kit available for Volvo VNL trucks, covering oil, fuel, and water separation in a single package. Ideal for owner-operators and fleet managers who want to perform a full preventive maintenance service in one efficient shop visit.\nKit Incl"
+    },
+    {
+      "_id": "product-kit--5",
+      "partNumber": "KIT #5",
+      "name": "Volvo VNL Fuel & Oil Service Kit — FS20313, 23151592",
+      "slug": "volvo-vnl-fuel-oil-service-kit",
+      "category": "Oil Filters",
+      "productType": "multi-system-filter-kit",
+      "vehicleFit": [
+        "Volvo"
+      ],
+      "brandsInCopy": [
+        "Volvo"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Volvo VNL Fuel & Oil Service Kit — FS20313",
+      "seoDescription": "Fuel & oil service kit for Volvo VNL D12/D13 trucks. Includes 2× oil filters 23151592 & EleMax fuel water separator FS20313. Convenient bundle pricing. Fast shipping.",
+      "descriptionPreview": "A purpose-built fuel and oil filter kit for Volvo VNL trucks, combining primary oil filtration with advanced fuel/water separation. This bundle streamlines your maintenance routine by providing the filters most frequently replaced together during scheduled fuel and oil system ser"
+    },
+    {
+      "_id": "product-kit--6",
+      "partNumber": "KIT #6",
+      "name": "Volvo VNL Fuel & Oil Filter Kit — 23920469, 23151592",
+      "slug": "volvo-vnl-d13-fuel-oil-filter-kit",
+      "category": "Accessories & Kits",
+      "productType": "multi-system-filter-kit",
+      "vehicleFit": [
+        "Volvo"
+      ],
+      "brandsInCopy": [
+        "Volvo"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "Volvo VNL D13 Fuel & Oil Filter Kit",
+      "seoDescription": "Fuel & oil filter kit for Volvo VNL D11/D12/D13 trucks. Includes 2× oil filters 23151592 & fuel filter 23920469. Brand new in original packaging. Fast shipping.",
+      "descriptionPreview": "This fuel and oil filter change kit is tailored for Volvo VNL trucks, pairing primary oil filtration with secondary fuel filtration in a single, cost-effective package. Perfect for scheduled maintenance intervals where both the oil and fuel systems require attention.\nKit Includes"
+    },
+    {
+      "_id": "product-p611696",
+      "partNumber": "P611696",
+      "name": "P611696 Air Filter for Kenworth T680, T800, T880, W900",
+      "slug": "p611696-kenworth-air-filter",
+      "category": "Air Filters",
+      "productType": "air-filter",
+      "vehicleFit": [
+        "Kenworth"
+      ],
+      "brandsInCopy": [
+        "Kenworth"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "49456",
+        "AF27688",
+        "9456",
+        "LAF6116",
+        "CA10738",
+        "83456"
+      ],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "P611696 Air Filter for Kenworth T680 T800 W900",
+      "seoDescription": "Buy the P611696 engine air filter for Kenworth T680, T800, T880 & W900 trucks. Fits Paccar MX-13 & Cummins ISX engines. Fast shipping. Replaces Fleetguard AF27688, WIX 49456.",
+      "descriptionPreview": "The P611696 is a primary engine air filter designed for Kenworth heavy-duty trucks equipped with Paccar MX-13 and Cummins ISX engines. It delivers high-efficiency particulate filtration to protect turbochargers, intercoolers, and internal engine components from the damaging effec"
+    },
+    {
+      "_id": "product-p621725",
+      "partNumber": "P621725",
+      "name": "P621725 PowerCore Air Filter for Kenworth T680 & Peterbilt 579",
+      "slug": "p621725-kenworth-peterbilt-air-filter",
+      "category": "Air Filters",
+      "productType": "air-filter",
+      "vehicleFit": [
+        "Kenworth",
+        "Peterbilt"
+      ],
+      "brandsInCopy": [
+        "Kenworth",
+        "Peterbilt"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "PA32000",
+        "WA11058"
+      ],
+      "specsCount": 3,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "P621725 PowerCore Air Filter for Kenworth & Peterbilt",
+      "seoDescription": "Shop the P621725 PowerCore G2 air filter for Kenworth T680, T880 & Peterbilt 567, 579 trucks. Advanced fluted media technology. Fast shipping. Replaces Baldwin PA32000.",
+      "descriptionPreview": "The P621725 is a PowerCore G2 engine air filter engineered for Kenworth T680, T800, T880 and Peterbilt 567 and 579 trucks. This advanced panel-style element uses Donaldson's proprietary PowerCore filtration technology to deliver high-efficiency air cleaning in a compact, easy-to-"
+    },
+    {
+      "_id": "product-r61709",
+      "partNumber": "R61709",
+      "name": "R61709 Fuel Water Separator — Detroit DD13 DD15 DD16 / Racor",
+      "slug": "r61709-fuel-water-separator",
+      "category": "Fuel Filters",
+      "productType": "fuel-water-separator",
+      "vehicleFit": [
+        "Freightliner",
+        "Western Star"
+      ],
+      "brandsInCopy": [
+        "Freightliner",
+        "Western Star"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [
+        "FS20176",
+        "PF46235",
+        "P552709",
+        "WF10568",
+        "600568",
+        "L6048F",
+        "96869",
+        "RAIR61709",
+        "DDER61709"
+      ],
+      "specsCount": 7,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "R61709 Fuel Water Separator | Detroit DD13 DD15 DD16",
+      "seoDescription": "R61709 fuel/water separator element for Detroit DD13, DD15 & DD16. Fits 03-40538-009 housing on Freightliner Cascadia & Western Star. Crosses FS20176 / PF46235 / P552709.",
+      "descriptionPreview": "The R61709 is a cartridge-style fuel/water separator element engineered for Detroit Diesel DD13, DD15, and DD16 engines. It installs in the Detroit 03-40538-009 fuel processor housing used on Freightliner Cascadia, Western Star, and Freightliner M2 platforms — delivering the 5–10"
+    },
+    {
+      "_id": "product-red-lamp",
+      "partNumber": "Red lamp",
+      "name": "60250R Red LED Stop/Turn/Tail Truck Lamp — Oval, DOT Compliant",
+      "slug": "60250r-red-led-truck-lamp",
+      "category": "Accessories & Kits",
+      "productType": "lamp",
+      "vehicleFit": [
+        "Volvo",
+        "Freightliner",
+        "Kenworth"
+      ],
+      "brandsInCopy": [
+        "Volvo",
+        "Freightliner",
+        "Kenworth"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "60250R Red LED Stop Turn Tail Truck Lamp",
+      "seoDescription": "Shop the 60250R red LED oval stop/turn/tail lamp. 26 LEDs, DOT & SAE compliant, sealed construction. Fits Volvo, Freightliner, Kenworth trucks. Fast shipping.",
+      "descriptionPreview": "The TL 60250R is a heavy-duty oval LED stop/turn/tail lamp designed for commercial trucks, trailers, and fleet vehicles. Featuring 26 high-output red LEDs in an oval polycarbonate housing, it delivers bright, attention-commanding illumination for maximum road safety and regulator"
+    },
+    {
+      "_id": "product-white-lamp",
+      "partNumber": "White lamp",
+      "name": "6060C White LED Backup Truck Lamp — Oval, 24-Diode Array",
+      "slug": "6060c-white-led-truck-backup-lamp",
+      "category": "Accessories & Kits",
+      "productType": "lamp",
+      "vehicleFit": [
+        "Volvo",
+        "Freightliner",
+        "Kenworth"
+      ],
+      "brandsInCopy": [
+        "Volvo",
+        "Freightliner",
+        "Kenworth"
+      ],
+      "missingFromVehicleFit": [],
+      "vehicleFitNotInCopy": [],
+      "crossReferences": [],
+      "specsCount": 0,
+      "specsEmptyButProseHasDims": false,
+      "seoTitle": "6060C White LED Truck Backup Lamp — Oval",
+      "seoDescription": "Buy the 6060C white LED oval backup lamp. 24-diode full-pattern array, epoxy-sealed, shock resistant. Fits Volvo, Freightliner, Kenworth trucks. Fast shipping.",
+      "descriptionPreview": "The TL 6060C is a heavy-duty oval LED backup/utility lamp designed for commercial trucks and trailers. Its 24-diode array delivers a full-pattern white light output for maximum rearward visibility during reversing operations, loading dock maneuvers, and nighttime inspections.\nKey"
+    }
+  ]
+}

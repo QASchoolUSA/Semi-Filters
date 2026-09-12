@@ -2,6 +2,8 @@ import React from 'react'
 import { getAllProducts, getCategories, getShopFacets } from '@/sanity/lib/fetch'
 import { urlFor } from '@/sanity/lib/image'
 import ShopClient from '@/components/ShopClient'
+import Breadcrumbs from '@/components/Breadcrumbs'
+import JsonLd from '@/components/JsonLd'
 import {
     buildCategoryCounts,
     collectTruckBrands,
@@ -12,8 +14,7 @@ import {
 } from '@/lib/shop'
 import type { Product } from '@/types'
 import type { Metadata } from 'next'
-
-const BASE_URL = 'https://semifilters.com'
+import { BASE_URL, breadcrumbJsonLd } from '@/lib/seo'
 
 export const metadata: Metadata = {
     title: 'Shop All Semi Truck Filters — Oil, Air, Fuel & Cabin',
@@ -62,14 +63,10 @@ function buildShopJsonLd(products: Product[], total: number) {
     }
 }
 
-const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
-        { '@type': 'ListItem', position: 2, name: 'Shop', item: `${BASE_URL}/shop` },
-    ],
-}
+const breadcrumbItems = [
+    { name: 'Home', href: '/' },
+    { name: 'Shop' },
+]
 
 export default async function ProductsPage({
     searchParams,
@@ -110,16 +107,11 @@ export default async function ProductsPage({
 
     return (
         <>
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-            />
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(shopJsonLd) }}
-            />
+            <JsonLd data={breadcrumbJsonLd(breadcrumbItems)} />
+            <JsonLd data={shopJsonLd} />
             <div className="shop-page-title-banner">
                 <div className="container">
+                    <Breadcrumbs items={breadcrumbItems} />
                     <h1>All Products</h1>
                     <p>
                         Premium OEM-quality oil, air, fuel, and cabin filters for semi trucks. Find

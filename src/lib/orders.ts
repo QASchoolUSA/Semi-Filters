@@ -1,6 +1,7 @@
 import type Stripe from 'stripe'
 import { writeClient } from '@/sanity/lib/write-client'
 import { orderByStripeSessionQuery } from '@/sanity/lib/queries'
+import { parseFulfillmentMethod } from '@/lib/fulfillment'
 
 export async function upsertOrderFromStripeSession(fullSession: Stripe.Checkout.Session) {
   if (!process.env.SANITY_API_TOKEN) {
@@ -10,11 +11,13 @@ export async function upsertOrderFromStripeSession(fullSession: Stripe.Checkout.
 
   const shipping = fullSession.collected_information?.shipping_details
   const lineItems = fullSession.line_items?.data || []
+  const fulfillmentMethod = parseFulfillmentMethod(fullSession.metadata?.fulfillmentMethod)
 
   const doc = {
     _type: 'order' as const,
     stripeSessionId: fullSession.id,
     status: 'paid' as const,
+    fulfillmentMethod,
     customerName: fullSession.customer_details?.name || shipping?.name || 'Customer',
     customerEmail: fullSession.customer_details?.email || undefined,
     customerPhone: fullSession.customer_details?.phone || undefined,
@@ -52,6 +55,7 @@ export async function upsertOrderFromStripeSession(fullSession: Stripe.Checkout.
     return writeClient
       .patch(existing._id)
       .set({
+        fulfillmentMethod: doc.fulfillmentMethod,
         customerName: doc.customerName,
         customerEmail: doc.customerEmail,
         customerPhone: doc.customerPhone,

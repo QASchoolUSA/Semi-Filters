@@ -95,7 +95,7 @@ export default function TruckMakerFilters({ categories }: TruckMakerFiltersProps
                                 {mainCategories.map((cat) => (
                                     <li key={cat._id}>
                                         <Link
-                                            href={`/shop?truck=${maker.slug}&category=${cat.slug?.current || 'all'}`}
+                                            href={`/trucks/${maker.slug.toLowerCase()}`}
                                             className="maker-cat"
                                         >
                                             <span className="maker-cat__icon">
@@ -111,7 +111,7 @@ export default function TruckMakerFilters({ categories }: TruckMakerFiltersProps
                             </ul>
 
                             <Link
-                                href={`/shop?truck=${maker.slug}`}
+                                href={`/trucks/${maker.slug.toLowerCase()}`}
                                 className="maker-card__cta"
                             >
                                 <span>View all {maker.name} filters</span>

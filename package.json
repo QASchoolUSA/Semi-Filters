@@ -9,13 +9,16 @@
     "lint": "eslint",
     "typegen": "sanity schema extract --path=./src/sanity/extract.json && sanity typegen generate",
     "hash-password": "npx tsx scripts/hash-store-password.ts",
-    "seed-demo-order": "npx tsx scripts/seed-demo-order.ts"
+    "seed-demo-order": "npx tsx scripts/seed-demo-order.ts",
+    "audit-fitment": "node --import tsx scripts/audit-product-fitment.ts",
+    "migrate-seo-fitment": "node --import tsx scripts/migrate-seo-fitment.ts"
   },
   "dependencies": {
     "@portabletext/react": "^6.2.0",
     "@sanity/image-url": "^2.1.1",
     "@sanity/vision": "^5.31.2",
     "bcryptjs": "^3.0.3",
+    "googleapis": "^180.0.0",
     "next": "^16.3.5",
     "next-auth": "^5.0.0-beta.32",
     "next-sanity": "^12.4.5",

@@ -6,14 +6,20 @@ import Link from 'next/link'
 import { useCart } from '@/context/CartContext'
 import { urlFor } from '@/sanity/lib/image'
 import { HiOutlineX, HiOutlineShoppingBag, HiOutlineTrash, HiOutlineArrowRight } from 'react-icons/hi'
+import {
+    PICKUP_ADDRESS_ONE_LINE,
+    calculateShippingDollars,
+    type FulfillmentMethod,
+} from '@/lib/fulfillment'
 
 export default function CartDrawer() {
     const { items, totalItems, totalPrice, removeFromCart, updateQuantity, clearCart, isCartOpen, closeCart } = useCart()
     const [isCheckingOut, setIsCheckingOut] = useState(false)
+    const [fulfillmentMethod, setFulfillmentMethod] = useState<FulfillmentMethod>('shipping')
 
-    // $5.99 base + $1 for each additional item beyond the first
     const itemQuantityCount = items.reduce((sum, item) => sum + item.quantity, 0)
-    const shipping = itemQuantityCount > 0 ? 5.99 + Math.max(0, itemQuantityCount - 1) * 1.00 : 0
+    const shipping =
+        fulfillmentMethod === 'pickup' ? 0 : calculateShippingDollars(itemQuantityCount)
     const grandTotal = totalPrice + shipping
 
     // Close drawer on Escape key
@@ -33,7 +39,7 @@ export default function CartDrawer() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ items }),
+                body: JSON.stringify({ items, fulfillmentMethod }),
             })
 
             const data = await response.json()
@@ -193,13 +199,47 @@ export default function CartDrawer() {
 
                         {/* ─── Footer / Summary ─── */}
                         <footer className="cart-panel__footer">
+                            <fieldset className="fulfillment-method fulfillment-method--compact">
+                                <legend className="fulfillment-method__legend">Delivery</legend>
+                                <label className={`fulfillment-method__option${fulfillmentMethod === 'shipping' ? ' is-selected' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="drawerFulfillmentMethod"
+                                        value="shipping"
+                                        checked={fulfillmentMethod === 'shipping'}
+                                        onChange={() => setFulfillmentMethod('shipping')}
+                                    />
+                                    <span className="fulfillment-method__body">
+                                        <span className="fulfillment-method__title">Shipping</span>
+                                        <span className="fulfillment-method__meta">
+                                            ${calculateShippingDollars(itemQuantityCount).toFixed(2)}
+                                        </span>
+                                    </span>
+                                </label>
+                                <label className={`fulfillment-method__option${fulfillmentMethod === 'pickup' ? ' is-selected' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="drawerFulfillmentMethod"
+                                        value="pickup"
+                                        checked={fulfillmentMethod === 'pickup'}
+                                        onChange={() => setFulfillmentMethod('pickup')}
+                                    />
+                                    <span className="fulfillment-method__body">
+                                        <span className="fulfillment-method__title">Pickup</span>
+                                        <span className="fulfillment-method__meta">
+                                            Free · {PICKUP_ADDRESS_ONE_LINE}
+                                        </span>
+                                    </span>
+                                </label>
+                            </fieldset>
+
                             <div className="cart-panel__summary">
                                 <div className="cart-panel__row">
                                     <span>Subtotal</span>
                                     <span>${totalPrice.toFixed(2)}</span>
                                 </div>
                                 <div className="cart-panel__row">
-                                    <span>Shipping</span>
+                                    <span>{fulfillmentMethod === 'pickup' ? 'Pickup' : 'Shipping'}</span>
                                     <span className={shipping === 0 ? 'cart-panel__free-tag' : ''}>
                                         {shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
                                     </span>

@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next'
+import { BASE_URL } from '@/lib/seo'
 
 export default function robots(): MetadataRoute.Robots {
     return {
@@ -6,10 +7,10 @@ export default function robots(): MetadataRoute.Robots {
             {
                 userAgent: '*',
                 allow: '/',
-                disallow: ['/studio', '/api/', '/cart', '/success'],
+                disallow: ['/studio', '/api/', '/cart', '/success', '/store-management'],
             },
         ],
-        sitemap: 'https://semifilters.com/sitemap.xml',
-        host: 'https://semifilters.com',
+        sitemap: `${BASE_URL}/sitemap.xml`,
+        host: BASE_URL,
     }
 }

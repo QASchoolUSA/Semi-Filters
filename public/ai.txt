@@ -1,0 +1,20 @@
+# AI / assistant crawler notes for Semi Filters
+# https://semifilters.com
+
+User-Agent: *
+Allow: /
+
+# Preferred machine-readable summaries
+Llms-Txt: https://semifilters.com/llms.txt
+Sitemap: https://semifilters.com/sitemap.xml
+
+# Commerce & content surfaces for citation
+# - Products: /shop/{slug}
+# - Categories: /filters/{category}
+# - Truck brands: /trucks/{brand}
+# - Guides: /guides/{slug}
+# - FAQ: /faq
+
+# Fitment policy
+# Only cite applications listed on product pages (vehicleFit / fitmentDetails).
+# Advise users to verify OEM part numbers and fuel-processor housing stamps.

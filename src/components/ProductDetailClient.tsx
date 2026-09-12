@@ -250,26 +250,66 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                             </details>
                         )}
 
-                        {/* Truck Fitment */}
-                        {product.vehicleFit && product.vehicleFit.length > 0 && (
-                            <details className="product-accordion">
-                                <summary className="product-accordion-summary">
-                                    Truck Fitment
-                                    <HiOutlineChevronDown className="accordion-icon" size={20} />
-                                </summary>
-                                <div className="accordion-content">
+                        {/* Truck Fitment — visible for AEO / shoppers */}
+                        {(product.fitmentDetails?.length || product.vehicleFit?.length) ? (
+                            <div className="product-fitment-panel">
+                                <h2 className="product-fitment-panel__title">Truck Fitment</h2>
+                                {product.category?.slug?.current && (
+                                    <p className="product-fitment-panel__category">
+                                        Category:{' '}
+                                        <Link href={`/filters/${product.category.slug.current}`}>
+                                            {product.category.name}
+                                        </Link>
+                                    </p>
+                                )}
+                                {product.fitmentDetails && product.fitmentDetails.length > 0 ? (
+                                    <ul className="fitment-detail-list">
+                                        {product.fitmentDetails.map((row, index) => (
+                                            <li key={`${row.brand}-${index}`} className="fitment-detail-item">
+                                                <Link
+                                                    href={`/trucks/${row.brand.toLowerCase().replace(/\s+/g, '-')}`}
+                                                    className="fitment-detail-item__brand"
+                                                >
+                                                    {row.brand}
+                                                </Link>
+                                                {row.models?.length ? (
+                                                    <span className="fitment-detail-item__meta">
+                                                        Models: {row.models.join(', ')}
+                                                    </span>
+                                                ) : null}
+                                                {row.engines?.length ? (
+                                                    <span className="fitment-detail-item__meta">
+                                                        Engines: {row.engines.join(', ')}
+                                                    </span>
+                                                ) : null}
+                                                {row.notes ? (
+                                                    <span className="fitment-detail-item__notes">{row.notes}</span>
+                                                ) : null}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
                                     <div className="compatibility-tags">
-                                        {product.vehicleFit.map((truck, index) => (
-                                            <span key={index} className="compat-tag">{truck}</span>
+                                        {product.vehicleFit!.map((truck, index) => (
+                                            <Link
+                                                key={index}
+                                                href={`/trucks/${truck.toLowerCase().replace(/\s+/g, '-')}`}
+                                                className="compat-tag compat-tag--link"
+                                            >
+                                                {truck}
+                                            </Link>
                                         ))}
                                     </div>
-                                </div>
-                            </details>
-                        )}
+                                )}
+                                <p className="product-fitment-panel__verify">
+                                    Always verify against your OEM filter list, VIN build sheet, or housing stamp before install.
+                                </p>
+                            </div>
+                        ) : null}
 
                         {/* Cross-Reference / Interchange Part Numbers */}
                         {product.crossReferences && product.crossReferences.length > 0 && (
-                            <details className="product-accordion">
+                            <details className="product-accordion" open>
                                 <summary className="product-accordion-summary">
                                     Cross-Reference Part Numbers
                                     <HiOutlineChevronDown className="accordion-icon" size={20} />
@@ -283,6 +323,22 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                                     </div>
                                 </div>
                             </details>
+                        )}
+
+                        {product.faqs && product.faqs.length > 0 && (
+                            <div className="product-faq-panel">
+                                <h2 className="product-faq-panel__title">Frequently Asked Questions</h2>
+                                <div className="faq-section__list">
+                                    {product.faqs.map((faq, index) => (
+                                        <details key={index} className="faq-item" open={index === 0}>
+                                            <summary className="faq-item__question">{faq.question}</summary>
+                                            <div className="faq-item__answer">
+                                                <p>{faq.answer}</p>
+                                            </div>
+                                        </details>
+                                    ))}
+                                </div>
+                            </div>
                         )}
                     </div>
                 </div>

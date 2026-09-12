@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { sendEmail } from '@/lib/email'
+import {
+  PICKUP_ADDRESS_HTML,
+  PICKUP_ADDRESS_ONE_LINE,
+  parseFulfillmentMethod,
+} from '@/lib/fulfillment'
 import { upsertOrderFromStripeSession } from '@/lib/orders'
 import { sendTelegramMessage } from '@/lib/telegram'
 
@@ -46,6 +51,8 @@ export async function POST(request: Request) {
         console.error('Failed to persist order to Sanity:', orderErr)
       }
 
+      const fulfillmentMethod = parseFulfillmentMethod(fullSession.metadata?.fulfillmentMethod)
+      const isPickup = fulfillmentMethod === 'pickup'
       const customerEmail = fullSession.customer_details?.email
       const customerName = fullSession.customer_details?.name || 'Customer'
       const customerPhone = fullSession.customer_details?.phone || '—'
@@ -94,6 +101,12 @@ export async function POST(request: Request) {
             .join(', ')
         : 'Not provided'
 
+      const deliveryLabel = isPickup ? 'Pickup' : 'Ship To'
+      const deliveryHtml = isPickup ? PICKUP_ADDRESS_HTML : shippingAddressHtml
+      const deliveryText = isPickup ? PICKUP_ADDRESS_ONE_LINE : shippingAddressText
+      const deliveryMethodLabel = isPickup ? 'Local Pickup' : 'Shipping'
+      const fulfillmentCostLabel = isPickup ? 'Pickup' : 'Shipping'
+
       const itemLinesText = lineItems
         .map((item) => {
           const product = item.price?.product as Stripe.Product | undefined
@@ -126,7 +139,7 @@ export async function POST(request: Request) {
             <td style="padding:4px 0; text-align:right;">$${amountSubtotal}</td>
           </tr>
           <tr>
-            <td style="padding:4px 0; color:#555;">Shipping</td>
+            <td style="padding:4px 0; color:#555;">${fulfillmentCostLabel}</td>
             <td style="padding:4px 0; text-align:right;">$${shippingCost}</td>
           </tr>
           <tr>
@@ -162,10 +175,14 @@ export async function POST(request: Request) {
                 <td style="padding:8px 12px;">${customerPhone}</td>
               </tr>
               <tr style="background:#f9f9f9;">
-                <td style="padding:8px 12px; font-weight:600; color:#555;">Ship To</td>
-                <td style="padding:8px 12px;">${shippingAddressHtml}</td>
+                <td style="padding:8px 12px; font-weight:600; color:#555;">Delivery</td>
+                <td style="padding:8px 12px;">${deliveryMethodLabel}</td>
               </tr>
               <tr>
+                <td style="padding:8px 12px; font-weight:600; color:#555;">${deliveryLabel}</td>
+                <td style="padding:8px 12px;">${deliveryHtml}</td>
+              </tr>
+              <tr style="background:#f9f9f9;">
                 <td style="padding:8px 12px; font-weight:600; color:#555;">Stripe ID</td>
                 <td style="padding:8px 12px; font-family:monospace; font-size:13px;">${session.id}</td>
               </tr>
@@ -185,11 +202,12 @@ export async function POST(request: Request) {
             `Customer: ${customerName}`,
             `Email: ${customerEmail || '—'}`,
             `Phone: ${customerPhone}`,
-            `Ship to: ${shippingAddressText}`,
+            `Delivery: ${deliveryMethodLabel}`,
+            `${isPickup ? 'Pickup' : 'Ship to'}: ${deliveryText}`,
             '',
             itemLinesText || '• (no line items)',
             '',
-            `Subtotal $${amountSubtotal} · Shipping $${shippingCost} · Tax $${taxAmount}`,
+            `Subtotal $${amountSubtotal} · ${fulfillmentCostLabel} $${shippingCost} · Tax $${taxAmount}`,
             `Stripe: ${session.id}`,
           ].join('\n')
         )
@@ -198,6 +216,36 @@ export async function POST(request: Request) {
       }
 
       if (customerEmail) {
+        const customerFulfillmentHtml = isPickup
+          ? `
+              <div style="background:#f9fafb; border-radius:12px; padding:24px; margin-bottom:24px;">
+                <h3 style="margin:0 0 12px; font-size:15px; color:#333;">Local Pickup</h3>
+                <p style="margin:0; color:#555; font-size:14px; line-height:1.6;">${PICKUP_ADDRESS_HTML}</p>
+              </div>
+              <div style="text-align:center; padding:16px 0 8px;">
+                <p style="margin:0 0 4px; color:#555; font-size:14px;">
+                  Your order is confirmed for pickup at our Sanford location.
+                </p>
+                <p style="margin:0; color:#555; font-size:14px;">
+                  Questions? Reply to this email or contact us at
+                  <a href="mailto:support@semifilters.com" style="color:#2563eb;">support@semifilters.com</a>
+                </p>
+              </div>`
+          : `
+              <div style="background:#f9fafb; border-radius:12px; padding:24px; margin-bottom:24px;">
+                <h3 style="margin:0 0 12px; font-size:15px; color:#333;">Shipping Address</h3>
+                <p style="margin:0; color:#555; font-size:14px; line-height:1.6;">${shippingAddressHtml}</p>
+              </div>
+              <div style="text-align:center; padding:16px 0 8px;">
+                <p style="margin:0 0 4px; color:#555; font-size:14px;">
+                  Your order is being prepared and will ship within 1–2 business days.
+                </p>
+                <p style="margin:0; color:#555; font-size:14px;">
+                  Questions? Reply to this email or contact us at
+                  <a href="mailto:support@semifilters.com" style="color:#2563eb;">support@semifilters.com</a>
+                </p>
+              </div>`
+
         await sendEmail({
           to: customerEmail,
           subject: `Order Confirmation — Semi Filters`,
@@ -214,20 +262,7 @@ export async function POST(request: Request) {
                 ${totalsHtml}
               </div>
 
-              <div style="background:#f9fafb; border-radius:12px; padding:24px; margin-bottom:24px;">
-                <h3 style="margin:0 0 12px; font-size:15px; color:#333;">Shipping Address</h3>
-                <p style="margin:0; color:#555; font-size:14px; line-height:1.6;">${shippingAddressHtml}</p>
-              </div>
-
-              <div style="text-align:center; padding:16px 0 8px;">
-                <p style="margin:0 0 4px; color:#555; font-size:14px;">
-                  Your order is being prepared and will ship within 1–2 business days.
-                </p>
-                <p style="margin:0; color:#555; font-size:14px;">
-                  Questions? Reply to this email or contact us at
-                  <a href="mailto:support@semifilters.com" style="color:#2563eb;">support@semifilters.com</a>
-                </p>
-              </div>
+              ${customerFulfillmentHtml}
 
               <hr style="border:none; border-top:1px solid #e5e7eb; margin:24px 0;" />
               <p style="text-align:center; color:#999; font-size:12px; margin:0;">

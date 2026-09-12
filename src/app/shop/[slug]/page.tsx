@@ -1,29 +1,17 @@
 import React from 'react'
 import { getProductBySlug, getRelatedProducts } from '@/sanity/lib/fetch'
 import ProductDetailClient from '@/components/ProductDetailClient'
+import Breadcrumbs from '@/components/Breadcrumbs'
+import JsonLd from '@/components/JsonLd'
 import { urlFor } from '@/sanity/lib/image'
-import type { Product } from '@/types'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { BASE_URL, breadcrumbJsonLd, faqPageJsonLd, portableTextToPlain } from '@/lib/seo'
 
 export const revalidate = 60
 
-const BASE_URL = 'https://semifilters.com'
-
 interface Props {
     params: Promise<{ slug: string }>
-}
-
-function portableTextToPlain(blocks: unknown): string {
-    if (!Array.isArray(blocks)) return ''
-    return blocks
-        .filter((b: Record<string, unknown>) => b._type === 'block' && Array.isArray(b.children))
-        .map((b: Record<string, unknown>) =>
-            (b.children as { text?: string }[]).map((c) => c.text || '').join('')
-        )
-        .join(' ')
-        .replace(/\s+/g, ' ')
-        .trim()
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -90,6 +78,40 @@ export default async function ProductDetailPage({ params }: Props) {
         || (product.description ? portableTextToPlain(product.description).slice(0, 200) : '')
         || `${product.name} — premium semi truck filter from Semi Filters.`
 
+    const additionalProperty = [
+        ...(product.fitmentDetails?.flatMap((row) => {
+            const props = [
+                {
+                    '@type': 'PropertyValue' as const,
+                    name: 'Compatible With',
+                    value: row.brand,
+                },
+            ]
+            if (row.models?.length) {
+                props.push({
+                    '@type': 'PropertyValue' as const,
+                    name: `${row.brand} Models`,
+                    value: row.models.join(', '),
+                })
+            }
+            if (row.engines?.length) {
+                props.push({
+                    '@type': 'PropertyValue' as const,
+                    name: `${row.brand} Engines`,
+                    value: row.engines.join(', '),
+                })
+            }
+            return props
+        }) ?? []),
+        ...(!product.fitmentDetails?.length && product.vehicleFit?.length
+            ? product.vehicleFit.map((v) => ({
+                '@type': 'PropertyValue' as const,
+                name: 'Compatible With',
+                value: v,
+            }))
+            : []),
+    ]
+
     const productJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'Product',
@@ -153,36 +175,25 @@ export default async function ProductDetailPage({ params }: Props) {
             },
         },
         ...(product.category?.name && { category: product.category.name }),
-        ...(product.vehicleFit?.length && {
-            additionalProperty: product.vehicleFit.map((v: string) => ({
-                '@type': 'PropertyValue',
-                name: 'Compatible With',
-                value: v,
-            })),
-        }),
+        ...(additionalProperty.length ? { additionalProperty } : {}),
     }
 
-    const breadcrumbJsonLd = {
-        '@context': 'https://schema.org',
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
-            { '@type': 'ListItem', position: 2, name: 'Shop', item: `${BASE_URL}/shop` },
-            { '@type': 'ListItem', position: 3, name: product.name, item: productUrl },
-        ],
-    }
+    const crumbs = [
+        { name: 'Home', href: '/' },
+        { name: 'Shop', href: '/shop' },
+        ...(product.category?.slug?.current
+            ? [{ name: product.category.name, href: `/filters/${product.category.slug.current}` }]
+            : []),
+        { name: product.name },
+    ]
 
     return (
         <section className="section">
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
-            />
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-            />
+            <JsonLd data={productJsonLd} />
+            <JsonLd data={breadcrumbJsonLd(crumbs)} />
+            {product.faqs?.length ? <JsonLd data={faqPageJsonLd(product.faqs)} /> : null}
             <div className="container">
+                <Breadcrumbs items={crumbs} />
                 <ProductDetailClient product={product} relatedProducts={relatedProducts} />
             </div>
         </section>

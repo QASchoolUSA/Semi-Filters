@@ -60,6 +60,7 @@ const demoOrder = {
   _type: 'order' as const,
   stripeSessionId: DEMO_SESSION_ID,
   status: 'paid' as const,
+  fulfillmentMethod: 'shipping' as const,
   customerName: 'Demo Buyer',
   customerEmail: 'demo@semifilters.com',
   customerPhone: '+14075550199',

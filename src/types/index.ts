@@ -33,12 +33,26 @@ export interface Product {
     partNumber?: string
     crossReferences?: string[]
     vehicleFit?: string[]
+    fitmentDetails?: FitmentDetail[]
+    faqs?: ProductFaq[]
     inStock: boolean
     featured?: boolean
     brand?: string
     productType?: string
     seoTitle?: string
     seoDescription?: string
+}
+
+export interface FitmentDetail {
+    brand: string
+    models?: string[]
+    engines?: string[]
+    notes?: string
+}
+
+export interface ProductFaq {
+    question: string
+    answer: string
 }
 
 export interface CategoryRef {
@@ -52,6 +66,22 @@ export interface Category {
     slug: SanitySlug
     description?: string
     image?: SanityImage | null
+    seoTitle?: string
+    seoDescription?: string
+}
+
+export interface Guide {
+    _id: string
+    title: string
+    slug: SanitySlug
+    excerpt?: string
+    publishedAt?: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    body?: any
+    faqs?: ProductFaq[]
+    relatedTruckBrands?: string[]
+    seoTitle?: string
+    seoDescription?: string
 }
 
 export interface Banner {
@@ -82,6 +112,7 @@ export interface CartItem {
 
 // ---- Store management orders ----
 export type OrderStatus = 'paid' | 'ready_to_ship' | 'shipped' | 'cancelled'
+export type FulfillmentMethod = 'shipping' | 'pickup'
 
 export interface OrderShippingAddress {
     name?: string
@@ -114,6 +145,7 @@ export interface StoreOrder {
     _createdAt?: string
     stripeSessionId: string
     status: OrderStatus
+    fulfillmentMethod?: FulfillmentMethod
     customerName?: string
     customerEmail?: string
     customerPhone?: string

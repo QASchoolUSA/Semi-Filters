@@ -13,7 +13,17 @@ export default defineConfig({
   title: 'Semi Filters CMS',
   projectId,
   dataset,
-  plugins: [structureTool(), visionTool()],
+  plugins: [
+    structureTool({
+      structure: (S) =>
+        S.list()
+          .title('Content')
+          .items(
+            S.documentTypeListItems().filter((item) => item.getId() !== 'gscConnection')
+          ),
+    }),
+    visionTool(),
+  ],
   schema: {
     types: schemaTypes,
   },

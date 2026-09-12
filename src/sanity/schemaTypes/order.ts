@@ -27,6 +27,18 @@ export const order = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'fulfillmentMethod',
+      title: 'Delivery method',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Shipping', value: 'shipping' },
+          { title: 'Pickup', value: 'pickup' },
+        ],
+      },
+      initialValue: 'shipping',
+    }),
+    defineField({
       name: 'customerName',
       title: 'Customer Name',
       type: 'string',

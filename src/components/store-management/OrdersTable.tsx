@@ -94,6 +94,7 @@ export default function OrdersTable({ orders }: { orders: StoreOrder[] }) {
               <tr>
                 <th>Created</th>
                 <th>Customer</th>
+                <th>Delivery</th>
                 <th>Items</th>
                 <th className="sm-num">Total</th>
                 <th>Status</th>
@@ -104,6 +105,7 @@ export default function OrdersTable({ orders }: { orders: StoreOrder[] }) {
               {filtered.map((order) => {
                 const itemCount =
                   order.lineItems?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0
+                const isPickup = order.fulfillmentMethod === 'pickup'
                 return (
                   <tr key={order._id} className="sm-row-enter">
                     <td className="sm-cell-muted">{formatDate(order._createdAt)}</td>
@@ -111,6 +113,7 @@ export default function OrdersTable({ orders }: { orders: StoreOrder[] }) {
                       <div className="sm-cell-primary">{order.customerName || 'Customer'}</div>
                       <div className="sm-cell-muted">{order.customerEmail || '—'}</div>
                     </td>
+                    <td>{isPickup ? 'Pickup' : 'Shipping'}</td>
                     <td>
                       {itemCount} item{itemCount === 1 ? '' : 's'}
                     </td>
@@ -125,7 +128,7 @@ export default function OrdersTable({ orders }: { orders: StoreOrder[] }) {
                       >
                         View
                       </Link>
-                      {order.status !== 'shipped' && order.status !== 'cancelled' && (
+                      {!isPickup && order.status !== 'shipped' && order.status !== 'cancelled' && (
                         <Link
                           href={`/store-management/shipping?order=${order._id}`}
                           className="sm-link-btn sm-link-btn--accent"

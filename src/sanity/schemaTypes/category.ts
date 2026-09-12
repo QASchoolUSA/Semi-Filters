@@ -40,6 +40,19 @@ export const category = defineType({
             title: 'Display Order',
             type: 'number',
         }),
+        defineField({
+            name: 'seoTitle',
+            title: 'SEO Title',
+            type: 'string',
+            description: 'Custom title for category landing pages',
+        }),
+        defineField({
+            name: 'seoDescription',
+            title: 'SEO Description',
+            type: 'text',
+            rows: 3,
+            description: 'Meta description for /filters/[slug] landings',
+        }),
     ],
     preview: {
         select: {

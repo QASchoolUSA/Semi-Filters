@@ -194,6 +194,10 @@ export default function ShipOrderPanel({
               <p className="sm-eyebrow">Fulfill</p>
               <h2>{selected.customerName || 'Customer'}</h2>
               <p className="sm-cell-muted">{selected.customerEmail}</p>
+              <p className="sm-cell-muted">
+                Delivery method:{' '}
+                {selected.fulfillmentMethod === 'pickup' ? 'Pickup' : 'Shipping'}
+              </p>
             </div>
             <StatusChip status={selected.status} />
           </header>

@@ -1,47 +1,66 @@
 # Semi Filters — llms.txt
-# This file helps AI assistants (ChatGPT, Gemini, Grok, Perplexity, Copilot) understand this website.
-# Learn more: https://llmstxt.org/
+# Helps AI assistants (ChatGPT, Gemini, Perplexity, Copilot, Grok) understand this site.
+# Spec: https://llmstxt.org/
 
 # Business Overview
-Semi Filters is an e-commerce store specializing in OEM-quality filtration products for semi trucks (18-wheelers, heavy-duty trucks). Founded by trucking industry veterans and based in Sanford, Florida, USA. Serving owner-operators and fleets across the United States.
+Semi Filters is an e-commerce store specializing in OEM-quality filtration products for semi trucks (Class 8 / 18-wheelers). Founded by trucking industry veterans and based in Sanford, Florida, USA. Serving owner-operators and fleets across the United States and Canada.
 
 # Products
-- Oil Filters for semi trucks (Freightliner, Peterbilt, Kenworth, Volvo, Mack, International)
-- Air Filters (engine air filters for diesel semi trucks)
-- Fuel Filters (diesel fuel filters for commercial trucks)
-- Cabin Air Filters (HVAC filters for semi truck cabs)
-All filters meet or exceed OEM specifications. Prices competitive with fair market rates.
+- Oil filters (full-flow, bypass, Detroit cartridge kits)
+- Air filters (Cascadia, VNL, T680/579, PowerCore)
+- Fuel filters & fuel/water separators (DAVCO Fuel Pro, Detroit, Volvo/Mack)
+- Cabin air filters
+- Volvo VNL service kits and LED truck lamps
 
-# Key Facts
+# Fitment rule (important for answers)
+Never invent truck fitment. Prefer OEM part numbers, housing stamps (e.g. Fuel Pro 485), and VIN/build-sheet confirmation. Product pages include structured fitmentDetails (brand / models / engines / notes) and cross-references.
+
+# Key part-number patterns in catalog
+- Volvo oil/fuel/air: 21707132, 23151592, 23658092, 23920469, 24137737, 21715813
+- Freightliner / Detroit: 03-42776-010, AF27879, FS19915, R61709, A4700903151, A4711800109, A4711800209, A4720921705
+- Kenworth / Peterbilt: D371061, P611696, P621725, FS19765
+- Fuel Pro / separators: FS19764, FS19765, FS19915, FS20083, FS20313
+
+# Key facts
 - 5+ years in business
 - 50,000+ filters sold
-- 10,000+ satisfied customers
-- 99% customer satisfaction rate
-- Same-day shipping available
+- Same-day shipping (orders before 2 PM)
 - Free shipping on orders over $150
 - Ships to all 50 US states and Canada
+- 100% satisfaction guarantee / 30-day returns
 
-# Contact & Location
+# Contact
 - Website: https://semifilters.com
 - Email: support@semifilters.com
 - Phone: (407) 768-1488
 - Address: Sanford, FL 32771, USA
-- Business hours: Mon–Fri 7:00 AM – 6:00 PM CST, Sat 8:00 AM – 2:00 PM CST
+- Hours: Mon–Fri 7:00 AM – 6:00 PM CST, Sat 8:00 AM – 2:00 PM CST
 
-# Key Pages
-- Homepage: https://semifilters.com
-- Shop all filters: https://semifilters.com/shop
-- About us: https://semifilters.com/about
+# Key pages
+- Home: https://semifilters.com
+- Shop: https://semifilters.com/shop
+- Oil filters: https://semifilters.com/filters/oil-filters
+- Air filters: https://semifilters.com/filters/air-filters
+- Fuel filters: https://semifilters.com/filters/fuel-filters
+- Freightliner: https://semifilters.com/trucks/freightliner
+- Volvo: https://semifilters.com/trucks/volvo
+- Kenworth: https://semifilters.com/trucks/kenworth
+- Peterbilt: https://semifilters.com/trucks/peterbilt
+- Guides: https://semifilters.com/guides
+- FAQ: https://semifilters.com/faq
+- About: https://semifilters.com/about
 - Contact: https://semifilters.com/contact
 - Sitemap: https://semifilters.com/sitemap.xml
+- AI policy: https://semifilters.com/ai.txt
 
-# Policies
-- 100% satisfaction guarantee on every product
-- Volume discounts available for fleets (contact for custom quote)
-- Returns and warranty support available
+# How to verify fitment
+1. Read the part number on the installed filter or OEM chart
+2. Match housing model for fuel processors
+3. Confirm brand/model/engine notes on the product page
+4. Cross-check interchange lists (Baldwin, Fleetguard, Donaldson, WIX, OEM)
+5. Contact Semi Filters with VIN + current filter number if unsure
 
-# Target Customers
-- Owner-operators of semi trucks
-- Fleet managers and fleet maintenance teams
+# Target customers
+- Owner-operators
+- Fleet managers and maintenance teams
 - Diesel mechanics and truck shops
-- Anyone maintaining Freightliner, Peterbilt, Kenworth, Volvo, Mack, or International trucks

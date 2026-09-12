@@ -5,12 +5,14 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useCart } from '@/context/CartContext'
 import { HiCheckCircle, HiOutlineShoppingBag } from 'react-icons/hi'
+import { PICKUP_ADDRESS_ONE_LINE, type FulfillmentMethod } from '@/lib/fulfillment'
 
 function SuccessContent() {
     const searchParams = useSearchParams()
     const sessionId = searchParams.get('session_id')
     const { clearCart } = useCart()
     const [cleared, setCleared] = useState(false)
+    const [fulfillmentMethod, setFulfillmentMethod] = useState<FulfillmentMethod>('shipping')
 
     useEffect(() => {
         // Clear the cart once we reach the success page
@@ -20,14 +22,45 @@ function SuccessContent() {
         }
     }, [sessionId, cleared, clearCart])
 
+    useEffect(() => {
+        if (!sessionId) return
+
+        let cancelled = false
+        fetch(`/api/checkout/session?session_id=${encodeURIComponent(sessionId)}`)
+            .then((res) => (res.ok ? res.json() : null))
+            .then((data) => {
+                if (!cancelled && data?.fulfillmentMethod === 'pickup') {
+                    setFulfillmentMethod('pickup')
+                }
+            })
+            .catch(() => {
+                // Keep default shipping copy if lookup fails
+            })
+
+        return () => {
+            cancelled = true
+        }
+    }, [sessionId])
+
+    const isPickup = fulfillmentMethod === 'pickup'
+
     return (
         <div className="section">
             <div className="container" style={{ maxWidth: '600px', textAlign: 'center', margin: '0 auto', padding: '60px 20px' }}>
                 <HiCheckCircle size={80} color="var(--color-primary)" style={{ margin: '0 auto 20px' }} />
                 <h1 style={{ fontSize: '2.5rem', marginBottom: '16px' }}>Order Confirmed!</h1>
                 <p style={{ fontSize: '1.2rem', color: 'var(--color-text-light)', marginBottom: '32px' }}>
-                    Thank you for your purchase. We have received your order and are getting it ready to be shipped. 
-                    You will receive an email confirmation shortly.
+                    {isPickup ? (
+                        <>
+                            Thank you for your purchase. Your order is confirmed for local pickup at{' '}
+                            <strong>{PICKUP_ADDRESS_ONE_LINE}</strong>. You will receive an email confirmation shortly.
+                        </>
+                    ) : (
+                        <>
+                            Thank you for your purchase. We have received your order and are getting it ready to be shipped.
+                            You will receive an email confirmation shortly.
+                        </>
+                    )}
                 </p>
                 <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
                     <Link href="/shop" className="btn btn-primary btn-lg">

@@ -4,6 +4,7 @@ import "./globals.css";
 import ClientLayout from "@/components/ClientLayout";
 import ClarityAnalytics from "@/components/ClarityAnalytics";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { BASE_URL } from "@/lib/seo";
 
 // Load Inter via next/font — self-hosted at build time, zero render-blocking network request
 const inter = Inter({
@@ -13,8 +14,6 @@ const inter = Inter({
   variable: "--font-inter",
   preload: true,
 });
-
-const BASE_URL = "https://semifilters.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -96,7 +95,8 @@ export const metadata: Metadata = {
     "geo.region": "US-FL",
     "geo.placename": "Sanford",
     "geo.position": "28.8003;-81.2731",
-    "ICBM": "28.8003, -81.2731",
+    ICBM: "28.8003, -81.2731",
+    "ai-content-declaration": `${BASE_URL}/llms.txt`,
   },
   verification: {
     // Add your verification codes here after registering with each search console:
@@ -115,6 +115,7 @@ const siteJsonLd = {
       "@type": "Organization",
       "@id": `${BASE_URL}/#organization`,
       name: "Semi Filters",
+      alternateName: ["SemiFilters", "semifilters.com"],
       url: BASE_URL,
       logo: {
         "@type": "ImageObject",
@@ -246,8 +247,9 @@ const siteJsonLd = {
     {
       "@type": "WebSite",
       "@id": `${BASE_URL}/#website`,
-      url: BASE_URL,
+      url: `${BASE_URL}/`,
       name: "Semi Filters",
+      alternateName: ["SemiFilters", "semifilters.com"],
       description:
         "Premium filtration solutions for semi trucks — oil, air, fuel, and cabin filters.",
       publisher: { "@id": `${BASE_URL}/#organization` },

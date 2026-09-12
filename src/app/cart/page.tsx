@@ -6,10 +6,16 @@ import Link from 'next/link'
 import { useCart } from '@/context/CartContext'
 import { urlFor } from '@/sanity/lib/image'
 import { HiOutlineShoppingBag } from 'react-icons/hi'
+import {
+    PICKUP_ADDRESS_ONE_LINE,
+    calculateShippingDollars,
+    type FulfillmentMethod,
+} from '@/lib/fulfillment'
 
 export default function CartPage() {
     const { items, totalItems, totalPrice, removeFromCart, updateQuantity, clearCart } = useCart()
     const [isCheckingOut, setIsCheckingOut] = useState(false)
+    const [fulfillmentMethod, setFulfillmentMethod] = useState<FulfillmentMethod>('shipping')
 
     if (items.length === 0) {
         return (
@@ -35,9 +41,9 @@ export default function CartPage() {
         )
     }
 
-    // $5.99 base + $1 for each additional item beyond the first
     const totalItemCount = items.reduce((sum, item) => sum + item.quantity, 0)
-    const shipping = totalItemCount > 0 ? 5.99 + Math.max(0, totalItemCount - 1) * 1.00 : 0
+    const shipping =
+        fulfillmentMethod === 'pickup' ? 0 : calculateShippingDollars(totalItemCount)
     const grandTotal = totalPrice + shipping
 
     const handleCheckout = async () => {
@@ -48,7 +54,7 @@ export default function CartPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ items }),
+                body: JSON.stringify({ items, fulfillmentMethod }),
             })
 
             const data = await response.json()
@@ -154,13 +160,50 @@ export default function CartPage() {
                         {/* Summary */}
                         <div className="cart-summary">
                             <h2>Order Summary</h2>
+
+                            <fieldset className="fulfillment-method">
+                                <legend className="fulfillment-method__legend">Delivery method</legend>
+                                <label className={`fulfillment-method__option${fulfillmentMethod === 'shipping' ? ' is-selected' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="fulfillmentMethod"
+                                        value="shipping"
+                                        checked={fulfillmentMethod === 'shipping'}
+                                        onChange={() => setFulfillmentMethod('shipping')}
+                                    />
+                                    <span className="fulfillment-method__body">
+                                        <span className="fulfillment-method__title">Shipping</span>
+                                        <span className="fulfillment-method__meta">
+                                            ${calculateShippingDollars(totalItemCount).toFixed(2)} · 3–5 business days
+                                        </span>
+                                    </span>
+                                </label>
+                                <label className={`fulfillment-method__option${fulfillmentMethod === 'pickup' ? ' is-selected' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="fulfillmentMethod"
+                                        value="pickup"
+                                        checked={fulfillmentMethod === 'pickup'}
+                                        onChange={() => setFulfillmentMethod('pickup')}
+                                    />
+                                    <span className="fulfillment-method__body">
+                                        <span className="fulfillment-method__title">Local Pickup</span>
+                                        <span className="fulfillment-method__meta">
+                                            Free · {PICKUP_ADDRESS_ONE_LINE}
+                                        </span>
+                                    </span>
+                                </label>
+                            </fieldset>
+
                             <div className="cart-summary-row">
                                 <span>Subtotal</span>
                                 <span>${totalPrice.toFixed(2)}</span>
                             </div>
                             <div className="cart-summary-row">
-                                <span>Shipping</span>
-                                <span>${shipping.toFixed(2)}</span>
+                                <span>{fulfillmentMethod === 'pickup' ? 'Pickup' : 'Shipping'}</span>
+                                <span className={shipping === 0 ? 'cart-summary-free' : undefined}>
+                                    {shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
+                                </span>
                             </div>
 
                             <div className="cart-summary-row total">
