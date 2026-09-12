@@ -2,7 +2,11 @@ import { createCipheriv, createDecipheriv, createHmac, randomBytes, scryptSync, 
 import { google } from 'googleapis'
 import type { Credentials } from 'google-auth-library'
 import { adminClient } from '@/sanity/lib/admin-client'
-import { writeClient } from '@/sanity/lib/write-client'
+import {
+  hasSanityWriteToken,
+  probeSanityWriteAccess,
+  writeClient,
+} from '@/sanity/lib/write-client'
 
 export const GSC_SCOPE = 'https://www.googleapis.com/auth/webmasters.readonly'
 export const GSC_CONNECTION_DOC_ID = 'gscConnection'
@@ -55,7 +59,11 @@ function isSanitySessionError(error: unknown): boolean {
 export function humanizeGscError(error: unknown): string {
   const message = error instanceof Error ? error.message : String(error)
   if (isSanitySessionError(error)) {
-    return 'Sanity API credentials failed (this is not the store login). Update SANITY_API_TOKEN in your env, then restart the server.'
+    return (
+      'Sanity rejected SANITY_API_TOKEN (invalid, revoked, or wrong project). ' +
+      'In sanity.io/manage → project e4jrvr61 → API → Tokens, create a new token with Editor permissions, ' +
+      'paste it into Vercel as SANITY_API_TOKEN with no quotes, then redeploy.'
+    )
   }
   return message || 'Failed to load Search Console data'
 }
@@ -128,24 +136,16 @@ export async function assertGscStorageReady() {
       'AUTH_SECRET is missing on the server — cannot encrypt the Google refresh token'
     )
   }
-  if (!process.env.SANITY_API_TOKEN) {
+
+  if (!hasSanityWriteToken()) {
     throw new GscConfigError(
       'SANITY_API_TOKEN is missing on the server — cannot save the Search Console connection'
     )
   }
 
-  try {
-    // Proves the token is accepted (invalid tokens throw "Session not found").
-    await writeClient.fetch(`count(*[_type == "product"])`, {}, { cache: 'no-store' })
-  } catch (error) {
-    if (isSanitySessionError(error)) {
-      throw new GscConfigError(humanizeGscError(error))
-    }
-    throw new GscConfigError(
-      error instanceof Error
-        ? `Sanity write client failed: ${error.message}`
-        : 'Sanity write client failed'
-    )
+  const probe = await probeSanityWriteAccess()
+  if (!probe.ok) {
+    throw new GscConfigError(humanizeGscError(new Error(probe.error || 'Sanity token failed')))
   }
 }
 
@@ -357,7 +357,7 @@ export async function saveGscConnection(refreshToken: string, siteUrl: string) {
 }
 
 export async function clearGscConnection() {
-  if (!process.env.SANITY_API_TOKEN) {
+  if (!hasSanityWriteToken()) {
     throw new GscConfigError('SANITY_API_TOKEN is required')
   }
   try {
@@ -377,7 +377,7 @@ export async function getStoredGscConnection(): Promise<StoredGscConnection | nu
   const readDoc = async () => {
     // Prefer writeClient when a token exists — avoids CDN/ACL edge cases.
     // Fall back to tokenless adminClient if the token is rejected.
-    if (process.env.SANITY_API_TOKEN) {
+    if (hasSanityWriteToken()) {
       try {
         return await writeClient.fetch<{
           refreshTokenEncrypted?: string

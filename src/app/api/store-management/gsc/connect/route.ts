@@ -5,6 +5,7 @@ import {
   getGscAuthUrl,
   isGscOAuthReady,
   resolveRequestOrigin,
+  assertGscStorageReady,
 } from '@/lib/gsc'
 
 export async function GET(request: Request) {
@@ -22,20 +23,9 @@ export async function GET(request: Request) {
     return NextResponse.redirect(seoUrl)
   }
 
-  if (!process.env.AUTH_SECRET) {
-    seoUrl.searchParams.set('error', 'AUTH_SECRET is missing on the server')
-    return NextResponse.redirect(seoUrl)
-  }
-
-  if (!process.env.SANITY_API_TOKEN) {
-    seoUrl.searchParams.set(
-      'error',
-      'SANITY_API_TOKEN is missing on the server — add it in Vercel env, then reconnect'
-    )
-    return NextResponse.redirect(seoUrl)
-  }
-
   try {
+    // Validate Sanity token BEFORE sending the user to Google.
+    await assertGscStorageReady()
     const subject =
       (typeof session.user.email === 'string' && session.user.email) ||
       (typeof session.user.name === 'string' && session.user.name) ||
@@ -47,7 +37,7 @@ export async function GET(request: Request) {
     console.error('[gsc/connect]', error)
     seoUrl.searchParams.set(
       'error',
-      error instanceof Error ? error.message : 'Failed to start OAuth'
+      error instanceof Error ? error.message.slice(0, 400) : 'Failed to start OAuth'
     )
     return NextResponse.redirect(seoUrl)
   }
