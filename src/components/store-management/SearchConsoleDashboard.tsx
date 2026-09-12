@@ -218,12 +218,15 @@ export default function SearchConsoleDashboard() {
     }
     const err = params.get('error')
     if (err) {
+      const decoded = decodeURIComponent(err)
       setError(
-        err === 'no_refresh_token'
-          ? 'Google did not return a refresh token. Revoke app access in your Google Account and connect again with consent.'
-          : err === 'oauth_failed'
-            ? 'Google sign-in failed. Try connecting again.'
-            : err
+        decoded === 'no_refresh_token'
+          ? 'Google did not return a refresh token. Open https://myaccount.google.com/permissions , remove Semi Filters access, then connect again.'
+          : decoded === 'oauth_failed'
+            ? 'Google sign-in succeeded, but saving the connection failed. Check server logs / env (SANITY_API_TOKEN, AUTH_SECRET).'
+            : decoded === 'oauth_not_configured'
+              ? 'GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set on the server.'
+              : decoded
       )
       window.history.replaceState({}, '', SEO_PATH)
     }
@@ -262,6 +265,11 @@ export default function SearchConsoleDashboard() {
           setOverview(null)
           setQueries([])
           setPages([])
+          if (justConnected) {
+            setError(
+              'Google sign-in finished, but no connection is stored yet. Usually SANITY_API_TOKEN or AUTH_SECRET is missing on the host, or Google did not return a refresh token — revoke app access and connect again.'
+            )
+          }
           return
         }
 

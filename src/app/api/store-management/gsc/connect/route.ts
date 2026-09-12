@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
-import { getGscAuthUrl, isGscOAuthReady, resolveRequestOrigin } from '@/lib/gsc'
+import {
+  assertGscStorageReady,
+  getGscAuthUrl,
+  isGscOAuthReady,
+  resolveRequestOrigin,
+} from '@/lib/gsc'
 
 export async function GET(request: Request) {
   const session = await auth()
@@ -8,25 +13,24 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  const origin = resolveRequestOrigin(request)
+  const seoUrl = new URL('/store-management/seo', origin)
+
   if (!isGscOAuthReady()) {
-    return NextResponse.json(
-      {
-        error:
-          'GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set before connecting Search Console',
-      },
-      { status: 503 }
-    )
+    seoUrl.searchParams.set('error', 'oauth_not_configured')
+    return NextResponse.redirect(seoUrl)
   }
 
   try {
-    const origin = resolveRequestOrigin(request)
+    assertGscStorageReady()
     const url = getGscAuthUrl(origin)
     return NextResponse.redirect(url)
   } catch (error) {
     console.error('[gsc/connect]', error)
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to start OAuth' },
-      { status: 500 }
+    seoUrl.searchParams.set(
+      'error',
+      error instanceof Error ? error.message : 'Failed to start OAuth'
     )
+    return NextResponse.redirect(seoUrl)
   }
 }

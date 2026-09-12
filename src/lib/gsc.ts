@@ -121,6 +121,20 @@ export function isGscOAuthReady(): boolean {
   return Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET)
 }
 
+/** Fail before Google OAuth if we cannot persist the refresh token afterward. */
+export function assertGscStorageReady() {
+  if (!process.env.AUTH_SECRET) {
+    throw new GscConfigError(
+      'AUTH_SECRET is missing on the server — cannot encrypt the Google refresh token'
+    )
+  }
+  if (!process.env.SANITY_API_TOKEN) {
+    throw new GscConfigError(
+      'SANITY_API_TOKEN is missing on the server — cannot save the Search Console connection'
+    )
+  }
+}
+
 function getEncryptionKey() {
   const secret = process.env.AUTH_SECRET
   if (!secret) {
@@ -225,17 +239,34 @@ export async function resolveGscSiteUrl(credentials: Credentials): Promise<strin
 }
 
 export async function saveGscConnection(refreshToken: string, siteUrl: string) {
-  if (!process.env.SANITY_API_TOKEN) {
-    throw new GscConfigError('SANITY_API_TOKEN is required to save the Search Console connection')
+  assertGscStorageReady()
+
+  try {
+    await writeClient.createOrReplace({
+      _id: GSC_CONNECTION_DOC_ID,
+      _type: 'gscConnection',
+      refreshTokenEncrypted: encryptSecret(refreshToken),
+      siteUrl,
+      connectedAt: new Date().toISOString(),
+    })
+  } catch (error) {
+    if (isSanitySessionError(error)) {
+      throw new GscConfigError(humanizeGscError(error))
+    }
+    throw new GscConfigError(
+      error instanceof Error
+        ? `Failed to save Search Console connection: ${error.message}`
+        : 'Failed to save Search Console connection'
+    )
   }
 
-  await writeClient.createOrReplace({
-    _id: GSC_CONNECTION_DOC_ID,
-    _type: 'gscConnection',
-    refreshTokenEncrypted: encryptSecret(refreshToken),
-    siteUrl,
-    connectedAt: new Date().toISOString(),
-  })
+  // Confirm the published doc is readable (same path the dashboard uses).
+  const stored = await getStoredGscConnection()
+  if (!stored?.refreshToken || stored.siteUrl !== siteUrl) {
+    throw new GscConfigError(
+      'Connection was written but could not be read back. Check Sanity API permissions and try again.'
+    )
+  }
 }
 
 export async function clearGscConnection() {
