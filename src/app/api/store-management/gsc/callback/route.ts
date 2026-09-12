@@ -17,16 +17,16 @@ export async function GET(request: Request) {
   const code = searchParams.get('code')
   const oauthError = searchParams.get('error')
   const origin = new URL(request.url).origin
-  const searchUrl = new URL('/store-management/search', origin)
+  const seoUrl = new URL('/store-management/seo', origin)
 
   if (oauthError) {
-    searchUrl.searchParams.set('error', oauthError)
-    return NextResponse.redirect(searchUrl)
+    seoUrl.searchParams.set('error', oauthError)
+    return NextResponse.redirect(seoUrl)
   }
 
   if (!code) {
-    searchUrl.searchParams.set('error', 'missing_code')
-    return NextResponse.redirect(searchUrl)
+    seoUrl.searchParams.set('error', 'missing_code')
+    return NextResponse.redirect(seoUrl)
   }
 
   try {
@@ -34,22 +34,22 @@ export async function GET(request: Request) {
     const refreshToken = tokens.refresh_token
 
     if (!refreshToken) {
-      searchUrl.searchParams.set('error', 'no_refresh_token')
-      return NextResponse.redirect(searchUrl)
+      seoUrl.searchParams.set('error', 'no_refresh_token')
+      return NextResponse.redirect(seoUrl)
     }
 
     const siteUrl = await resolveGscSiteUrl(tokens)
     await saveGscConnection(refreshToken, siteUrl)
 
-    searchUrl.searchParams.set('connected', '1')
-    return NextResponse.redirect(searchUrl)
+    seoUrl.searchParams.set('connected', '1')
+    return NextResponse.redirect(seoUrl)
   } catch (error) {
     console.error('[gsc/callback]', error)
     if (error instanceof GscConfigError) {
-      searchUrl.searchParams.set('error', error.message)
+      seoUrl.searchParams.set('error', error.message)
     } else {
-      searchUrl.searchParams.set('error', 'oauth_failed')
+      seoUrl.searchParams.set('error', 'oauth_failed')
     }
-    return NextResponse.redirect(searchUrl)
+    return NextResponse.redirect(seoUrl)
   }
 }

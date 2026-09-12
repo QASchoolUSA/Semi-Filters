@@ -23,6 +23,28 @@ const RANGES: { value: GscRangeDays; label: string }[] = [
   { value: 90, label: '90 days' },
 ]
 
+const SEO_PATH = '/store-management/seo'
+
+async function readJson<T>(res: Response): Promise<T> {
+  const text = await res.text()
+  if (!text.trim()) {
+    throw new Error(
+      res.status >= 400
+        ? `Request failed (${res.status}) with an empty response`
+        : 'Empty response from Search Console API'
+    )
+  }
+  try {
+    return JSON.parse(text) as T
+  } catch {
+    throw new Error(
+      res.status >= 400
+        ? `Request failed (${res.status}): ${text.slice(0, 160)}`
+        : 'Invalid JSON from Search Console API'
+    )
+  }
+}
+
 function formatInt(n: number) {
   return new Intl.NumberFormat('en-US').format(Math.round(n))
 }
@@ -184,7 +206,7 @@ export default function SearchConsoleDashboard() {
     const params = new URLSearchParams(window.location.search)
     if (params.get('connected') === '1') {
       setJustConnected(true)
-      window.history.replaceState({}, '', '/store-management/search')
+      window.history.replaceState({}, '', SEO_PATH)
     }
     const err = params.get('error')
     if (err) {
@@ -195,7 +217,7 @@ export default function SearchConsoleDashboard() {
             ? 'Google sign-in failed. Try connecting again.'
             : err
       )
-      window.history.replaceState({}, '', '/store-management/search')
+      window.history.replaceState({}, '', SEO_PATH)
     }
   }, [])
 
@@ -213,9 +235,11 @@ export default function SearchConsoleDashboard() {
           fetch(`/api/store-management/gsc/pages?range=${range}`),
         ])
 
-        const overviewJson = (await overviewRes.json()) as OverviewPayload
-        const queriesJson = await queriesRes.json()
-        const pagesJson = await pagesRes.json()
+        const [overviewJson, queriesJson, pagesJson] = await Promise.all([
+          readJson<OverviewPayload>(overviewRes),
+          readJson<{ status?: string; rows?: GscDimensionRow[]; error?: string }>(queriesRes),
+          readJson<{ status?: string; rows?: GscDimensionRow[]; error?: string }>(pagesRes),
+        ])
 
         if (cancelled) return
 
@@ -236,6 +260,18 @@ export default function SearchConsoleDashboard() {
         if (!overviewRes.ok || overviewJson.status === 'error') {
           setStatus('error')
           setError(overviewJson.error || 'Failed to load Search Console data')
+          return
+        }
+
+        if (!queriesRes.ok && queriesJson.status === 'error') {
+          setStatus('error')
+          setError(queriesJson.error || 'Failed to load keyword data')
+          return
+        }
+
+        if (!pagesRes.ok && pagesJson.status === 'error') {
+          setStatus('error')
+          setError(pagesJson.error || 'Failed to load page data')
           return
         }
 
@@ -261,7 +297,9 @@ export default function SearchConsoleDashboard() {
     try {
       const res = await fetch('/api/store-management/gsc/disconnect', { method: 'POST' })
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
+        const data = await readJson<{ error?: string }>(res).catch(
+          (): { error?: string } => ({})
+        )
         setError(typeof data.error === 'string' ? data.error : 'Failed to disconnect')
         return
       }

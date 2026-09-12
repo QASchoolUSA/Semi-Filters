@@ -15,21 +15,20 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  if (!isGscOAuthReady()) {
-    return NextResponse.json(
-      { status: 'misconfigured', error: 'OAuth client env vars are missing' },
-      { status: 503 }
-    )
-  }
-
-  if (!(await isGscConnected())) {
-    return NextResponse.json({ status: 'not_connected' })
-  }
-
-  const { searchParams } = new URL(request.url)
-  const range = parseGscRange(searchParams.get('range'))
-
   try {
+    if (!isGscOAuthReady()) {
+      return NextResponse.json(
+        { status: 'misconfigured', error: 'OAuth client env vars are missing' },
+        { status: 503 }
+      )
+    }
+
+    if (!(await isGscConnected())) {
+      return NextResponse.json({ status: 'not_connected' })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const range = parseGscRange(searchParams.get('range'))
     const data = await fetchGscQueries(range)
     return NextResponse.json({ status: 'ok', range, ...data })
   } catch (error) {

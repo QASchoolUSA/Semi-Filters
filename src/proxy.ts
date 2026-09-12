@@ -51,6 +51,13 @@ export default auth((req) => {
     return NextResponse.redirect(loginUrl)
   }
 
+  // Legacy Search Console route
+  if (pathname === '/store-management/search' || pathname.startsWith('/store-management/search/')) {
+    const url = req.nextUrl.clone()
+    url.pathname = pathname.replace('/store-management/search', '/store-management/seo')
+    return NextResponse.redirect(url, 308)
+  }
+
   return NextResponse.next()
 })
 

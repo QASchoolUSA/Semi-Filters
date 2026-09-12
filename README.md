@@ -99,7 +99,7 @@ npx tsx scripts/hash-store-password.ts 'your-password' 'you@semifilters.com'
 
 ### Google Search Console (store-management)
 
-The **Search** tab at `/store-management/search` shows clicks, impressions, CTR, average position, top keywords, pages, countries, and devices via the Search Console API.
+The **SEO** tab at `/store-management/seo` shows clicks, impressions, CTR, average position, top keywords, pages, countries, and devices via the Search Console API.
 
 One-time setup:
 
@@ -108,10 +108,10 @@ One-time setup:
    - Production: `https://semifilters.com/api/store-management/gsc/callback`
    - Local: `http://localhost:3000/api/store-management/gsc/callback`
 3. Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `AUTH_SECRET`, and `NEXT_PUBLIC_SITE_URL` (must match the host you use for the redirect URI). `SANITY_API_TOKEN` is required to save the connection.
-4. Sign in to store-management → **Search** → **Connect Google** with an account that has access to the semifilters.com property.
+4. Sign in to store-management → **SEO** → **Connect Google** with an account that has access to the semifilters.com property.
 5. The refresh token is encrypted and stored in Sanity automatically. The app picks the matching GSC property from your account (override with `GSC_SITE_URL` if needed).
 
-Clicks are visits from Google Search only — not full-site analytics (Clarity/GA). Data usually lags about two days. Use **Disconnect** on the Search page to remove the saved connection.
+Clicks are visits from Google Search only — not full-site analytics (Clarity/GA). Data usually lags about two days. Use **Disconnect** on the SEO page to remove the saved connection.
 
 ## Content migrations
 
