@@ -4,6 +4,7 @@ import {
   fetchGscPages,
   GscConfigError,
   GscNotConnectedError,
+  humanizeGscError,
   isGscConnected,
   isGscOAuthReady,
   parseGscRange,
@@ -45,7 +46,7 @@ export async function GET(request: Request) {
     return NextResponse.json(
       {
         status: 'error',
-        error: error instanceof Error ? error.message : 'Failed to load pages',
+        error: humanizeGscError(error),
       },
       { status: 500 }
     )

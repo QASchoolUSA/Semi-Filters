@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import type { GscDateRow, GscDimensionRow, GscMetrics, GscRangeDays } from '@/lib/gsc'
 
-type LoadStatus = 'loading' | 'not_connected' | 'misconfigured' | 'ok' | 'error'
+type LoadStatus = 'loading' | 'not_connected' | 'misconfigured' | 'ok' | 'error' | 'auth_required'
 
 type OverviewPayload = {
   status: LoadStatus | string
@@ -24,6 +24,13 @@ const RANGES: { value: GscRangeDays; label: string }[] = [
 ]
 
 const SEO_PATH = '/store-management/seo'
+
+function friendlyError(message: string) {
+  if (/session not found/i.test(message)) {
+    return 'Sanity API credentials failed (this is not the store login). Update SANITY_API_TOKEN in your env, then restart the server.'
+  }
+  return message
+}
 
 async function readJson<T>(res: Response): Promise<T> {
   const text = await res.text()
@@ -194,6 +201,7 @@ function MetricsTable({
 
 export default function SearchConsoleDashboard() {
   const [range, setRange] = useState<GscRangeDays>(28)
+  const [reloadKey, setReloadKey] = useState(0)
   const [status, setStatus] = useState<LoadStatus>('loading')
   const [error, setError] = useState<string | null>(null)
   const [overview, setOverview] = useState<OverviewPayload | null>(null)
@@ -243,6 +251,12 @@ export default function SearchConsoleDashboard() {
 
         if (cancelled) return
 
+        if (overviewRes.status === 401 || queriesRes.status === 401 || pagesRes.status === 401) {
+          setStatus('auth_required')
+          setError('Your store-management session expired. Sign in again to load SEO data.')
+          return
+        }
+
         if (overviewJson.status === 'not_connected' || queriesJson.status === 'not_connected') {
           setStatus('not_connected')
           setOverview(null)
@@ -253,25 +267,25 @@ export default function SearchConsoleDashboard() {
 
         if (overviewJson.status === 'misconfigured') {
           setStatus('misconfigured')
-          setError(overviewJson.error || 'Search Console is misconfigured')
+          setError(friendlyError(overviewJson.error || 'Search Console is misconfigured'))
           return
         }
 
         if (!overviewRes.ok || overviewJson.status === 'error') {
           setStatus('error')
-          setError(overviewJson.error || 'Failed to load Search Console data')
+          setError(friendlyError(overviewJson.error || 'Failed to load Search Console data'))
           return
         }
 
         if (!queriesRes.ok && queriesJson.status === 'error') {
           setStatus('error')
-          setError(queriesJson.error || 'Failed to load keyword data')
+          setError(friendlyError(queriesJson.error || 'Failed to load keyword data'))
           return
         }
 
         if (!pagesRes.ok && pagesJson.status === 'error') {
           setStatus('error')
-          setError(pagesJson.error || 'Failed to load page data')
+          setError(friendlyError(pagesJson.error || 'Failed to load page data'))
           return
         }
 
@@ -282,7 +296,9 @@ export default function SearchConsoleDashboard() {
       } catch (err) {
         if (cancelled) return
         setStatus('error')
-        setError(err instanceof Error ? err.message : 'Failed to load Search Console data')
+        setError(
+          friendlyError(err instanceof Error ? err.message : 'Failed to load Search Console data')
+        )
       }
     }
 
@@ -290,7 +306,7 @@ export default function SearchConsoleDashboard() {
     return () => {
       cancelled = true
     }
-  }, [range, justConnected])
+  }, [range, justConnected, reloadKey])
 
   async function disconnect() {
     setDisconnecting(true)
@@ -370,10 +386,45 @@ export default function SearchConsoleDashboard() {
 
       {status === 'misconfigured' && (
         <div className="sm-empty">
-          <h2>OAuth not configured</h2>
+          <h2>Setup needed</h2>
           <p>
-            Set <code className="sm-empty__code">GOOGLE_CLIENT_ID</code> and{' '}
-            <code className="sm-empty__code">GOOGLE_CLIENT_SECRET</code>, then reconnect.
+            {error || (
+              <>
+                Set <code className="sm-empty__code">GOOGLE_CLIENT_ID</code> and{' '}
+                <code className="sm-empty__code">GOOGLE_CLIENT_SECRET</code>, then reconnect.
+              </>
+            )}
+          </p>
+        </div>
+      )}
+
+      {status === 'auth_required' && (
+        <div className="sm-empty">
+          <h2>Sign in required</h2>
+          <p>Your store-management session expired. Sign in again to view SEO data.</p>
+          <p style={{ marginTop: 16 }}>
+            <a className="sm-btn sm-btn--primary" href="/store-management/login">
+              Sign in
+            </a>
+          </p>
+        </div>
+      )}
+
+      {status === 'error' && (
+        <div className="sm-empty">
+          <h2>Couldn’t load SEO data</h2>
+          <p>
+            This is a Search Console / Sanity API problem — not the store login page. Fix the
+            credentials above, then retry.
+          </p>
+          <p style={{ marginTop: 16 }}>
+            <button
+              type="button"
+              className="sm-btn sm-btn--primary"
+              onClick={() => setReloadKey((k) => k + 1)}
+            >
+              Retry
+            </button>
           </p>
         </div>
       )}

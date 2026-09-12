@@ -1,6 +1,7 @@
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto'
 import { google } from 'googleapis'
 import type { Credentials } from 'google-auth-library'
+import { adminClient } from '@/sanity/lib/admin-client'
 import { writeClient } from '@/sanity/lib/write-client'
 
 export const GSC_SCOPE = 'https://www.googleapis.com/auth/webmasters.readonly'
@@ -44,6 +45,19 @@ export class GscConfigError extends Error {
     super(message)
     this.name = 'GscConfigError'
   }
+}
+
+function isSanitySessionError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error)
+  return /session not found/i.test(message) || /SIO-401-ANF/i.test(message)
+}
+
+export function humanizeGscError(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error)
+  if (isSanitySessionError(error)) {
+    return 'Sanity API credentials failed (this is not the store login). Update SANITY_API_TOKEN in your env, then restart the server.'
+  }
+  return message || 'Failed to load Search Console data'
 }
 
 function formatUtcDate(date: Date): string {
@@ -214,26 +228,31 @@ export async function getStoredGscConnection(): Promise<StoredGscConnection | nu
     return { refreshToken: envToken, siteUrl: envSite }
   }
 
-  if (!process.env.SANITY_API_TOKEN) {
-    return null
-  }
+  // Read without SANITY_API_TOKEN — a rejected token returns
+  // "Unauthorized - Session not found" even on public datasets.
+  try {
+    const doc = await adminClient.fetch<{
+      refreshTokenEncrypted?: string
+      siteUrl?: string
+    } | null>(
+      `*[_id == $id][0]{ refreshTokenEncrypted, siteUrl }`,
+      { id: GSC_CONNECTION_DOC_ID },
+      { cache: 'no-store' }
+    )
 
-  const doc = await writeClient.fetch<{
-    refreshTokenEncrypted?: string
-    siteUrl?: string
-  } | null>(
-    `*[_id == $id][0]{ refreshTokenEncrypted, siteUrl }`,
-    { id: GSC_CONNECTION_DOC_ID },
-    { cache: 'no-store' }
-  )
+    if (!doc?.refreshTokenEncrypted || !doc.siteUrl) {
+      return null
+    }
 
-  if (!doc?.refreshTokenEncrypted || !doc.siteUrl) {
-    return null
-  }
-
-  return {
-    refreshToken: decryptSecret(doc.refreshTokenEncrypted),
-    siteUrl: doc.siteUrl,
+    return {
+      refreshToken: decryptSecret(doc.refreshTokenEncrypted),
+      siteUrl: doc.siteUrl,
+    }
+  } catch (error) {
+    if (isSanitySessionError(error)) {
+      throw new GscConfigError(humanizeGscError(error))
+    }
+    throw error
   }
 }
 
