@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import {
   assertGscStorageReady,
+  createGscOAuthState,
   getGscAuthUrl,
   isGscOAuthReady,
   resolveRequestOrigin,
@@ -9,12 +10,13 @@ import {
 
 export async function GET(request: Request) {
   const session = await auth()
-  if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
   const origin = resolveRequestOrigin(request)
   const seoUrl = new URL('/store-management/seo', origin)
+
+  if (!session?.user?.email) {
+    seoUrl.searchParams.set('error', 'sign_in_required')
+    return NextResponse.redirect(seoUrl)
+  }
 
   if (!isGscOAuthReady()) {
     seoUrl.searchParams.set('error', 'oauth_not_configured')
@@ -22,8 +24,9 @@ export async function GET(request: Request) {
   }
 
   try {
-    assertGscStorageReady()
-    const url = getGscAuthUrl(origin)
+    await assertGscStorageReady()
+    const state = createGscOAuthState(session.user.email)
+    const url = getGscAuthUrl(origin, state)
     return NextResponse.redirect(url)
   } catch (error) {
     console.error('[gsc/connect]', error)

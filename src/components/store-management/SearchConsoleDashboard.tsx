@@ -222,11 +222,17 @@ export default function SearchConsoleDashboard() {
       setError(
         decoded === 'no_refresh_token'
           ? 'Google did not return a refresh token. Open https://myaccount.google.com/permissions , remove Semi Filters access, then connect again.'
-          : decoded === 'oauth_failed'
-            ? 'Google sign-in succeeded, but saving the connection failed. Check server logs / env (SANITY_API_TOKEN, AUTH_SECRET).'
+          : decoded === 'oauth_failed' || decoded.startsWith('oauth_failed:')
+            ? decoded.startsWith('oauth_failed:')
+              ? decoded
+              : 'Google sign-in reached the app, but saving the connection failed. Check SANITY_API_TOKEN and AUTH_SECRET on the host.'
             : decoded === 'oauth_not_configured'
               ? 'GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set on the server.'
-              : decoded
+              : decoded === 'sign_in_required'
+                ? 'Sign in to store-management first, then click Connect Google.'
+                : decoded === 'missing_code'
+                  ? 'Google callback was missing an auth code. Try Connect again.'
+                  : decoded
       )
       window.history.replaceState({}, '', SEO_PATH)
     }
@@ -437,20 +443,24 @@ export default function SearchConsoleDashboard() {
         </div>
       )}
 
-      {status === 'not_connected' && (
+      {status === 'not_connected' && error && (
+        <div className="sm-empty">
+          <h2>Connection didn’t complete</h2>
+          <p>{error}</p>
+          <p style={{ marginTop: 16 }}>
+            <a className="sm-btn sm-btn--primary" href="/api/store-management/gsc/connect">
+              Try Connect again
+            </a>
+          </p>
+        </div>
+      )}
+
+      {status === 'not_connected' && !error && (
         <div className="sm-empty">
           <h2>Connect Google Search Console</h2>
           <p>
             Sign in once with the Google account that has access to the semifilters.com property.
             Connection is saved automatically — no env token paste needed.
-          </p>
-          <p className="sm-cell-muted" style={{ marginTop: 12 }}>
-            If Google shows <code className="sm-empty__code">redirect_uri_mismatch</code>, add the
-            exact callback for this host under Authorized redirect URIs in Google Cloud Console —
-            e.g. <code className="sm-empty__code">http://localhost:3000/api/store-management/gsc/callback</code>{' '}
-            locally, or{' '}
-            <code className="sm-empty__code">https://semifilters.com/api/store-management/gsc/callback</code>{' '}
-            in production.
           </p>
           <p style={{ marginTop: 16 }}>
             <a className="sm-btn sm-btn--primary" href="/api/store-management/gsc/connect">

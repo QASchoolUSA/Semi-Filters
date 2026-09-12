@@ -1,42 +1,44 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@/auth'
 import {
   exchangeGscCode,
   GscConfigError,
   resolveGscSiteUrl,
   resolveRequestOrigin,
   saveGscConnection,
+  verifyGscOAuthState,
 } from '@/lib/gsc'
 
-export async function GET(request: Request) {
-  const session = await auth()
-  if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+function redirectWithError(seoUrl: URL, message: string) {
+  seoUrl.searchParams.set('error', message.slice(0, 300))
+  return NextResponse.redirect(seoUrl)
+}
 
+export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
   const oauthError = searchParams.get('error')
+  const state = searchParams.get('state')
   const origin = resolveRequestOrigin(request)
   const seoUrl = new URL('/store-management/seo', origin)
 
+  // Never return bare JSON here — Google lands the browser on this URL.
   if (oauthError) {
-    seoUrl.searchParams.set('error', oauthError)
-    return NextResponse.redirect(seoUrl)
+    return redirectWithError(seoUrl, oauthError)
   }
 
   if (!code) {
-    seoUrl.searchParams.set('error', 'missing_code')
-    return NextResponse.redirect(seoUrl)
+    return redirectWithError(seoUrl, 'missing_code')
   }
 
   try {
+    // Auth cookie is unreliable on the Google → app hop; signed state is the source of truth.
+    verifyGscOAuthState(state)
+
     const tokens = await exchangeGscCode(code, origin)
     const refreshToken = tokens.refresh_token
 
     if (!refreshToken) {
-      seoUrl.searchParams.set('error', 'no_refresh_token')
-      return NextResponse.redirect(seoUrl)
+      return redirectWithError(seoUrl, 'no_refresh_token')
     }
 
     const siteUrl = await resolveGscSiteUrl(tokens)
@@ -47,10 +49,11 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('[gsc/callback]', error)
     if (error instanceof GscConfigError) {
-      seoUrl.searchParams.set('error', error.message)
-    } else {
-      seoUrl.searchParams.set('error', 'oauth_failed')
+      return redirectWithError(seoUrl, error.message)
     }
-    return NextResponse.redirect(seoUrl)
+    return redirectWithError(
+      seoUrl,
+      error instanceof Error ? `oauth_failed: ${error.message}` : 'oauth_failed'
+    )
   }
 }

@@ -1,4 +1,4 @@
-import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto'
+import { createCipheriv, createDecipheriv, createHmac, randomBytes, scryptSync, timingSafeEqual } from 'crypto'
 import { google } from 'googleapis'
 import type { Credentials } from 'google-auth-library'
 import { adminClient } from '@/sanity/lib/admin-client'
@@ -122,7 +122,7 @@ export function isGscOAuthReady(): boolean {
 }
 
 /** Fail before Google OAuth if we cannot persist the refresh token afterward. */
-export function assertGscStorageReady() {
+export async function assertGscStorageReady() {
   if (!process.env.AUTH_SECRET) {
     throw new GscConfigError(
       'AUTH_SECRET is missing on the server — cannot encrypt the Google refresh token'
@@ -133,6 +133,74 @@ export function assertGscStorageReady() {
       'SANITY_API_TOKEN is missing on the server — cannot save the Search Console connection'
     )
   }
+
+  try {
+    // Proves the token is accepted (invalid tokens throw "Session not found").
+    await writeClient.fetch(`count(*[_type == "product"])`, {}, { cache: 'no-store' })
+  } catch (error) {
+    if (isSanitySessionError(error)) {
+      throw new GscConfigError(humanizeGscError(error))
+    }
+    throw new GscConfigError(
+      error instanceof Error
+        ? `Sanity write client failed: ${error.message}`
+        : 'Sanity write client failed'
+    )
+  }
+}
+
+function oauthStateSecret() {
+  const secret = process.env.AUTH_SECRET
+  if (!secret) {
+    throw new GscConfigError('AUTH_SECRET is required for OAuth state')
+  }
+  return secret
+}
+
+/** Bind the OAuth round-trip so the callback does not depend on the store-management cookie. */
+export function createGscOAuthState(email: string): string {
+  const payload = Buffer.from(
+    JSON.stringify({
+      email: email.toLowerCase(),
+      exp: Date.now() + 15 * 60 * 1000,
+      n: randomBytes(8).toString('hex'),
+    }),
+    'utf8'
+  ).toString('base64url')
+  const sig = createHmac('sha256', oauthStateSecret()).update(payload).digest('base64url')
+  return `${payload}.${sig}`
+}
+
+export function verifyGscOAuthState(state: string | null): { email: string } {
+  if (!state || !state.includes('.')) {
+    throw new GscConfigError('Missing OAuth state — start Connect again from the SEO page')
+  }
+  const [payload, sig] = state.split('.')
+  if (!payload || !sig) {
+    throw new GscConfigError('Invalid OAuth state — start Connect again from the SEO page')
+  }
+  const expected = createHmac('sha256', oauthStateSecret()).update(payload).digest('base64url')
+  const sigBuf = Buffer.from(sig)
+  const expectedBuf = Buffer.from(expected)
+  if (sigBuf.length !== expectedBuf.length || !timingSafeEqual(sigBuf, expectedBuf)) {
+    throw new GscConfigError('OAuth state mismatch — start Connect again from the SEO page')
+  }
+  let parsed: { email?: string; exp?: number }
+  try {
+    parsed = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as {
+      email?: string
+      exp?: number
+    }
+  } catch {
+    throw new GscConfigError('Corrupt OAuth state — start Connect again from the SEO page')
+  }
+  if (!parsed.email || typeof parsed.exp !== 'number') {
+    throw new GscConfigError('Invalid OAuth state payload — start Connect again')
+  }
+  if (parsed.exp < Date.now()) {
+    throw new GscConfigError('OAuth state expired — start Connect again from the SEO page')
+  }
+  return { email: parsed.email }
 }
 
 function getEncryptionKey() {
@@ -183,12 +251,13 @@ function getOAuth2Client(origin?: string) {
   return new google.auth.OAuth2(clientId, clientSecret, getGscRedirectUri(origin))
 }
 
-export function getGscAuthUrl(origin?: string): string {
+export function getGscAuthUrl(origin?: string, state?: string): string {
   const client = getOAuth2Client(origin)
   return client.generateAuthUrl({
     access_type: 'offline',
     prompt: 'consent',
     scope: [GSC_SCOPE],
+    ...(state ? { state } : {}),
   })
 }
 
@@ -239,15 +308,18 @@ export async function resolveGscSiteUrl(credentials: Credentials): Promise<strin
 }
 
 export async function saveGscConnection(refreshToken: string, siteUrl: string) {
-  assertGscStorageReady()
+  await assertGscStorageReady()
+
+  const refreshTokenEncrypted = encryptSecret(refreshToken)
+  const connectedAt = new Date().toISOString()
 
   try {
     await writeClient.createOrReplace({
       _id: GSC_CONNECTION_DOC_ID,
       _type: 'gscConnection',
-      refreshTokenEncrypted: encryptSecret(refreshToken),
+      refreshTokenEncrypted,
       siteUrl,
-      connectedAt: new Date().toISOString(),
+      connectedAt,
     })
   } catch (error) {
     if (isSanitySessionError(error)) {
@@ -260,11 +332,26 @@ export async function saveGscConnection(refreshToken: string, siteUrl: string) {
     )
   }
 
-  // Confirm the published doc is readable (same path the dashboard uses).
+  // Verify with the write token first (authoritative), then public read path.
+  const written = await writeClient.fetch<{
+    refreshTokenEncrypted?: string
+    siteUrl?: string
+  } | null>(
+    `*[_id == $id][0]{ refreshTokenEncrypted, siteUrl }`,
+    { id: GSC_CONNECTION_DOC_ID },
+    { cache: 'no-store' }
+  )
+
+  if (!written?.refreshTokenEncrypted || written.siteUrl !== siteUrl) {
+    throw new GscConfigError(
+      'Sanity write reported success but the connection document is missing. Check API token permissions (needs Editor).'
+    )
+  }
+
   const stored = await getStoredGscConnection()
   if (!stored?.refreshToken || stored.siteUrl !== siteUrl) {
     throw new GscConfigError(
-      'Connection was written but could not be read back. Check Sanity API permissions and try again.'
+      'Connection was saved but the public read path cannot see it yet. Retry loading the SEO page in a few seconds.'
     )
   }
 }
@@ -287,10 +374,26 @@ export async function getStoredGscConnection(): Promise<StoredGscConnection | nu
     return { refreshToken: envToken, siteUrl: envSite }
   }
 
-  // Read without SANITY_API_TOKEN — a rejected token returns
-  // "Unauthorized - Session not found" even on public datasets.
-  try {
-    const doc = await adminClient.fetch<{
+  const readDoc = async () => {
+    // Prefer writeClient when a token exists — avoids CDN/ACL edge cases.
+    // Fall back to tokenless adminClient if the token is rejected.
+    if (process.env.SANITY_API_TOKEN) {
+      try {
+        return await writeClient.fetch<{
+          refreshTokenEncrypted?: string
+          siteUrl?: string
+        } | null>(
+          `*[_id == $id][0]{ refreshTokenEncrypted, siteUrl }`,
+          { id: GSC_CONNECTION_DOC_ID },
+          { cache: 'no-store' }
+        )
+      } catch (error) {
+        if (!isSanitySessionError(error)) throw error
+        // Invalid token — fall through to public read.
+      }
+    }
+
+    return adminClient.fetch<{
       refreshTokenEncrypted?: string
       siteUrl?: string
     } | null>(
@@ -298,6 +401,10 @@ export async function getStoredGscConnection(): Promise<StoredGscConnection | nu
       { id: GSC_CONNECTION_DOC_ID },
       { cache: 'no-store' }
     )
+  }
+
+  try {
+    const doc = await readDoc()
 
     if (!doc?.refreshTokenEncrypted || !doc.siteUrl) {
       return null
