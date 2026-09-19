@@ -164,7 +164,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                         <div className="product-detail-price-block">
                             <div className="product-detail-stock">
                                 <span className={`stock-indicator ${product.inStock !== false ? 'stock-in' : 'stock-out'}`} />
-                                {product.inStock !== false ? 'In Stock — Ready to Ship' : 'Out of Stock'}
+                                {product.inStock !== false ? 'In Stock' : 'Out of Stock'}
                             </div>
                             <div className="product-detail-pricing">
                                 <span className="product-detail-price">${product.price.toFixed(2)}</span>
