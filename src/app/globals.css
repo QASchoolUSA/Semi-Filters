@@ -7182,6 +7182,21 @@ select {
   margin: 0 0 1.25rem;
 }
 
+/* Product page: full trail on desktop, category-only on mobile */
+.product-breadcrumbs-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .product-breadcrumbs-full {
+    display: none;
+  }
+
+  .product-breadcrumbs-mobile {
+    display: block;
+  }
+}
+
 .breadcrumbs__list {
   display: flex;
   flex-wrap: wrap;
