@@ -161,29 +161,31 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                     )}
 
                     <div className="product-price-stock-row">
-                        <div className="product-detail-pricing">
-                            <span className="product-detail-price">${product.price.toFixed(2)}</span>
-                            {product.compareAtPrice && (
-                                <span className="product-detail-compare">${product.compareAtPrice.toFixed(2)}</span>
-                            )}
-                            {savings && (
-                                <span className="product-detail-save">Save ${savings}</span>
-                            )}
+                        <div className="product-detail-price-block">
+                            <div className="product-detail-stock">
+                                <span className={`stock-indicator ${product.inStock !== false ? 'stock-in' : 'stock-out'}`} />
+                                {product.inStock !== false ? 'In Stock — Ready to Ship' : 'Out of Stock'}
+                            </div>
+                            <div className="product-detail-pricing">
+                                <span className="product-detail-price">${product.price.toFixed(2)}</span>
+                                {product.compareAtPrice && (
+                                    <span className="product-detail-compare">${product.compareAtPrice.toFixed(2)}</span>
+                                )}
+                                {savings && (
+                                    <span className="product-detail-save">Save ${savings}</span>
+                                )}
+                            </div>
                         </div>
 
-                        <div className="product-detail-stock">
-                            <span className={`stock-indicator ${product.inStock !== false ? 'stock-in' : 'stock-out'}`} />
-                            {product.inStock !== false ? 'In Stock — Ready to Ship' : 'Out of Stock'}
-                        </div>
-                    </div>
-
-                    {/* Actions: Quantity & Add to Cart */}
-                    <div className="product-purchase-actions">
                         <div className="quantity-selector">
                             <button className="quantity-btn" onClick={() => setQuantity(Math.max(1, quantity - 1))}>−</button>
                             <span className="quantity-value">{quantity}</span>
                             <button className="quantity-btn" onClick={() => setQuantity(quantity + 1)}>+</button>
                         </div>
+                    </div>
+
+                    {/* Actions: Add to Cart */}
+                    <div className="product-purchase-actions">
                         <button
                             className="btn btn-primary btn-lg add-to-cart-btn"
                             onClick={handleAddToCart}
