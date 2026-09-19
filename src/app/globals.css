@@ -4752,8 +4752,8 @@ select {
     font-size: 0.9rem;
   }
 
-  /* Product detail: price on top (centered), stock + smaller qty below */
-  .product-price-stock-row {
+  /* Product detail — discounted: compare | big price | % off, then stock + qty */
+  .product-price-stock-row.has-discount {
     display: grid;
     grid-template-columns: 1fr auto;
     grid-template-areas:
@@ -4762,6 +4762,16 @@ select {
     align-items: center;
     column-gap: 12px;
     row-gap: 10px;
+  }
+
+  /* Product detail — single price: In Stock | price | qty on one row */
+  .product-price-stock-row.no-discount {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "stock price qty";
+    align-items: center;
+    column-gap: 12px;
+    row-gap: 0;
   }
 
   .product-detail-price-block {
@@ -4774,29 +4784,32 @@ select {
 
   .product-detail-pricing {
     grid-area: price;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .product-price-stock-row.has-discount .product-detail-pricing {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
     column-gap: 8px;
-    width: 100%;
-    min-width: 0;
   }
 
-  .product-detail-compare {
+  .product-price-stock-row.has-discount .product-detail-compare {
     order: 1;
     justify-self: start;
     text-align: left;
     font-size: 0.95rem;
   }
 
-  .product-detail-price {
+  .product-price-stock-row.has-discount .product-detail-price {
     order: 2;
     justify-self: center;
     font-size: 2.15rem;
     line-height: 1.1;
   }
 
-  .product-detail-save {
+  .product-price-stock-row.has-discount .product-detail-save {
     order: 3;
     justify-self: end;
     text-align: right;
@@ -4814,13 +4827,15 @@ select {
     display: inline;
   }
 
-  /* No compare price: keep sale price centered alone */
-  .product-detail-pricing:not(:has(.product-detail-compare)) {
-    grid-template-columns: 1fr;
+  .product-price-stock-row.no-discount .product-detail-pricing {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  .product-detail-pricing:not(:has(.product-detail-compare)) .product-detail-price {
-    justify-self: center;
+  .product-price-stock-row.no-discount .product-detail-price {
+    font-size: 1.65rem;
+    line-height: 1.1;
   }
 
   .product-price-stock-row .quantity-selector {
