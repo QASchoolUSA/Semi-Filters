@@ -63,6 +63,11 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
     const savings = product.compareAtPrice
         ? (product.compareAtPrice - product.price).toFixed(2)
         : null
+    const savingsPercent =
+        product.compareAtPrice && product.compareAtPrice > product.price
+            ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
+            : null
+    const hasDiscount = savingsPercent != null && savingsPercent > 0
 
     return (
         <>
@@ -160,19 +165,22 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                         <p className="product-detail-part">Part Number: {product.partNumber}</p>
                     )}
 
-                    <div className="product-price-stock-row">
+                    <div className={`product-price-stock-row${hasDiscount ? ' has-discount' : ' no-discount'}`}>
                         <div className="product-detail-price-block">
                             <div className="product-detail-stock">
                                 <span className={`stock-indicator ${product.inStock !== false ? 'stock-in' : 'stock-out'}`} />
-                                {product.inStock !== false ? 'In Stock — Ready to Ship' : 'Out of Stock'}
+                                {product.inStock !== false ? 'In Stock' : 'Out of Stock'}
                             </div>
                             <div className="product-detail-pricing">
                                 <span className="product-detail-price">${product.price.toFixed(2)}</span>
-                                {product.compareAtPrice && (
+                                {hasDiscount && product.compareAtPrice && (
                                     <span className="product-detail-compare">${product.compareAtPrice.toFixed(2)}</span>
                                 )}
-                                {savings && (
-                                    <span className="product-detail-save">Save ${savings}</span>
+                                {hasDiscount && savings && (
+                                    <span className="product-detail-save">
+                                        <span className="product-detail-save-amount">Save ${savings}</span>
+                                        <span className="product-detail-save-percent">{savingsPercent}% off</span>
+                                    </span>
                                 )}
                             </div>
                         </div>
