@@ -63,6 +63,10 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
     const savings = product.compareAtPrice
         ? (product.compareAtPrice - product.price).toFixed(2)
         : null
+    const savingsPercent =
+        product.compareAtPrice && product.compareAtPrice > product.price
+            ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
+            : null
 
     return (
         <>
@@ -171,8 +175,11 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                                 {product.compareAtPrice && (
                                     <span className="product-detail-compare">${product.compareAtPrice.toFixed(2)}</span>
                                 )}
-                                {savings && (
-                                    <span className="product-detail-save">Save ${savings}</span>
+                                {savings && savingsPercent != null && (
+                                    <span className="product-detail-save">
+                                        <span className="product-detail-save-amount">Save ${savings}</span>
+                                        <span className="product-detail-save-percent">{savingsPercent}% off</span>
+                                    </span>
                                 )}
                             </div>
                         </div>
