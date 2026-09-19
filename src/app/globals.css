@@ -4748,25 +4748,41 @@ select {
     font-size: 0.9rem;
   }
 
-  /* Product detail */
-  .product-detail-pricing {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
+  /* Product detail: qty beside stock so price + Save share one full-width line */
   .product-price-stock-row {
-    flex-wrap: nowrap;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "stock qty"
+      "price price";
     align-items: center;
-    gap: 12px;
+    column-gap: 12px;
+    row-gap: 8px;
   }
 
   .product-detail-price-block {
-    flex: 1;
+    display: contents;
+  }
+
+  .product-detail-stock {
+    grid-area: stock;
+  }
+
+  .product-detail-pricing {
+    grid-area: price;
+    flex-wrap: nowrap;
+    gap: 8px;
     min-width: 0;
   }
 
-  .product-price-stock-row .quantity-selector {
+  .product-detail-save {
     flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .product-price-stock-row .quantity-selector {
+    grid-area: qty;
+    align-self: center;
   }
 
   .product-purchase-actions {
