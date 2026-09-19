@@ -193,7 +193,19 @@ export default async function ProductDetailPage({ params }: Props) {
             <JsonLd data={breadcrumbJsonLd(crumbs)} />
             {product.faqs?.length ? <JsonLd data={faqPageJsonLd(product.faqs)} /> : null}
             <div className="container">
-                <Breadcrumbs items={crumbs} />
+                <Breadcrumbs items={crumbs} className="product-breadcrumbs-full" />
+                {product.category?.slug?.current ? (
+                    <Breadcrumbs
+                        className="product-breadcrumbs-mobile"
+                        linkLast
+                        items={[
+                            {
+                                name: product.category.name,
+                                href: `/filters/${product.category.slug.current}`,
+                            },
+                        ]}
+                    />
+                ) : null}
                 <ProductDetailClient product={product} relatedProducts={relatedProducts} />
             </div>
         </section>
