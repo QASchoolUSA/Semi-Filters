@@ -2035,31 +2035,44 @@ select {
 }
 
 .product-price-stock-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "stock ."
+    "price qty";
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
+  column-gap: 16px;
+  row-gap: 8px;
   margin-bottom: 24px;
 }
 
 .product-detail-price-block {
+  display: contents;
+}
+
+.product-detail-stock {
+  grid-area: stock;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.product-detail-pricing {
+  grid-area: price;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
   min-width: 0;
 }
 
 .product-price-stock-row .quantity-selector {
+  grid-area: qty;
   margin-bottom: 0;
   flex-shrink: 0;
-}
-
-.product-detail-pricing {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  align-self: center;
+  justify-self: end;
 }
 
 .product-detail-price {
@@ -2086,14 +2099,6 @@ select {
 
 .product-detail-save-percent {
   display: none;
-}
-
-.product-detail-stock {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
 }
 
 .stock-indicator {
@@ -4780,26 +4785,18 @@ select {
     font-size: 0.9rem;
   }
 
-  /* Product detail — discounted: compare | big price | % off, then stock + qty */
-  .product-price-stock-row.has-discount {
+  /* Product detail — stock above; price + quantity always share one row */
+  .product-price-stock-row.has-discount,
+  .product-price-stock-row.no-discount {
     display: grid;
     grid-template-columns: 1fr auto;
     grid-template-areas:
-      "price price"
-      "stock qty";
+      "stock stock"
+      "price qty";
     align-items: center;
     column-gap: 12px;
     row-gap: 10px;
-  }
-
-  /* Product detail — single price: In Stock | price | qty on one row */
-  .product-price-stock-row.no-discount {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    grid-template-areas: "stock price qty";
-    align-items: center;
-    column-gap: 12px;
-    row-gap: 0;
+    flex-wrap: nowrap;
   }
 
   .product-detail-price-block {
@@ -4817,30 +4814,25 @@ select {
   }
 
   .product-price-stock-row.has-discount .product-detail-pricing {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    column-gap: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 10px;
   }
 
   .product-price-stock-row.has-discount .product-detail-compare {
-    order: 1;
-    justify-self: start;
-    text-align: left;
+    order: 0;
     font-size: 0.95rem;
   }
 
   .product-price-stock-row.has-discount .product-detail-price {
-    order: 2;
-    justify-self: center;
-    font-size: 2.15rem;
+    order: 0;
+    font-size: 1.85rem;
     line-height: 1.1;
   }
 
   .product-price-stock-row.has-discount .product-detail-save {
-    order: 3;
-    justify-self: end;
-    text-align: right;
+    order: 0;
     flex-shrink: 0;
     white-space: nowrap;
     padding: 4px 10px;
@@ -4857,18 +4849,18 @@ select {
 
   .product-price-stock-row.no-discount .product-detail-pricing {
     display: flex;
-    justify-content: center;
     align-items: center;
   }
 
   .product-price-stock-row.no-discount .product-detail-price {
-    font-size: 1.65rem;
+    font-size: 1.85rem;
     line-height: 1.1;
   }
 
   .product-price-stock-row .quantity-selector {
     grid-area: qty;
     align-self: center;
+    justify-self: end;
   }
 
   .product-price-stock-row .quantity-btn {
