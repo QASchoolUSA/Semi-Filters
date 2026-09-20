@@ -74,6 +74,7 @@
   --color-surface: rgba(0, 0, 0, 0.03);
   --color-border: rgba(0, 0, 0, 0.08);
   --color-border-hover: rgba(0, 0, 0, 0.15);
+  --color-separator: rgba(0, 0, 0, 0.12);
 
   --color-text-primary: #12121a;
   --color-text-secondary: #4a4a5a;
