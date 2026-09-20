@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="assets/audio-data.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #000000;
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: #000000;
+        font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: #f5f5f7;
+        overflow: hidden;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .scene-inner {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 80px 120px;
+      }
+      .bg-glow {
+        position: absolute;
+        width: 720px;
+        height: 720px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 107, 0, 0.16) 0%, rgba(255, 107, 0, 0) 70%);
+        pointer-events: none;
+        top: 50%;
+        left: 50%;
+        margin-left: -360px;
+        margin-top: -360px;
+      }
+      .logo-wrap {
+        position: relative;
+        width: 220px;
+        height: 220px;
+        margin-bottom: 48px;
+      }
+      .logo-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 10px solid #ff6b00;
+      }
+      .logo-ring-mid {
+        position: absolute;
+        inset: 36px;
+        border-radius: 50%;
+        border: 7px dashed #ff6b00;
+        border-spacing: 12px;
+      }
+      .logo-core {
+        position: absolute;
+        inset: 78px;
+        border-radius: 50%;
+        background: #ff6b00;
+      }
+      .headline {
+        font-size: 72px;
+        font-weight: 650;
+        letter-spacing: -0.03em;
+        line-height: 1.08;
+        text-align: center;
+        max-width: 1400px;
+      }
+      .subhead {
+        margin-top: 20px;
+        font-size: 28px;
+        font-weight: 400;
+        color: rgba(235, 235, 245, 0.6);
+        letter-spacing: -0.01em;
+        text-align: center;
+      }
+      .section-label {
+        font-size: 22px;
+        font-weight: 500;
+        color: rgba(235, 235, 245, 0.55);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-bottom: 18px;
+      }
+      .section-title {
+        font-size: 56px;
+        font-weight: 650;
+        letter-spacing: -0.03em;
+        margin-bottom: 48px;
+        text-align: center;
+      }
+      .truck-row {
+        display: flex;
+        gap: 28px;
+        justify-content: center;
+      }
+      .truck-card {
+        width: 340px;
+        background: #1c1c1e;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 18px;
+        padding: 36px 32px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      }
+      .truck-card h3 {
+        font-size: 36px;
+        font-weight: 650;
+        letter-spacing: -0.02em;
+        margin-bottom: 12px;
+      }
+      .truck-card p {
+        font-size: 20px;
+        color: rgba(235, 235, 245, 0.55);
+        line-height: 1.4;
+      }
+      .accent-bar {
+        width: 64px;
+        height: 4px;
+        background: #ff6b00;
+        border-radius: 999px;
+        margin-bottom: 20px;
+      }
+      .product-stage {
+        display: flex;
+        gap: 48px;
+        align-items: stretch;
+        justify-content: center;
+      }
+      .product-card {
+        width: 520px;
+        background: #1c1c1e;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 18px;
+        padding: 40px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      }
+      .product-eyebrow {
+        font-size: 18px;
+        color: #ff6b00;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+      .product-name {
+        font-size: 40px;
+        font-weight: 650;
+        letter-spacing: -0.02em;
+        margin-bottom: 16px;
+      }
+      .product-meta {
+        font-size: 20px;
+        color: rgba(235, 235, 245, 0.55);
+        margin-bottom: 28px;
+        line-height: 1.45;
+      }
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 32px;
+      }
+      .chip {
+        padding: 10px 16px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 18px;
+        color: rgba(235, 235, 245, 0.75);
+      }
+      .btn-cart {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background: #ff6b00;
+        color: #000;
+        font-size: 22px;
+        font-weight: 650;
+        border-radius: 12px;
+        padding: 18px 28px;
+        min-width: 220px;
+      }
+      .cart-side {
+        width: 360px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+      }
+      .promo-chip {
+        background: rgba(255, 107, 0, 0.12);
+        border: 1px solid rgba(255, 107, 0, 0.35);
+        border-radius: 14px;
+        padding: 22px 24px;
+      }
+      .promo-chip .code {
+        font-size: 32px;
+        font-weight: 700;
+        color: #ff6b00;
+        letter-spacing: 0.04em;
+      }
+      .promo-chip .label {
+        margin-top: 6px;
+        font-size: 18px;
+        color: rgba(235, 235, 245, 0.6);
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        background: #30d158;
+        color: #000;
+        font-weight: 700;
+        font-size: 18px;
+      }
+      .confirm-wrap {
+        text-align: center;
+      }
+      .confirm-check {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        background: rgba(48, 209, 88, 0.15);
+        border: 2px solid #30d158;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 28px;
+        font-size: 48px;
+        color: #30d158;
+      }
+      .confirm-title {
+        font-size: 64px;
+        font-weight: 650;
+        letter-spacing: -0.03em;
+        margin-bottom: 12px;
+      }
+      .confirm-sub {
+        font-size: 24px;
+        color: rgba(235, 235, 245, 0.55);
+      }
+      .outro-mark {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+      }
+      .wordmark {
+        font-size: 64px;
+        font-weight: 750;
+        letter-spacing: 0.08em;
+      }
+      .wordmark span {
+        color: #ff6b00;
+      }
+      .tagline {
+        font-size: 28px;
+        color: rgba(235, 235, 245, 0.65);
+      }
+      .url {
+        margin-top: 8px;
+        font-size: 22px;
+        color: #ff6b00;
+        letter-spacing: 0.02em;
+      }
+      .cursor {
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        border-radius: 50% 50% 50% 0;
+        background: #f5f5f7;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+        z-index: 5;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="20"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Scene 1: Brand hook 0–3.5 -->
+      <div class="clip scene" data-start="0" data-duration="3.5" data-track-index="0" id="scene-1">
+        <div class="bg-glow" id="hook-glow"></div>
+        <div class="scene-inner" id="scene-1-inner">
+          <div class="logo-wrap" id="logo">
+            <div class="logo-ring"></div>
+            <div class="logo-ring-mid"></div>
+            <div class="logo-core"></div>
+          </div>
+          <h1 class="headline" id="hook-headline">Premium Filters for Semi Trucks</h1>
+          <p class="subhead" id="hook-sub">OEM-quality oil, air, fuel, and cabin filtration</p>
+        </div>
+      </div>
+
+      <!-- Scene 2: Shop by truck 3.5–8.5 -->
+      <div class="clip scene" data-start="3.5" data-duration="5" data-track-index="0" id="scene-2">
+        <div class="scene-inner" id="scene-2-inner">
+          <div class="section-label" id="truck-label">Shop by Truck</div>
+          <h2 class="section-title" id="truck-title">Find Filters For Your Rig</h2>
+          <div class="truck-row">
+            <div class="truck-card" id="card-volvo">
+              <div class="accent-bar" id="bar-volvo"></div>
+              <h3>Volvo</h3>
+              <p>VNL · VNR · VHD</p>
+            </div>
+            <div class="truck-card" id="card-kenworth">
+              <div class="accent-bar" id="bar-kenworth"></div>
+              <h3>Kenworth</h3>
+              <p>T680 · T880 · W900</p>
+            </div>
+            <div class="truck-card" id="card-freightliner">
+              <div class="accent-bar" id="bar-freightliner"></div>
+              <h3>Freightliner</h3>
+              <p>Cascadia · M2 · SD</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene 3: Fitment → cart 8.5–14 -->
+      <div class="clip scene" data-start="8.5" data-duration="5.5" data-track-index="0" id="scene-3">
+        <div class="scene-inner" id="scene-3-inner" style="position: relative">
+          <div class="product-stage">
+            <div class="product-card" id="product-card">
+              <div class="product-eyebrow">Oil Filter</div>
+              <h3 class="product-name">FleetGuard LF9009</h3>
+              <p class="product-meta">OEM cross-ref ready · Fits Cascadia / T680 / VNL</p>
+              <div class="chip-row">
+                <span class="chip">Oil</span>
+                <span class="chip">Air</span>
+                <span class="chip">Fuel</span>
+                <span class="chip">Cabin</span>
+              </div>
+              <div class="btn-cart" id="btn-cart">
+                Add to Cart
+                <span class="badge" id="cart-badge">1</span>
+              </div>
+            </div>
+            <div class="cart-side" id="cart-side">
+              <div class="promo-chip" id="promo">
+                <div class="code">FIRST15</div>
+                <div class="label">Save 15% on your first order</div>
+              </div>
+            </div>
+          </div>
+          <div class="cursor" id="cursor"></div>
+        </div>
+      </div>
+
+      <!-- Scene 4: Confirmed + outro 14–20 -->
+      <div class="clip scene" data-start="14" data-duration="6" data-track-index="0" id="scene-4">
+        <div class="scene-inner">
+          <div class="confirm-wrap" id="confirm-block">
+            <div class="confirm-check" id="confirm-check">✓</div>
+            <h2 class="confirm-title" id="confirm-title">Order Confirmed!</h2>
+            <p class="confirm-sub" id="confirm-sub">Shipping from $5.99 · Fast 3–5 day delivery</p>
+          </div>
+          <div class="outro-mark" id="outro-block">
+            <div class="logo-wrap" style="width: 120px; height: 120px; margin-bottom: 8px" id="outro-logo">
+              <div class="logo-ring" style="border-width: 6px"></div>
+              <div class="logo-ring-mid" style="inset: 22px; border-width: 4px"></div>
+              <div class="logo-core" style="inset: 44px"></div>
+            </div>
+            <div class="wordmark">SEMI <span>FILTERS</span></div>
+            <div class="tagline">Keep your fleet running.</div>
+            <div class="url">semifilters.com</div>
+          </div>
+        </div>
+      </div>
+
+      <audio
+        id="bgm"
+        src="assets/music/happy-beats-business-moves-vol-10-by-ende-dot-app.mp3"
+        data-start="0"
+        data-duration="20"
+        data-track-index="10"
+        data-volume="0.3"
+        data-automation='{"version":1,"lanes":[{"target":"volume","points":[{"t":0,"v":1},{"t":18.2,"v":1},{"t":19.7,"v":0.25}]}]}'
+      ></audio>
+      <!-- beat-grid: truck cards -->
+      <audio id="sfx-card1" src="assets/sfx/switch1.ogg" data-start="4.1" data-duration="0.31" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="sfx-card2" src="assets/sfx/switch5.ogg" data-start="5.19" data-duration="0.31" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="sfx-card3" src="assets/sfx/switch10.ogg" data-start="6.28" data-duration="0.31" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="sfx-click" src="assets/sfx/click1.ogg" data-start="11.47" data-duration="0.09" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="sfx-confirm" src="assets/sfx/click2.ogg" data-start="15.82" data-duration="0.06" data-track-index="11" data-volume="0.4"></audio>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // ---- Scene 1: hook ----
+      gsap.set("#scene-1-inner", { opacity: 0 });
+      gsap.set("#logo", { scale: 0.82, opacity: 0 });
+      gsap.set("#hook-headline", { opacity: 0, y: 28 });
+      gsap.set("#hook-sub", { opacity: 0, y: 16 });
+      gsap.set("#hook-glow", { opacity: 0.35 });
+
+      tl.fromTo("#scene-1-inner", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }, 0);
+      tl.fromTo("#logo", { scale: 0.82, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7, ease: "power3.out" }, 0.15);
+      tl.fromTo("#hook-headline", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" }, 0.75);
+      tl.fromTo("#hook-sub", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 1.15);
+      tl.to("#scene-1-inner", { opacity: 0, duration: 0.4, ease: "power2.in" }, 3.05);
+
+      // ---- Scene 2: trucks ----
+      // beat-grid: card 1 at 4.10s, card 2 at 5.19s, card 3 at 6.28s
+      gsap.set("#scene-2-inner", { opacity: 0 });
+      gsap.set(["#truck-label", "#truck-title"], { opacity: 0, y: 18 });
+      gsap.set(["#card-volvo", "#card-kenworth", "#card-freightliner"], { opacity: 0, y: 36 });
+
+      tl.fromTo("#scene-2-inner", { opacity: 0 }, { opacity: 1, duration: 0.35 }, 3.5);
+      tl.fromTo("#truck-label", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.4 }, 3.6);
+      tl.fromTo("#truck-title", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.45 }, 3.75);
+      tl.fromTo("#card-volvo", { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 4.1);
+      tl.fromTo("#card-kenworth", { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 5.19);
+      tl.fromTo("#card-freightliner", { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 6.28);
+      tl.to("#scene-2-inner", { opacity: 0, duration: 0.4, ease: "power2.in" }, 8.05);
+
+      // ---- Scene 3: product / cart ----
+      gsap.set("#scene-3-inner", { opacity: 0 });
+      gsap.set("#product-card", { opacity: 0, y: 28 });
+      gsap.set("#cart-side", { opacity: 0, x: 24 });
+      gsap.set("#cart-badge", { scale: 0, opacity: 0 });
+      gsap.set("#promo", { opacity: 0.55, scale: 0.96 });
+      gsap.set("#cursor", { opacity: 0, x: 820, y: 620 });
+
+      tl.fromTo("#scene-3-inner", { opacity: 0 }, { opacity: 1, duration: 0.35 }, 8.5);
+      tl.fromTo("#product-card", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" }, 8.65);
+      tl.fromTo("#cart-side", { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 9.1);
+      tl.fromTo("#cursor", { opacity: 0 }, { opacity: 1, duration: 0.2 }, 10.6);
+      tl.to("#cursor", { x: 620, y: 690, duration: 0.75, ease: "power2.inOut" }, 10.7);
+      // click Add to Cart
+      tl.to("#btn-cart", { scale: 0.96, duration: 0.08, yoyo: true, repeat: 1 }, 11.47);
+      tl.fromTo("#cart-badge", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2)" }, 11.55);
+      tl.fromTo("#promo", { opacity: 0.55, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" }, 11.7);
+      tl.to("#cursor", { opacity: 0, duration: 0.25 }, 12.2);
+      tl.to("#scene-3-inner", { opacity: 0, duration: 0.4, ease: "power2.in" }, 13.55);
+
+      // ---- Scene 4: confirm then outro ----
+      // beat-locked: Order Confirmed at 15.82s; logo land at 18.01s
+      gsap.set("#confirm-block", { opacity: 0, scale: 0.94 });
+      gsap.set("#outro-block", { opacity: 0, y: 20 });
+      gsap.set("#outro-logo", { scale: 0.9, opacity: 0 });
+
+      tl.fromTo("#confirm-block", { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power3.out" }, 14.15);
+      tl.to("#confirm-block", { opacity: 0, y: -16, duration: 0.4, ease: "power2.in" }, 16.6);
+      tl.fromTo("#outro-block", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" }, 17.1);
+      tl.fromTo("#outro-logo", { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "power2.out" }, 18.01);
+
+      // ---- Subtle audio-reactive glow / accent bars ----
+      if (window.AUDIO_DATA && window.AUDIO_DATA.frames) {
+        const AUDIO_DATA = window.AUDIO_DATA;
+        const glow = document.getElementById("hook-glow");
+        const bars = ["bar-volvo", "bar-kenworth", "bar-freightliner"].map((id) =>
+          document.getElementById(id),
+        );
+        const maxFrame = Math.min(AUDIO_DATA.totalFrames, Math.ceil(20 * AUDIO_DATA.fps));
+        for (let f = 0; f < maxFrame; f += 2) {
+          const frame = AUDIO_DATA.frames[f];
+          const t = f / AUDIO_DATA.fps;
+          tl.call(
+            ((bands, time) => () => {
+              const bass = bands[0] || 0;
+              const mid = bands[4] || 0;
+              if (glow && time < 3.5) {
+                gsap.set(glow, { opacity: 0.28 + bass * 0.45 });
+              }
+              bars.forEach((el) => {
+                if (!el) return;
+                el.style.boxShadow = `0 0 ${8 + mid * 18}px rgba(255,107,0,${0.12 + mid * 0.3})`;
+              });
+            })(frame.bands || [], t),
+            [],
+            t,
+          );
+        }
+      }
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
