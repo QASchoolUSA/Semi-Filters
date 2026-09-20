@@ -2071,7 +2071,7 @@ select {
   grid-area: qty;
   margin-bottom: 0;
   flex-shrink: 0;
-  align-self: center;
+  align-self: start;
   justify-self: end;
 }
 
@@ -4816,7 +4816,7 @@ select {
   .product-price-stock-row.has-discount .product-detail-pricing {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
+    align-items: center;
     gap: 8px 10px;
   }
 
@@ -4859,8 +4859,10 @@ select {
 
   .product-price-stock-row .quantity-selector {
     grid-area: qty;
-    align-self: center;
+    align-self: start;
     justify-self: end;
+    /* Optically align with large price text */
+    margin-top: 2px;
   }
 
   .product-price-stock-row .quantity-btn {
