@@ -60,6 +60,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.75,
     }))
 
+    const truckCategoryUrls: MetadataRoute.Sitemap = TRUCK_BRANDS.flatMap((brand) =>
+        categories
+            .filter((c) => c.slug?.current)
+            .map((c) => ({
+                url: `${BASE_URL}/trucks/${truckBrandToSlug(brand)}/${c.slug!.current}`,
+                lastModified: c._updatedAt ? new Date(c._updatedAt) : new Date(),
+                changeFrequency: 'weekly' as const,
+                priority: 0.7,
+            }))
+    )
+
     return [
         {
             url: BASE_URL,
@@ -75,6 +86,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
         ...categoryUrls,
         ...truckUrls,
+        ...truckCategoryUrls,
         {
             url: `${BASE_URL}/guides`,
             lastModified: new Date(),

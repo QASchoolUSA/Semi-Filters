@@ -60,6 +60,8 @@ export const productsByCategorySlugQuery = defineQuery(`*[${publishedProduct} &&
 
 export const productsByTruckBrandQuery = defineQuery(`*[${publishedProduct} && $brand in vehicleFit] | order(featured desc, name asc) ${productCardProjection}`)
 
+export const productsByTruckBrandAndCategoryQuery = defineQuery(`*[${publishedProduct} && $brand in vehicleFit && category->slug.current == $categorySlug] | order(featured desc, name asc) ${productCardProjection}`)
+
 export const allCategoriesQuery = defineQuery(`*[_type == "category"] | order(order asc) {
   _id,
   name,

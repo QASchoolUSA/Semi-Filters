@@ -92,14 +92,17 @@ export default function TruckMakerFilters({ categories }: TruckMakerFiltersProps
                             <p className="maker-card__desc">{maker.description}</p>
 
                             <ul className="maker-card__cats" role="list">
-                                {mainCategories.map((cat) => (
+                                {mainCategories.map((cat) => {
+                                    const categorySlug = cat.slug?.current
+                                    if (!categorySlug) return null
+                                    return (
                                     <li key={cat._id}>
                                         <Link
-                                            href={`/trucks/${maker.slug.toLowerCase()}`}
+                                            href={`/trucks/${maker.slug.toLowerCase()}/${categorySlug}`}
                                             className="maker-cat"
                                         >
                                             <span className="maker-cat__icon">
-                                                {getCategoryIcon(cat.slug?.current || '', 22)}
+                                                {getCategoryIcon(categorySlug, 22)}
                                             </span>
                                             <span className="maker-cat__name">
                                                 {cat.name.replace(' Filters', '')}
@@ -107,7 +110,8 @@ export default function TruckMakerFilters({ categories }: TruckMakerFiltersProps
                                             <HiOutlineArrowNarrowRight className="maker-cat__arrow" size={16} />
                                         </Link>
                                     </li>
-                                ))}
+                                    )
+                                })}
                             </ul>
 
                             <Link

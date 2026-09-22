@@ -11,6 +11,7 @@ import {
   productBySlugQuery,
   productsByCategorySlugQuery,
   productsByTruckBrandQuery,
+  productsByTruckBrandAndCategoryQuery,
   relatedProductsQuery,
   shopFacetQuery,
   allProductsQuery,
@@ -187,6 +188,22 @@ export const getProductsByTruckBrand = cache(async (brand: string): Promise<Prod
     return []
   }
 })
+
+export const getProductsByTruckBrandAndCategory = cache(
+  async (brand: string, categorySlug: string): Promise<Product[]> => {
+    try {
+      return asProducts(
+        await sanityFetch(productsByTruckBrandAndCategoryQuery, {
+          params: { brand, categorySlug },
+          tags: ['products', `truck:${brand}`, `category:${categorySlug}`],
+        })
+      )
+    } catch (error) {
+      console.error('Failed to fetch products by truck brand and category:', error)
+      return []
+    }
+  }
+)
 
 export const getGuides = cache(async (): Promise<Guide[]> => {
   try {

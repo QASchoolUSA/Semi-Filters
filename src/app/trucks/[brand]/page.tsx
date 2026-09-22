@@ -157,11 +157,11 @@ export default async function TruckLandingPage({ params }: Props) {
                 )}
 
                 <p className="landing-footer-links">
-                    <Link href="/filters/oil-filters">Oil Filters</Link>
+                    <Link href={`/trucks/${slug}/oil-filters`}>Oil Filters</Link>
                     {' · '}
-                    <Link href="/filters/air-filters">Air Filters</Link>
+                    <Link href={`/trucks/${slug}/air-filters`}>Air Filters</Link>
                     {' · '}
-                    <Link href="/filters/fuel-filters">Fuel Filters</Link>
+                    <Link href={`/trucks/${slug}/fuel-filters`}>Fuel Filters</Link>
                     {' · '}
                     <Link href="/guides">Maintenance Guides</Link>
                 </p>
