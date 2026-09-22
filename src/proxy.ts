@@ -4,7 +4,9 @@ import { truckBrandToSlug } from '@/lib/seo'
 
 /**
  * Next.js 16 proxy (replaces middleware).
- * - Redirects legacy /shop?category=&truck= URLs to indexable landings
+ * - Redirects /shop?category= to /filters/{category}
+ * - Redirects /shop?truck=&category= to /trucks/{brand}/{category}
+ * - Leaves /shop?truck= on /shop so brand filtering works on All Products
  * - Protects /store-management with Auth.js
  */
 export default auth((req) => {
@@ -14,27 +16,23 @@ export default auth((req) => {
     const category = searchParams.get('category')
     const truck = searchParams.get('truck')
 
-    if (category && category !== 'all' && !truck) {
+    // Category-only → dedicated category landing
+    if (category && category !== 'all' && (!truck || truck === 'all')) {
       const url = req.nextUrl.clone()
       url.pathname = `/filters/${category}`
       url.search = ''
       return NextResponse.redirect(url, 308)
     }
 
-    if (truck && (!category || category === 'all')) {
+    // Brand + category → nested brand×category landing
+    if (truck && truck !== 'all' && category && category !== 'all') {
       const url = req.nextUrl.clone()
-      url.pathname = `/trucks/${truckBrandToSlug(truck)}`
+      url.pathname = `/trucks/${truckBrandToSlug(truck)}/${category}`
       url.search = ''
       return NextResponse.redirect(url, 308)
     }
 
-    if (truck && category && category !== 'all') {
-      const url = req.nextUrl.clone()
-      url.pathname = `/trucks/${truckBrandToSlug(truck)}`
-      url.search = ''
-      return NextResponse.redirect(url, 308)
-    }
-
+    // Truck-only stays on /shop so the All Products brand filter works
     return NextResponse.next()
   }
 
