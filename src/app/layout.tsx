@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import ClientLayout from "@/components/ClientLayout";
 import ClarityAnalytics from "@/components/ClarityAnalytics";
+import GoogleTagManager from "@/components/GoogleTagManager";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { BASE_URL } from "@/lib/seo";
 
@@ -268,9 +269,11 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
     >
       <body>
+        <GoogleTagManager />
         <link rel="preconnect" href="https://cdn.sanity.io" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
         <link rel="dns-prefetch" href="https://www.clarity.ms" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <ClarityAnalytics />
         <script
           type="application/ld+json"
