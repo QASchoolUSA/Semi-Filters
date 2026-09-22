@@ -110,19 +110,6 @@ export default async function CategoryLandingPage({ params }: Props) {
                         <Link href="/shop">Browse the full shop</Link>.
                     </p>
                 )}
-
-                <p className="landing-footer-links">
-                    Also shop by truck:{' '}
-                    <Link href="/trucks/freightliner">Freightliner</Link>
-                    {' · '}
-                    <Link href="/trucks/volvo">Volvo</Link>
-                    {' · '}
-                    <Link href="/trucks/kenworth">Kenworth</Link>
-                    {' · '}
-                    <Link href="/trucks/peterbilt">Peterbilt</Link>
-                    {' · '}
-                    <Link href="/guides">Guides</Link>
-                </p>
             </div>
         </section>
     )

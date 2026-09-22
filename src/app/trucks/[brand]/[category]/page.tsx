@@ -134,16 +134,6 @@ export default async function TruckCategoryLandingPage({ params }: Props) {
                         <Link href="/shop">Shop all products</Link>.
                     </p>
                 )}
-
-                <p className="landing-footer-links">
-                    <Link href={`/trucks/${brandSlug}`}>All {brand} filters</Link>
-                    {' · '}
-                    <Link href={`/filters/${categorySlug}`}>{category.name} (all brands)</Link>
-                    {' · '}
-                    <Link href="/shop">All products</Link>
-                    {' · '}
-                    <Link href="/guides">Maintenance Guides</Link>
-                </p>
             </div>
         </section>
     )
